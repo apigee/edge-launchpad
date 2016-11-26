@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "apigeetool": "^0.6.6",
+    "async": "^2.1.4",
+    "fs-extra": "^1.0.0",
+    "lodash": "^4.17.2",
+    "mustache": "^2.3.0"
+  }
+}
