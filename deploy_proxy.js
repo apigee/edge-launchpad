@@ -13,22 +13,18 @@ var context = {
 	get_where_to_deploy: function() {
 		return {
 			username: 'gkidiyoor+testing@apigee.com',
-			password: 'XXX!',
+			password: 'Gkidiyoortesting1!',
 			environments: 'prod',
 			organization: 'hulk',
 		}
 	},
-	get_config: function() {
+	get_params: function() {
 		return {
 
 		}
 	},
-	get_dependency: function() {
-		return [{
-			name: 'common-consent-controller',
-			type: 'node',
-			version: '1.0'
-		}]
+	getAllVariables: function(){
+		return {name: 'Gautham V Kidiyoor'}
 	}
 }
 
@@ -47,7 +43,7 @@ function build(context, subResourceName) {
 		if (err) {
 			console.error(err)
 		} else {
-			var inject_object = {name: 'Gautham V Kidiyoor'}
+			var inject_object = context.getAllVariables()
 			replace_variables(proxy_target_dir, inject_object)
 		}
 

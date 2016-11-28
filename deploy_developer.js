@@ -14,7 +14,14 @@ var context = {
 			environments: 'prod',
 			organization: 'hulk',
 		}
+	},
+	getSubResourceConfig: function(){
+		return {
+			email: 'gkidiyoor@apigee.com',
+			payload: {'{ email: "gkidiyoor+testing@apigee.com", "firstName":"OpenBank","lastName":"Developer","userName":"openbank"}'}
+		}
 	}
+
 
 }
 
@@ -29,10 +36,9 @@ function deploy(context, subResourceName) {
 	where_to_deploy 			= context.get_where_to_deploy()
 	lodash.merge(deployment_opts, where_to_deploy);
 	
-	deployment_opts.email 		= ''
-	deployment_opts.firstName	= ''
-	deployment_opts.lastName	= ''
-	deployment_opts.username 	= ''
+	config = context.getSubResourceConfig(resourceName, subResourceName)
+	deployment_opts.email 		= subResourceName
+	lodash.merge(deployment_opts, config.payload)
 
 	sdk.createDeveloper(opts).then(
 		function(result){
@@ -51,7 +57,10 @@ function clean(context) {
 	where_to_deploy 			= context.get_where_to_deploy()
 	lodash.merge(deployment_opts, where_to_deploy);
 
-	deployment_opts.email		= ''
+	config = context.getSubResourceConfig(resourceName, subResourceName)
+	deployment_opts.email 		= subResourceName
+	lodash.merge(deployment_opts, config.payload)
+
 
 	sdk.deleteDeveloper(deployment_opts).then(
 		function(result){
