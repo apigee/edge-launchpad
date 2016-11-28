@@ -21,16 +21,17 @@ function build(context) {
 
 }
 
-function deploy(context, subResourceName) {
+function deploy(context, resourceName, subResourceName) {
 	deployment_opts 			= {}
 
 	// prepare deployment_opts object for deploying proxy
 	where_to_deploy 			= context.get_where_to_deploy()
-	lodash.merge(deployment_opts, where_to_deploy);
-	
-	deployment_opts.name 		= ''
-	deployment_opts.apiproducts = ''
-	deployment_opts.email 		= ''
+	lodash.merge(deployment_opts, where_to_deploy)
+
+	config = context.getSubResourceConfig(resourceName, subResourceName)
+	deployment_opts.name 		= subResourceName
+	lodash.merge(deployment_opts, config.payload)
+
 
 	sdk.createApp(opts).then(
 		function(result){
@@ -49,8 +50,10 @@ function clean(context) {
 	where_to_deploy 			= context.get_where_to_deploy()
 	lodash.merge(deployment_opts, where_to_deploy);
 
-	deployment_opts.name 		= ''
-	deployment_opts.email 		= ''		
+	config = context.getSubResourceConfig(resourceName, subResourceName)
+	deployment_opts.name 		= subResourceName
+	lodash.merge(deployment_opts, config.payload)
+	
 
 	sdk.deleteApp(deployment_opts).then(
 		function(result){
