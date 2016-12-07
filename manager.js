@@ -1,76 +1,49 @@
 
-var Promise = require("bluebird");
-
+//var Promise = require("bluebird");
 
 var instance;
 
 function getManager() {
 
     if (!instance) {
-        instance = new manager();
+        instance                    = new manager();
     }
     return instance;
 }
 
-exports.getManager = getManager;
 
 function manager() {
 
-    this.adapters = {};
-    this.isDebug = true;
+    this.adapters                   = {};
+    this.isDebug                    = true;
+
     loadAdapters();
 
     function loadAdapters() {
-        //load all adapters from config file
-        //make all adapters inherit from baseAdapter
+        //TODO load all adapters from config file
+        //TODO make all adapters inherit from baseAdapter
+        console.log('loading adapters');
     }
 
-    //doTask(taskName, context, resourceName, subResourceName, params) {
-////get the specific adapter from manager.getResource/SubResourceAdapter(resourceName, subResourceName);
-//call doTask on the adapter
-
-//}
 
     this.doTask = function(taskName,context,resourceName,subResourceName,params ) {
+
+        //TODO get the specific adapter from manager.getResource/SubResourceAdapter(resourceName, subResourceName);
+        //TODO call doTask on the adapter
         //TODO:check context and taskName
 
         var config = context.getConfig(resourceName, subResourceName);
 
-
-
         if (config) {
-            config.configName = getName(resourceName, subResourceName);
-            var adapter = (subResourceName)?this.getAdapter(config.resourceType,config.subResourceType):this.getAdapter(config.resourceType);
-            adapter.doTask(taskName,context,config,resourceName,subResourceName, params);
+            //config.configName       = getName(resourceName, subResourceName);
+            var adapter             = this.getAdapter(config.resourceType, config.subResourceName);
+            adapter.doTask(taskName, context, config, resourceName, subResourceName, params);
         }
 
     }
 
-    this.repeatToAll = function(taskName,context,resourceName,subResourceName,params) {
-
-        if (subResourceName) return;
-
-        var config = context.getConfig(resourceName);
-
-        if (!config) return;
-
-        if (config.subResources && config.subResources.length > 0) {
-
-            //use promise - synchronous invocation
-            //loop through subresources
-            //for each sub-resource get its adapter based on the resource & subResource type
-            //config.configName = getName(resourceName, subResourceName);
-            //call doTask on the subresource adapter with the subresource config. (set resourceType and resourceName attributes for the subresource config before passing, when getConfig() is not used
-            //if there is an error then log the error (getLog().logErrorStatus(config, error))
-        } else if (config.resources && config.resources.length > 0) {
-            //use promise - synchronous invocation
-            //loop through subresources
-            //for each sub-resource get its adapter based on the resource & subResource type
-            //config.configName = getName(resourceName, subResourceName);
-            //call doTask on the subresource adapter with the subresource config. (set resourceType and resourceName attributes for the subresource config before passing, when getConfig() is not used
-            //if there is an error then log the error (getLog().logErrorStatus(config, error))
-        }
-
+    this.getAdapter = function (config.resourceType, config.subResourceType) {
+        return {doTask: function(){}}
     }
 
 }
@@ -129,3 +102,6 @@ this.getLog = function() {
     // get specific adapter
     // call doTask(taskName, ....) in sequence.
 //}
+
+
+exports.getManager = getManager;
