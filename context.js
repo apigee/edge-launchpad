@@ -2,27 +2,42 @@
  * Created by Muthu on 28/11/16.
  */
 
-var yaml = require('js-yaml');
-var fs   = require('fs');
+var yaml                            = require('js-yaml');
+var fs                              = require('fs');
+var path                            = require('path');
+
+var instance;
+
+function getContext(config, env) {
+
+    if (!instance) {
+        instance                    = new context(config, env);
+    }
+    return instance;
+}
+
 
 function context(config, env) {
-    this.variables = {};
-    this.env = env;
+    this.variables                  = {};
+    this.env                        = env;
+    this.config                     = {};
 
     //TODO:if object assign as it is; if text, load (find file type and load accordingly) and assign
     if (typeof config === 'string' || config instanceof String ) {
-        //load config file
+        var configObj               = null;
 
-        var configObj = null;
         try {
-            configObj = yaml.safeLoad(fs.readFileSync(config, 'utf8'));
+            var current_dir         = process.cwd();
+            var config_file_path    = path.join(current_dir, config)
+            configObj = yaml.safeLoad(fs.readFileSync(config_file_path, 'utf8'));
         } catch(e) {
-
+            console.log('ERROR reading config file');
         }
 
-        this.config = configObj;
+        this.config                 = configObj;
+
     } else {
-        this.config = config;
+        this.config                 = config;
     }
 
     this.getVariable = function (variableName) {
@@ -76,3 +91,5 @@ function context(config, env) {
         return env;
     }
 }
+
+exports.getContext = getContext;

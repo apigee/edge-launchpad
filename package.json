@@ -3,7 +3,14 @@
     "apigeetool": "^0.6.6",
     "async": "^2.1.4",
     "fs-extra": "^1.0.0",
+    "gulp-param": "^1.0.3",
+    "js-yaml": "^3.7.0",
     "lodash": "^4.17.2",
-    "mustache": "^2.3.0"
+    "mustache": "^2.3.0",
+    "path": "^0.12.7",
+    "yargs": "^6.5.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
   }
 }
