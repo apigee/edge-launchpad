@@ -1,6 +1,5 @@
 var apigeetool 		= require('apigeetool')
 var sdk 			= apigeetool.getPromiseSDK()
-var lodash 			= require('lodash');
 var path 			= require('path');
 var async			= require('async');
 
@@ -14,7 +13,15 @@ var context = {
 			environments: 'prod',
 			organization: 'hulk',
 		}
+	},
+	getSubResourceConfig: function(){
+		return {
+			email: 'gkidiyoor@apigee.com',
+			payload: {'{ email: "gkidiyoor+testing@apigee.com", "firstName":"OpenBank","lastName":"Developer","userName":"openbank"}'}
+		}
 	}
+
+
 }
 
 function build(context) {
@@ -27,13 +34,12 @@ function deploy(context, resourceName, subResourceName) {
 	// prepare deployment_opts object for deploying proxy
 	where_to_deploy 			= context.get_where_to_deploy()
 	lodash.merge(deployment_opts, where_to_deploy)
-
+	
 	config = context.getSubResourceConfig(resourceName, subResourceName)
-	deployment_opts.name 		= subResourceName
+	deployment_opts.email 		= subResourceName
 	lodash.merge(deployment_opts, config.payload)
 
-
-	sdk.createApp(opts).then(
+	sdk.createDeveloper(opts).then(
 		function(result){
 			//developer created
 		},
@@ -43,7 +49,7 @@ function deploy(context, resourceName, subResourceName) {
 }
 
 
-function clean(context) {
+function clean(context, resourceName, subResourceName) {
     deployment_opts 			= {}
 
 	// prepare deployment_opts object for deploying proxy
@@ -51,11 +57,11 @@ function clean(context) {
 	lodash.merge(deployment_opts, where_to_deploy);
 
 	config = context.getSubResourceConfig(resourceName, subResourceName)
-	deployment_opts.name 		= subResourceName
+	deployment_opts.email 		= subResourceName
 	lodash.merge(deployment_opts, config.payload)
-	
 
-	sdk.deleteApp(deployment_opts).then(
+
+	sdk.deleteDeveloper(deployment_opts).then(
 		function(result){
 			//developer deleted
 		},
@@ -68,3 +74,6 @@ function clean(context) {
 build(context)
 //deploy(context, 'accounts')
 
+exports.clean 			= clean
+exports.build 			= build
+exports.deploy 			= deploy

@@ -1,0 +1,4 @@
+{
+  "solutions.api.apis":"../deployables/deploy_proxy",
+  "solutions.api.app":"../deployables/deploy_app"
+}
