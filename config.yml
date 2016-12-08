@@ -1,0 +1,138 @@
+resources:
+- name: openbank_apis
+  type: solutions.api
+  properties:
+    inputs:
+    - name:organization
+    prompt:Edge Org name
+    - name: environment
+    prompt:Edge Org Environment
+    - name: token
+    prompt:Edge Auth token
+    - name: usergrid_org
+    prompt:App services org name
+    - name: usergrid_app
+    prompt: App services app name
+    - name: usergrid_client_id
+    prompt: App services App Client Id
+    - name: usergrid_secret
+    prompt: App services App Client Secret
+    configurations:
+    - env : test
+    ugbase :'https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}'
+    proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
+    proxyhost : '{{organization}}-{{environment}}.apigee.net'
+    - env : prod
+    ugbase :'https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}'
+    proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
+    proxyhost : '{{organization}}-{{environment}}.apigee.net'
+    script: gulpfile.js
+    basePath: ./src/gateway/
+    dependencies:
+    - name: common-consent-controller
+      type: node
+      version:
+    edgeOrg:
+      orgName:'{{organization}}'
+      env:'{{environment}}'
+      token:'{{token}}'
+    dataSources:
+    - name: default
+      orgName:'{{usergrid_org}}'
+      appName:'{{usergrid_app}}'
+      appClientId:'{{usergrid_client_id}}'
+      appSecret:'{{usergrid_secret}}'
+    subResources:
+    - name: cacheResources
+      type: cache
+      items:
+      - name: consent-session-cache
+        payload: "{ name: 'consent-session-cache'}"
+      - name: application-session-cache
+        payload: "{ name: 'application-session-cache'}"
+      - name: nonce-cache
+        payload: "{ name: 'sms-token-cache'}"
+    - name: replace_orgvalues
+      type: configSubstitutions
+      - name:authentication_connector_target_url
+      filePaths:['authentication-connector/apiproxy/targets/default.xml']
+      value: '{{ugbase}}/customers/{customerNumber}'
+      - name:accounts_connector_appBasePath
+      filePaths:
+      value: '{{ugbase}}'
+      - name:location_connector_appBasePath
+      filePaths:
+      value: '{{ugbase}}'
+      - name:oauth_consent_app_redirect
+      filePaths:
+      value: '{{proxybase}}/internal/consent?sessionid={messageid}'
+      - name:transfers_consent_app_redirect
+      filePaths:
+      value: '{{proxybase}}/internal/transfer-consent?sessionid={messageid}'
+      - name:transfers_connector_targeturl
+      filePaths:
+      value: '{{ugbase}}/transactions'
+      - name:userinfo_getuser_url
+      filePaths:
+      value: '{{ugbase}}/customers/{accesstoken.customer_number}'
+    - name: bank_apis
+      type: proxies
+      items:
+      - name: accounts
+      - name: accounts-connector
+      - name: authentication-connector
+      - name: locations
+      - name: locations-connector
+      - name: oauth
+      - name: session
+      - name: sms-token
+      - name: transfers
+      - name: transfers-connector
+      - name: userinfo
+    - name: developers
+      type: developers
+      items:
+      - payload: '{"email":"openbank@apigee.net", "firstName":"OpenBank","lastName":"Developer","userName":"openbank"}'
+        email: openbank@apigee.net
+    - name: apiProducts
+      type: products
+      items:
+      - payload: '{"approvalType":"auto", "displayName":"Open Data APIs","name":"open_data_apis","environments":["test","prod"],"scopes":["openid", "atms", "branches"], "proxies":["oauth", "locations"]}'
+        name: open_data_apis
+      - payload: '{"approvalType":"auto", "displayName":"Payment Transfer APIs","name":"payment_transfer_apis","environments":["test","prod"],"scopes":["openid", "accounts", "transfer", "payment"], "proxies":["oauth", "transfers", "accounts"]}'
+        name: payment_transfer_apis
+      - payload: '{"approvalType":"auto", "displayName":"Account Access APIs","name":"account_access_apis","environments":["test","prod"],"scopes":["openid", "accounts", "accounts-info", "accounts-balance", "accounts-transactions"], "proxies":["oauth", "accounts"]}'
+        name: account_access_apis
+      - payload: '{"approvalType":"auto", "attributes":[{"name":"access","value":"private"}], "displayName":"Internal Consent APIs","name":"internal_consent_apis","environments":["test","prod"],"scopes":[], "proxies":["session", "sms-token", "authentication-connector", "oauth"]}'
+        name: internal_consent_apis
+    - name: developerApps
+      type: apps
+      items:
+      - payload: "{name:'AISP_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'account_access_apis'}"
+        name: AISP_App
+      - name: PISP_App
+        payload: "{name:'PISP_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'payment_transfer_apis'}"
+      - name: Opendata_App
+        payload: "{name:'Opendata_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'open_data_apis'}"
+      - name:internal_consent_app
+        payload: "{name:'internal_consent_app',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'internal_consent_apis'}"
+        assignResponse:
+        - name: consent_app_key
+          value: apiKey
+    - name: replace_consent_app_key
+      type: configSubstitutions
+      - name:consent_app_key
+        filePaths:['consent-app/apiproxy/resources/node/config.orig']
+        value: '{{consent_app_key}}'
+      - name:proxy_host
+        filePaths:['consent-app/apiproxy/resources/node/config.orig']
+        value: '{{proxyhost}}'
+    - name: consent_apis
+      type: proxies
+      items:
+      - name: consent-app
+      - name: consent-app-transfers
+              
+
+         
+                    
