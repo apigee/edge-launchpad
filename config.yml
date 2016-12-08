@@ -3,29 +3,29 @@ resources:
   type: solutions.api
   properties:
     inputs:
-    - name:organization
-    prompt:Edge Org name
+    - name: organization
+      prompt: Edge Org name
     - name: environment
-    prompt:Edge Org Environment
+      prompt: Edge Org Environment
     - name: token
-    prompt:Edge Auth token
+      prompt: Edge Auth token
     - name: usergrid_org
-    prompt:App services org name
+      prompt: App services org name
     - name: usergrid_app
-    prompt: App services app name
+      prompt: App services app name
     - name: usergrid_client_id
-    prompt: App services App Client Id
+      prompt: App services App Client Id
     - name: usergrid_secret
-    prompt: App services App Client Secret
+      prompt: App services App Client Secret
     configurations:
     - env : test
-    ugbase :'https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}'
-    proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
-    proxyhost : '{{organization}}-{{environment}}.apigee.net'
+      ugbase : "https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}"
+      proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
+      proxyhost : '{{organization}}-{{environment}}.apigee.net'
     - env : prod
-    ugbase :'https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}'
-    proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
-    proxyhost : '{{organization}}-{{environment}}.apigee.net'
+      ugbase : 'https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}'
+      proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
+      proxyhost : '{{organization}}-{{environment}}.apigee.net'
     script: gulpfile.js
     basePath: ./src/gateway/
     dependencies:
@@ -38,10 +38,10 @@ resources:
       token:'{{token}}'
     dataSources:
     - name: default
-      orgName:'{{usergrid_org}}'
-      appName:'{{usergrid_app}}'
-      appClientId:'{{usergrid_client_id}}'
-      appSecret:'{{usergrid_secret}}'
+      orgName: '{{usergrid_org}}'
+      appName: '{{usergrid_app}}'
+      appClientId: '{{usergrid_client_id}}'
+      appSecret: '{{usergrid_secret}}'
     subResources:
     - name: cacheResources
       type: cache
@@ -52,29 +52,30 @@ resources:
         payload: "{ name: 'application-session-cache'}"
       - name: nonce-cache
         payload: "{ name: 'sms-token-cache'}"
-    - name: replace_orgvalues
+    - name: replaceorgvalues
       type: configSubstitutions
-      - name:authentication_connector_target_url
-      filePaths:['authentication-connector/apiproxy/targets/default.xml']
-      value: '{{ugbase}}/customers/{customerNumber}'
-      - name:accounts_connector_appBasePath
-      filePaths:
-      value: '{{ugbase}}'
-      - name:location_connector_appBasePath
-      filePaths:
-      value: '{{ugbase}}'
-      - name:oauth_consent_app_redirect
-      filePaths:
-      value: '{{proxybase}}/internal/consent?sessionid={messageid}'
-      - name:transfers_consent_app_redirect
-      filePaths:
-      value: '{{proxybase}}/internal/transfer-consent?sessionid={messageid}'
-      - name:transfers_connector_targeturl
-      filePaths:
-      value: '{{ugbase}}/transactions'
-      - name:userinfo_getuser_url
-      filePaths:
-      value: '{{ugbase}}/customers/{accesstoken.customer_number}'
+      items:
+      - name: authentication_connector_target_url
+        filePaths: ['authentication-connector/apiproxy/targets/default.xml']
+        value: '{{ugbase}}/customers/{customerNumber}'
+      - name: accounts_connector_appBasePath
+        filePaths:
+        value: '{{ugbase}}'
+      - name: location_connector_appBasePath
+        filePaths:
+        value: '{{ugbase}}'
+      - name: oauth_consent_app_redirect
+        filePaths:
+        value: '{{proxybase}}/internal/consent?sessionid={messageid}'
+      - name: transfers_consent_app_redirect
+        filePaths:
+        value: '{{proxybase}}/internal/transfer-consent?sessionid={messageid}'
+      - name: transfers_connector_targeturl
+        filePaths:
+        value: '{{ugbase}}/transactions'
+      - name: userinfo_getuser_url
+        filePaths:
+        value: '{{ugbase}}/customers/{accesstoken.customer_number}'
     - name: bank_apis
       type: proxies
       items:
@@ -114,18 +115,19 @@ resources:
         payload: "{name:'PISP_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'payment_transfer_apis'}"
       - name: Opendata_App
         payload: "{name:'Opendata_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'open_data_apis'}"
-      - name:internal_consent_app
+      - name: internal_consent_app
         payload: "{name:'internal_consent_app',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'internal_consent_apis'}"
         assignResponse:
         - name: consent_app_key
           value: apiKey
     - name: replace_consent_app_key
       type: configSubstitutions
-      - name:consent_app_key
-        filePaths:['consent-app/apiproxy/resources/node/config.orig']
+      items:
+      - name: consent_app_key
+        filePaths: ['consent-app/apiproxy/resources/node/config.orig']
         value: '{{consent_app_key}}'
-      - name:proxy_host
-        filePaths:['consent-app/apiproxy/resources/node/config.orig']
+      - name: proxy_host
+        filePaths: ['consent-app/apiproxy/resources/node/config.orig']
         value: '{{proxyhost}}'
     - name: consent_apis
       type: proxies
