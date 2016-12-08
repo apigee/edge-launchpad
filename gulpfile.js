@@ -53,7 +53,7 @@ gulp.task('init', function() {
 gulp.task('clean', ['init'], function(){
     if (argv.subresource){
         params = {}
-        manager.doTask('CLEAN', context, null ,argv.subresource, params)
+        manager.doTask('CLEAN', context, argv.resource ,argv.subresource, params)
     } else if (argv.resource) {
         params = {}
         manager.doTask('CLEAN', context,argv.resource ,null, params)
@@ -77,13 +77,15 @@ gulp.task('build',['init'], function(){
 
 gulp.task('deploy', ['init','build'], function(){
     if (argv.subresource){
-
+        params = {}
+        manager.doTask('DEPLOY', context, argv.resource ,argv.subresource, params)
     } else if (argv.resource) {
-
+        params = {}
+        manager.doTask('DEPLOY', context,argv.resource ,null, params)
     } else {
-
+        params = {}
+        manager.doTask('DEPLOY', context, null ,null, params)
     }
-
 });
 
 

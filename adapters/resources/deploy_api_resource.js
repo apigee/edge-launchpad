@@ -55,7 +55,8 @@ function build(context) {
 }
 
 function deploy(context, subResourceName) {
-
+	console.log('deploying api resource')
+	this.gotoSubResources();
 }
 
 

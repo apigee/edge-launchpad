@@ -1,5 +1,7 @@
+var baseAdapter                     = require('./baseAdapter')
 
 //var Promise = require("bluebird");
+var deploy_api_resource             = require('./adapters/resources/deploy_api_resource')
 
 var instance;
 
@@ -42,7 +44,12 @@ function manager() {
 
     }
 
-    this.getAdapter = function (config.resourceType, config.subResourceType) {
+    this.getAdapter = function (resourceType, subResourceType) {
+        var adapter_cont            = function(){}
+        adapter_cont.prototype      = baseAdapter.baseAdapter;
+        adapter                     = new adapter_cont();
+        console.log(adapter)
+        adapter.deploy         = deploy_api_resource.deploy;
         return {doTask: function(){}}
     }
 
