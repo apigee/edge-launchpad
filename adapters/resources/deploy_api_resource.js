@@ -64,9 +64,10 @@ function build(context) {
 
 }
 
-function deploy(context, subResourceName) {
+function deploy(context,resourceName,subResourceName, params) {
+
 	console.log('deploying api resource')
-	this.gotoSubResources();
+	this.gotoSubResources('deploy', context, resourceName, subResourceName, params);
 }
 
 

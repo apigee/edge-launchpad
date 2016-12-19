@@ -5,7 +5,8 @@
 baseAdapter = {
     adapterContext: {},
 
-    doTask: function(taskName,context,config,resourceName,subResourceName, params) {
+    doTask: function(taskName,context,resourceName,subResourceName, params) {
+
         //TODO:
 
         /*
@@ -23,36 +24,52 @@ baseAdapter = {
         //TODO: check the taskName and call appropriate function
 
         switch (taskName.toUpperCase()) {
-            case 'CLEAN' : this.clean (context,config,resourceName,subResourceName,params); break;
-            case 'BUILD' : this.build (context,config,resourceName,subResourceName,params); break;
-            case 'DEPLOY': this.deploy(context,config,resourceName,subResourceName,params); break;
-            case 'PROMPT': this.prompt(context,config,resourceName,subResourceName,params); break;
+            case 'CLEAN' : this.clean (context,resourceName,subResourceName,params); break;
+            case 'BUILD' : this.build (context,resourceName,subResourceName,params); break;
+            case 'DEPLOY': this.deploy(context,resourceName,subResourceName,params); break;
+            case 'PROMPT': this.prompt(context,resourceName,subResourceName,params); break;
         }
 
     },
 
 
     //do the same activity for all subresources/resources; don't override
-    gotoSubResources: function(taskName, context, config, resourceName, subResourceName, params ) {
-        console.log('climbing down the tree ... ')
-        if (subResourceName) return;
+    gotoSubResources: function(taskName, context, resourceName, subResourceName, params ) {
 
-        var config = {}; //context.getConfig(resourceName);
+        var manager_builder                 = require('./manager');
+        manager                             = manager_builder.getManager();
+
+        console.log('climbing down the tree ... ')
+
+        var config                          = context.getConfig(resourceName);
+
+        var resourceType                    = config.type;
 
         if (!config) return;
 
-        if (config.subResources && config.subResources.length > 0) {
+        subResources                        = config.properties.subResources;
+
+        if (subResources && subResources.length > 0) {
             console.log('deploying all subresources')
+
+            for(var i=0; i< subResources.length; i++){
+                var subResourceType         = subResources[i].type;
+                var subResourceName         = subResources[i].name;
+
+                console.log(taskName+'ing : '+ subResourceName)
+
+                var adapter                 = manager.getAdapter(resourceType, subResourceType);
+
+                adapter.doTask(taskName, context, resourceName, subResourceName, params);
+            }
+
             //use promise - synchronous invocation
             //loop through subresources
             //for each sub-resource get its adapter based on the resource & subResource type
             //config.configName = getName(resourceName, subResourceName);
             //call doTask on the subresource adapter with the subresource config. (set resourceType and resourceName attributes for the subresource config before passing, when getConfig() is not used
             //if there is an error then log the error (getLog().logErrorStatus(config, error))
-            this.gotoSubResources();
-        } else if (config.resources && config.resources.length > 0) {
-            console.log('deploying all resources')
-            this.gotoSubResources();
+
         }
     },
 
