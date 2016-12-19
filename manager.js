@@ -2,7 +2,6 @@ var fs                              = require('fs')
 var baseAdapter                     = require('./baseAdapter')
 
 //var Promise = require("bluebird");
-var deploy_api_resource             = require('./adapters/resources/deploy_api_resource')
 
 var instance;
 
@@ -18,7 +17,7 @@ function getManager() {
 function manager() {
 
     this.isDebug                    = true;
-    this.adapters  = JSON.parse(fs.readFileSync('./config/adapters.json', 'utf8'));
+    this.adapters                   = JSON.parse(fs.readFileSync('./config/adapters.json', 'utf8'));
 
     this.doTask = function(taskName, context, resourceName, subResourceName, params ) {
 
@@ -36,6 +35,8 @@ function manager() {
             for(var i=0; i<config.length; i++){
                 var resourceType        = config[i].type;
                 var adapter             = this.getAdapter(resourceType);
+
+                var resourceName        = config[i].name
                 adapter.doTask(taskName, context, resourceName, subResourceName, params);
             }
         } else if (!subResourceName) {
@@ -51,7 +52,7 @@ function manager() {
 
     this.getAdapter = function (resourceType, subResourceType) {
         if(subResourceType){
-            var type                    = resourceType + '.' + subResourceType;
+            var s_type                    = resourceType + '.' + subResourceType;
             var adapter                 = require(this.adapters[s_type]).adapter;
             adapter.prototype           = baseAdapter.baseAdapter;
             var adapter_obj             = new adapter;
