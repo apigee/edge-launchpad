@@ -3,15 +3,11 @@ var lib				= require('./lib')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var context = {
-	get_where_to_deploy: function() {
-		return {
-			username: 'gkidiyoor+testing@apigee.com',
-			password: 'XXX!',
-			environments: 'prod',
-			organization: 'hulk',
-		}
-	}
+
+var adapter = function () {
+	this.clean 			= clean
+	this.build 			= build
+	this.deploy 		= deploy
 }
 
 function build(context) {
@@ -43,9 +39,4 @@ function clean(context) {
 		});
 }
 
-//build(context)
-deploy(context, 'accounts')
-
-exports.clean 			= clean
-exports.build 			= build
-exports.deploy 			= deploy
+exports.adapter 			= adapter

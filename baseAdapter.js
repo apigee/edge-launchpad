@@ -34,6 +34,7 @@ baseAdapter = {
 
     //do the same activity for all subresources/resources; don't override
     gotoSubResources: function(taskName, context, config, resourceName, subResourceName, params ) {
+        console.log('climbing down the tree ... ')
         if (subResourceName) return;
 
         var config = {}; //context.getConfig(resourceName);
