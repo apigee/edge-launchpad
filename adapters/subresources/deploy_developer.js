@@ -5,23 +5,10 @@ var async			= require('async');
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var context = {
-	get_where_to_deploy: function() {
-		return {
-			username: 'gkidiyoor+testing@apigee.com',
-			password: 'XXX!',
-			environments: 'prod',
-			organization: 'hulk',
-		}
-	},
-	getSubResourceConfig: function(){
-		return {
-			email: 'gkidiyoor@apigee.com',
-			payload: {'{ email: "gkidiyoor+testing@apigee.com", "firstName":"OpenBank","lastName":"Developer","userName":"openbank"}'}
-		}
-	}
-
-
+var adapter = function () {
+	this.clean 			= clean
+	this.build 			= build
+	this.deploy 		= deploy
 }
 
 function build(context) {
@@ -70,10 +57,5 @@ function clean(context, resourceName, subResourceName) {
 		});
 }
 
+exports.adapter 			= adapter
 
-build(context)
-//deploy(context, 'accounts')
-
-exports.clean 			= clean
-exports.build 			= build
-exports.deploy 			= deploy

@@ -58,28 +58,26 @@ function context(config, env) {
     }
 
     this.getConfig = function (resourceName, subResourceName) {
-        if (resourceName) {
-            var resource = this.config[resourceName];
-            if (resource) {
+        var config = this.config['resources'];
 
-                var resourceType = resource.type;
-                if (subResourceName) {
-                    var subResource = resource.subResources[subResourceName];
-                    if (subResource) {
-                        subResource.resourceName = resourceName;
-                        subResource.resourceType = resourceType;
-                        return subResource;
-                    }else {
-                        return null;
+        if (subResourceName) {
+            for(var i=0; i<config.length; i++){
+                if(config[i].name == resourceName) {
+                    for(var j=0; j<config[i].subResources.length; j++){
+                        if(config[i].subResources[j].name == subResourceName) {
+                            return config[i].subResources[j];
+                        }
                     }
-                } else {
-                    return resource;
                 }
-            } else {
-                return null;
+            }
+        } else if (resourceName) {
+            for(var i=0; i<config.length; i++){
+                if(config[i].name == resourceName) {
+                    return config[i];
+                }
             }
         } else {
-            return this.config;
+            return config;
         }
     }
 

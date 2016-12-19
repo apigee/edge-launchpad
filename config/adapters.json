@@ -1,4 +1,6 @@
 {
-  "solutions.api.apis":"../deployables/deploy_proxy",
-  "solutions.api.app":"../deployables/deploy_app"
+  "solutions.api": "./adapters/resources/deploy_api_resource",
+  "solutions.api.apis":"./adapters/deploy_proxy",
+  "solutions.api.app":"./adapters/deploy_app",
+  "solutions.api.proxies":"./adapters/deploy_proxy"
 }

@@ -8,19 +8,10 @@ var lib 			= require('./lib')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var context = {
-	basePath: '/Users/gautham/apigee/projects/openbank',
-	get_where_to_deploy: function() {
-		return {
-			username: 'gkidiyoor+testing@apigee.com',
-			password: 'Gkidiyoortesting1!',
-			environments: 'prod',
-			organization: 'hulk',
-		}
-	},
-	getAllVariables: function(){
-		return {name: 'Gautham V Kidiyoor'}
-	}
+var adapter = function () {
+	this.clean 			= clean
+	this.build 			= build
+	this.deploy 		= deploy
 }
 
 function build(context, subResourceName) {
@@ -98,10 +89,5 @@ function clean(context, subResourceName) {
 	})
 }
 
-build(context, 'accounts')
-//deploy(context, 'accounts')
-
-exports.clean 			= clean
-exports.build 			= build
-exports.deploy 			= deploy
+exports.adapter 			= adapter
 

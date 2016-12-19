@@ -1,3 +1,4 @@
+var fs                              = require('fs')
 var baseAdapter                     = require('./baseAdapter')
 
 //var Promise = require("bluebird");
@@ -16,41 +17,53 @@ function getManager() {
 
 function manager() {
 
-    this.adapters                   = {};
     this.isDebug                    = true;
+    this.adapters  = JSON.parse(fs.readFileSync('./config/adapters.json', 'utf8'));
 
-    loadAdapters();
-
-    function loadAdapters() {
-        //TODO load all adapters from config file
-        //TODO make all adapters inherit from baseAdapter
-        console.log('loading adapters');
-    }
-
-
-    this.doTask = function(taskName,context,resourceName,subResourceName,params ) {
+    this.doTask = function(taskName, context, resourceName, subResourceName, params ) {
 
         //TODO get the specific adapter from manager.getResource/SubResourceAdapter(resourceName, subResourceName);
         //TODO call doTask on the adapter
         //TODO:check context and taskName
 
-        var config = context.getConfig(resourceName, subResourceName);
+        var config                  = context.getConfig(resourceName, subResourceName);
 
-        if (config) {
-            //config.configName       = getName(resourceName, subResourceName);
-            var adapter             = this.getAdapter(config.resourceType, config.subResourceName);
-            adapter.doTask(taskName, context, config, resourceName, subResourceName, params);
+        if(!config){
+            console.log('ERROR retriving config, check parameters')
+            return
         }
-
+        if(!resourceName && !subResourceName) {
+            for(var i=0; i<config.length; i++){
+                var resourceType        = config[i].type;
+                var adapter             = this.getAdapter(resourceType);
+                adapter.doTask(taskName, context, resourceName, subResourceName, params);
+            }
+        } else if (!subResourceName) {
+            var resourceType            = config.type;
+            var adapter                 = this.getAdapter(resourceType);
+            adapter.doTask(taskName, context, resourceName, subResourceName, params);
+        } else {
+            var resourceType            = config.type;
+            var adapter                 = this.getAdapter(resourceType);
+            adapter.doTask(taskName, context, resourceName, subResourceName, params);
+        }
     }
 
     this.getAdapter = function (resourceType, subResourceType) {
-        var adapter_cont            = function(){}
-        adapter_cont.prototype      = baseAdapter.baseAdapter;
-        adapter                     = new adapter_cont();
-        console.log(adapter)
-        adapter.deploy         = deploy_api_resource.deploy;
-        return {doTask: function(){}}
+        if(subResourceType){
+            var type                    = resourceType + '.' + subResourceType;
+            var adapter                 = require(this.adapters[s_type]).adapter;
+            adapter.prototype           = baseAdapter.baseAdapter;
+            var adapter_obj             = new adapter;
+            return adapter_obj
+        } else if(resourceType) {
+            var adapter                 = require(this.adapters[resourceType]).adapter;
+            adapter.prototype           = baseAdapter.baseAdapter;
+            var adapter_obj             = new adapter;
+            return adapter_obj
+        } else {
+            console.log('ERROR retrieving adapter')
+        }
     }
 
 }

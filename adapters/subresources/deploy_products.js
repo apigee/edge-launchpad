@@ -4,8 +4,10 @@ var sdk 			= apigeetool.getPromiseSDK()
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var context = {
-
+var adapter = function () {
+	this.clean 			= clean
+	this.build 			= build
+	this.deploy 		= deploy
 }
 
 function build(context) {
@@ -39,7 +41,4 @@ function clean(context) {
 		});
 }
 
-exports.clean 			= clean
-exports.build 			= build
-exports.deploy 			= deploy
-
+exports.adapter 			= adapter

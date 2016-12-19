@@ -1,8 +1,15 @@
 var apigeetool 		= require('apigeetool')
-var sdk 			= apigeetool.getPromiseSDK()
 var lodash 			= require('lodash');
 var path 			= require('path');
 var async			= require('async');
+
+var sdk 			= apigeetool.getPromiseSDK()
+
+var adapter = function () {
+	this.clean 			= clean
+	this.build 			= build
+	this.deploy 		= deploy
+}
 
 var context = {
 	get_where_to_deploy: function() {
@@ -28,8 +35,11 @@ var context = {
 }
 
 function build(context) {
+	console.log('building api resource')
 	// pull dependency to solutions-common folder
+	/*
 	dependencies = context.get_dependency()
+
 
 	async.each(dependencies, 
 		function(dependency, callback) {
@@ -49,7 +59,7 @@ function build(context) {
 			}
 		}
 	);
-
+	*/
 	// run npm install inside proxy folder
 
 }
@@ -72,9 +82,6 @@ function pull_api(context, dependency){
 	
 }
 
-build(context)
-//deploy(context, 'accounts')
 
-exports.clean 			= clean
-exports.build 			= build
-exports.deploy 			= deploy
+exports.adapter 		= adapter
+
