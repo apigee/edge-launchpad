@@ -20,7 +20,7 @@ function manager() {
     this.isDebug                    = true;
     this.adapters                   = JSON.parse(fs.readFileSync('./config/adapters.json', 'utf8'));
 
-    this.doTask = function(taskName, context, resourceName, subResourceName, params ) {
+    this.doTask = function(taskName, context, resourceName, subResourceName, params, cb ) {
 
         //TODO get the specific adapter from manager.getResource/SubResourceAdapter(resourceName, subResourceName);
         //TODO call doTask on the adapter
@@ -41,13 +41,17 @@ function manager() {
 
                 var resourceName        = config[i].name;
 
-                adapter.doTask(taskName, context, resourceName, subResourceName, params);
+                adapter.doTask(taskName, context, resourceName, subResourceName, params, function () {
+                    cb(err, result)
+                });
             }
         } else if (!subResourceName) {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params);
+            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function () {
+                cb(err, result)
+            });
         } else {
             var subResourceType         = config.type;
             // to get resource type
@@ -55,7 +59,9 @@ function manager() {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType, subResourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params);
+            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function () {
+                cb(err, result)
+            });
         }
     }
 
@@ -76,7 +82,7 @@ function manager() {
         }
     }
 
-    this.prompt = function (context, resourceName, cb) {
+    this.prompt = function (context, resourceName) {
         var config                      = context.getConfig(resourceName);
 
         if (config.properties.inputs && config.properties.inputs.length > 0) {
@@ -84,7 +90,7 @@ function manager() {
 
             lib.prompt(inputs, function (err, results) {
                 if (!err) {
-                    cb(results)
+                    return results;
                 } else {
                     lib.print('error','ERROR while prompt');
                     lib.print('error', err);

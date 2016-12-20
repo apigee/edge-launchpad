@@ -10,11 +10,11 @@ var adapter = function () {
 	this.deploy 		= deploy
 }
 
-function build(context, resourceName, subResourceName, params) {
+function build(context, resourceName, subResourceName, params, cb) {
 
 }
 
-function deploy(context, resourceName, subResourceName, params) {
+function deploy(context, resourceName, subResourceName, params, cb) {
 	opts = lib.build_opts(context, resourceName, subResourceName)
 
 
@@ -29,7 +29,7 @@ function deploy(context, resourceName, subResourceName, params) {
 }
 
 
-function clean(context, resourceName, subResourceName, params) {
+function clean(context, resourceName, subResourceName, params, cb) {
 	/*
 	opts = lib.build_opts(context, resourceName, subResourceName, params)
 
