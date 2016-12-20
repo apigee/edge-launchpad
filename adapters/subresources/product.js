@@ -10,11 +10,11 @@ var adapter = function () {
 	this.deploy 		= deploy
 }
 
-function build(context) {
+function build(context, resourceName, subResourceName, params) {
 
 }
 
-function deploy(context, resourceName, subResourceName) {
+function deploy(context, resourceName, subResourceName, params) {
 	opts = lib.build_opts(context, resourceName, subResourceName)
 
 
@@ -29,8 +29,9 @@ function deploy(context, resourceName, subResourceName) {
 }
 
 
-function clean(context) {
-	opts = lib.build_opts(context, resourceName, subResourceName)
+function clean(context, resourceName, subResourceName, params) {
+	/*
+	opts = lib.build_opts(context, resourceName, subResourceName, params)
 
 	sdk.deleteProduct(deployment_opts).then(
 		function(result){
@@ -39,6 +40,7 @@ function clean(context) {
 		function(err){
 			//developer delete failed
 		});
+	*/
 }
 
 exports.adapter 			= adapter

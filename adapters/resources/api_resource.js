@@ -34,7 +34,7 @@ var context = {
 	}
 }
 
-function build(context) {
+function build(context,resourceName,subResourceName, params) {
 	console.log('building api resource')
 	// pull dependency to solutions-common folder
 	/*
@@ -62,17 +62,21 @@ function build(context) {
 	*/
 	// run npm install inside proxy folder
 
+	this.gotoSubResources('build', context, resourceName, subResourceName, params);
+
 }
 
 function deploy(context,resourceName,subResourceName, params) {
 
 	console.log('deploying api resource')
 	this.gotoSubResources('deploy', context, resourceName, subResourceName, params);
+	//dataSources.deploy()
 }
 
 
-function clean(context) {
+function clean(context,resourceName,subResourceName, params) {
 
+	this.gotoSubResources('clean', context, resourceName, subResourceName, params);
 }
 
 function pull_node(context, dependency){
