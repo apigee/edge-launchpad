@@ -35,38 +35,35 @@ var context = {
 	}
 }
 
-function build(context,resourceName,subResourceName, params) {
+function build(context,resourceName,subResourceName, params, cb) {
 	console.log('building api resource')
 
 	config = context.getConfig(resourceName);
 
-	handle_inputs(config)
-	handle_configuration(config)
+	lib.handle_inputs(config)
+	lib.handle_configuration(config)
 	handle_dependencies(config)
 	handle_data_sources(config)
-	this.gotoSubResources('build', context, resourceName, subResourceName, params)
+	this.gotoSubResources('build', context, resourceName, subResourceName, params, function (err, result) {
+		cb(err, result)
+	})
 
 }
 
-function deploy(context,resourceName,subResourceName, params) {
+function deploy(context,resourceName,subResourceName, params, cb) {
 
 	console.log('deploying api resource')
-	this.gotoSubResources('deploy', context, resourceName, subResourceName, params);
-	//dataSources.deploy()
+	this.gotoSubResources('deploy', context, resourceName, subResourceName, params, function (err, result) {
+		cb(err, result)
+	})//dataSources.deploy()
 }
 
 
-function clean(context,resourceName,subResourceName, params) {
+function clean(context,resourceName,subResourceName, params, cb) {
 
-	this.gotoSubResources('clean', context, resourceName, subResourceName, params);
-}
-
-function handle_inputs(config) {
-	lib.print('INFO','Handling inputs')
-}
-
-function handle_configuration(config){
-
+	this.gotoSubResources('clean', context, resourceName, subResourceName, params, function (err, result) {
+		cb(err, result)
+	})
 }
 
 function handle_data_sources(config) {

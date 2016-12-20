@@ -51,6 +51,15 @@ gulp.task('init', function() {
     context             = context_builder.getContext(config_file, env)
     manager             = manager_builder.getManager()
 
+    // set arguments passed to context
+    var args_passed     = argv
+    delete args_passed['_']
+    delete args_passed['$0']
+
+    for (var i=0; i<Object.keys(args_passed).length; i++) {
+        context.setVariable(Object.keys(args_passed)[i], args_passed[Object.keys(args_passed)[i]])
+    }
+
     //manager.prompt(context, 'openbank_apis')
 
 });

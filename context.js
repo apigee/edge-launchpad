@@ -42,19 +42,17 @@ function context(config, env) {
 
     this.getVariable = function (variableName) {
         // variables[variableName] if not found return undefined
-        if (!variablenName) return undefined;
+        if (!variableName) return undefined;
 
         var vName = variableName.replace("$","").replace("\'","");
 
-        if (variables[vName]) return undefined;
-        else
-            return variables[vName];
+        return this.variables[vName];
     }
 
     //setVariable; set the variable in the context
 
     this.setVariable = function(name, value) {
-        variables[name]             = value;
+        this.variables[name]             = value;
     }
 
     this.getConfig = function (resourceName, subResourceName) {
@@ -88,15 +86,14 @@ function context(config, env) {
     this.getDeploymentInfo = function () {
         var deploy_info                 = {};
         // TODO get from prompt variables
-        /*
-        var edgeOrg                     = this.config.resources.properties.edgeOrg;
 
-        deploy_info.org                 = edgeOrg.org;
-        deploy_info.token               = edgeOrg.token;
-        deploy_info.username            = edgeOrg.username;
-        deploy_info.password            = edgeOrg.password;
-        deploy_info.env                 = this.getEnvironment();
-        */
+        //var edgeOrg                     = this.config.resources.properties.edgeOrg;
+
+        deploy_info.org                 = this.getVariable('org');
+        deploy_info.token               = this.getVariable('token');
+        deploy_info.username            = this.getVariable('username');
+        deploy_info.password            = this.getVariable('password');
+        deploy_info.env                 = this.getVariable('env');
 
         return deploy_info;
     }

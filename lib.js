@@ -84,8 +84,18 @@ function print(level, msg){
 	console.log(msg)
 }
 
+function handle_inputs(config) {
+	print('INFO','Handling inputs')
+}
+
+function handle_configuration(config){
+
+}
+
 exports.build_opts 				= build_opts
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
+exports.handle_configuration 	= handle_configuration
+exports.handle_inputs 			= handle_inputs
 exports.print 					= print

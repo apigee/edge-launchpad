@@ -5,7 +5,7 @@
 baseAdapter = {
     adapterContext: {},
 
-    doTask: function(taskName,context,resourceName,subResourceName, params) {
+    doTask: function(taskName,context,resourceName,subResourceName, params, cb) {
 
         //TODO:
 
@@ -24,17 +24,25 @@ baseAdapter = {
         //TODO: check the taskName and call appropriate function
 
         switch (taskName.toUpperCase()) {
-            case 'CLEAN' : this.clean (context,resourceName,subResourceName,params); break;
-            case 'BUILD' : this.build (context,resourceName,subResourceName,params); break;
-            case 'DEPLOY': this.deploy(context,resourceName,subResourceName,params); break;
-            case 'PROMPT': this.prompt(context,resourceName,subResourceName,params); break;
+            case 'CLEAN' : this.clean (context, resourceName, subResourceName, params, function (err, result) {
+                cb(err, result)
+            }); break;
+            case 'BUILD' : this.build (context, resourceName, subResourceName, params, function (err, result) {
+                cb(err, result)
+            }); break;
+            case 'DEPLOY': this.deploy(context, resourceName, subResourceName, params), function (err, result) {
+                cb(err, result)
+            }; break;
+            case 'PROMPT': this.prompt(context, resourceName, subResourceName, params, function (err, result) {
+                cb(err, result)
+            }); break;
         }
 
     },
 
 
     //do the same activity for all subresources/resources; don't override
-    gotoSubResources: function(taskName, context, resourceName, subResourceName, params ) {
+    gotoSubResources: function(taskName, context, resourceName, subResourceName, params, cb) {
 
         var manager_builder                 = require('./manager');
         manager                             = manager_builder.getManager();
@@ -51,7 +59,7 @@ baseAdapter = {
 
         if (subResources && subResources.length > 0) {
             console.log('deploying all subresources')
-
+            // TODO async or promise
             for(var i=0; i< subResources.length; i++){
                 var subResourceType         = subResources[i].type;
                 var subResourceName         = subResources[i].name;
@@ -60,7 +68,10 @@ baseAdapter = {
 
                 var adapter                 = manager.getAdapter(resourceType, subResourceType);
 
-                adapter.doTask(taskName, context, resourceName, subResourceName, params);
+                // TODO async or promise
+                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
+                    
+                });
             }
 
             //use promise - synchronous invocation
@@ -71,21 +82,26 @@ baseAdapter = {
             //if there is an error then log the error (getLog().logErrorStatus(config, error))
 
         }
+
+        var err;
+        var result;
+
+        cb(err, result)
     },
 
 
-    clean: function(context,config,resourceName,subResourceName,params) {
+    clean: function(context,config,resourceName,subResourceName,params,cb) {
 
         //do cleaning activity
         this.gotoSubResources();
     },
 
-    build: function(context,config,resourceName,subResourceName,params) {
+    build: function(context,config,resourceName,subResourceName,params,cb) {
 
         this.gotoSubResources();
     },
 
-    deploy: function(context,config,resourceName,subResourceName,params) {
+    deploy: function(context,config,resourceName,subResourceName,params,cb) {
         console.log('base deploy')
         this.gotoSubResources();
     },
