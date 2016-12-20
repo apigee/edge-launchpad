@@ -29,30 +29,33 @@ function manager() {
         var config                  = context.getConfig(resourceName, subResourceName);
 
         if(!config){
-            console.log('ERROR retriving config, check parameters')
+            lib.print('error','ERROR retriving config, check parameters')
             return
         }
 
 
-            if(!resourceName && !subResourceName) {
-                for(var i=0; i<config.length; i++){
-                    var resourceType        = config[i].type;
-                    var adapter             = this.getAdapter(resourceType);
+        if(!resourceName && !subResourceName) {
+            for(var i=0; i<config.length; i++){
+                var resourceType        = config[i].type;
+                var adapter             = this.getAdapter(resourceType);
 
-                    var resourceName        = config[i].name;
-
-                    adapter.doTask(taskName, context, resourceName, subResourceName, params);
-                }
-            } else if (!subResourceName) {
-                var resourceType            = config.type;
-                var adapter                 = this.getAdapter(resourceType);
+                var resourceName        = config[i].name;
 
                 adapter.doTask(taskName, context, resourceName, subResourceName, params);
-            } else {
-                var resourceType            = config.type;
-                var adapter                 = this.getAdapter(resourceType);
+            }
+        } else if (!subResourceName) {
+            var resourceType            = config.type;
+            var adapter                 = this.getAdapter(resourceType);
 
-                adapter.doTask(taskName, context, resourceName, subResourceName, params);
+            adapter.doTask(taskName, context, resourceName, subResourceName, params);
+        } else {
+            var subResourceType         = config.type;
+            // to get resource type
+            var config                  = context.getConfig(resourceName, null);
+            var resourceType            = config.type;
+            var adapter                 = this.getAdapter(resourceType, subResourceType);
+
+            adapter.doTask(taskName, context, resourceName, subResourceName, params);
         }
     }
 
@@ -69,7 +72,7 @@ function manager() {
             var adapter_obj             = new adapter;
             return adapter_obj
         } else {
-            console.log('ERROR retrieving adapter');
+            lib.print('error','ERROR retrieving adapter');
         }
     }
 
@@ -83,8 +86,8 @@ function manager() {
                 if (!err) {
                     cb(results)
                 } else {
-                    console.log('ERROR while prompt');
-                    console.log(err);
+                    lib.print('error','ERROR while prompt');
+                    lib.print('error', err);
                 }
             });
         }
