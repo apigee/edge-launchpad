@@ -66,17 +66,23 @@ gulp.task('init', function() {
 
 gulp.task('clean', ['init'], function(){
     params = {}
-    manager.doTask('CLEAN', context, argv.resource ,argv.subresource, params)
+    manager.doTask('CLEAN', context, argv.resource ,argv.subresource, params, function () {
+        
+    })
 });
 
 gulp.task('build',['init'], function(){
     params = {}
-    manager.doTask('BUILD', context, argv.resource ,argv.subresource, params)
+    manager.doTask('BUILD', context, argv.resource ,argv.subresource, params, function () {
+        
+    })
 });
 
 gulp.task('deploy', ['init','build'], function(){
     params = {}
-    manager.doTask('DEPLOY', context, argv.resource ,argv.subresource, params)
+    manager.doTask('DEPLOY', context, argv.resource ,argv.subresource, params, function () {
+        
+    })
 });
 
 

@@ -30,9 +30,9 @@ baseAdapter = {
             case 'BUILD' : this.build (context, resourceName, subResourceName, params, function (err, result) {
                 cb(err, result)
             }); break;
-            case 'DEPLOY': this.deploy(context, resourceName, subResourceName, params), function (err, result) {
+            case 'DEPLOY': this.deploy(context, resourceName, subResourceName, params, function (err, result) {
                 cb(err, result)
-            }; break;
+            }); break;
             case 'PROMPT': this.prompt(context, resourceName, subResourceName, params, function (err, result) {
                 cb(err, result)
             }); break;
@@ -45,6 +45,7 @@ baseAdapter = {
     gotoSubResources: function(taskName, context, resourceName, subResourceName, params, cb) {
 
         var manager_builder                 = require('./manager');
+        var async                           = require('async')
         manager                             = manager_builder.getManager();
 
         console.log('climbing down the tree ... ')
@@ -60,19 +61,36 @@ baseAdapter = {
         if (subResources && subResources.length > 0) {
             console.log('deploying all subresources')
             // TODO async or promise
-            for(var i=0; i< subResources.length; i++){
-                var subResourceType         = subResources[i].type;
-                var subResourceName         = subResources[i].name;
 
-                console.log(taskName+'ing : '+ subResourceName)
+            async.eachSeries(subResources,
+                function (subResource, callback) {
+                    var subResourceType         = subResource.type;
+                    var subResourceName         = subResource.name;
 
-                var adapter                 = manager.getAdapter(resourceType, subResourceType);
+                    console.log(taskName+'ing : '+ subResourceName);
 
-                // TODO async or promise
-                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                    
-                });
-            }
+                    var adapter                 = manager.getAdapter(resourceType, subResourceType);
+
+                    adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
+                       if(!err) {
+                           callback()
+                       } else {
+                           callback(err)
+                       }
+                    });
+                },
+
+                function (err) {
+                    if(!err) {
+                        cb()
+                    } else {
+                        lib.print('ERROR',err)
+                        cb(err)
+                    }
+
+                }
+            );
+
 
             //use promise - synchronous invocation
             //loop through subresources
