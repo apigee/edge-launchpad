@@ -1,7 +1,8 @@
 var apigeetool 		= require('apigeetool')
-var lodash 			= require('lodash');
-var path 			= require('path');
-var async			= require('async');
+var lodash 			= require('lodash')
+var path 			= require('path')
+var async			= require('async')
+var lib 			= require('../../lib')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -36,33 +37,14 @@ var context = {
 
 function build(context,resourceName,subResourceName, params) {
 	console.log('building api resource')
-	// pull dependency to solutions-common folder
-	/*
-	dependencies = context.get_dependency()
 
+	config = context.getConfig(resourceName);
 
-	async.each(dependencies, 
-		function(dependency, callback) {
-	    	if (dependency.type == 'node') {
-	    		pull_node(context, dependency)
-
-	    	} else if(dependency.type == 'api') {
-	    		pull_api(context, dependency)
-	    	}
-	    	callback()
-		},
-		function(err) {
-			if(err != null) {
-				console.log('ERROR : ' + err)	
-			} else {
-				console.log('build successful')
-			}
-		}
-	);
-	*/
-	// run npm install inside proxy folder
-
-	this.gotoSubResources('build', context, resourceName, subResourceName, params);
+	handle_inputs(config)
+	handle_configuration(config)
+	handle_dependencies(config)
+	handle_data_sources(config)
+	this.gotoSubResources('build', context, resourceName, subResourceName, params)
 
 }
 
@@ -77,6 +59,47 @@ function deploy(context,resourceName,subResourceName, params) {
 function clean(context,resourceName,subResourceName, params) {
 
 	this.gotoSubResources('clean', context, resourceName, subResourceName, params);
+}
+
+function handle_inputs(config) {
+	lib.print('INFO','Handling inputs')
+}
+
+function handle_configuration(config){
+
+}
+
+function handle_data_sources(config) {
+	
+}
+
+function handle_dependencies(config) {
+	lib.print('INFO','Downloading dependencies')
+	// pull dependency to solutions-common folder
+	/*
+	 dependencies = context.get_dependency()
+
+
+	 async.each(dependencies,
+	 function(dependency, callback) {
+	 if (dependency.type == 'node') {
+	 pull_node(context, dependency)
+
+	 } else if(dependency.type == 'api') {
+	 pull_api(context, dependency)
+	 }
+	 callback()
+	 },
+	 function(err) {
+	 if(err != null) {
+	 console.log('ERROR : ' + err)
+	 } else {
+	 console.log('build successful')
+	 }
+	 }
+	 );
+	 */
+	// run npm install inside proxy folder
 }
 
 function pull_node(context, dependency){

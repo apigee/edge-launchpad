@@ -63,9 +63,9 @@ function context(config, env) {
         if (subResourceName) {
             for(var i=0; i<config.length; i++){
                 if(config[i].name == resourceName) {
-                    for(var j=0; j<config[i].subResources.length; j++){
-                        if(config[i].subResources[j].name == subResourceName) {
-                            return config[i].subResources[j];
+                    for(var j=0; j<config[i].properties.subResources.length; j++){
+                        if(config[i].properties.subResources[j].name == subResourceName) {
+                            return config[i].properties.subResources[j];
                         }
                     }
                 }

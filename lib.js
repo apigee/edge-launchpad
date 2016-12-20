@@ -80,7 +80,12 @@ function prompt(inputs, cb) {
 
 }
 
+function print(level, msg){
+	console.log(msg)
+}
+
 exports.build_opts 				= build_opts
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
+exports.print 					= print
