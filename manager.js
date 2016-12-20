@@ -41,7 +41,7 @@ function manager() {
 
                 var resourceName        = config[i].name;
 
-                adapter.doTask(taskName, context, resourceName, subResourceName, params, function () {
+                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
                     cb(err, result)
                 });
             }
@@ -49,7 +49,7 @@ function manager() {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function () {
+            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function (err, result) {
                 cb(err, result)
             });
         } else {
@@ -59,7 +59,7 @@ function manager() {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType, subResourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function () {
+            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function (err, result) {
                 cb(err, result)
             });
         }

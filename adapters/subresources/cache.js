@@ -5,8 +5,6 @@ var loadash         = require('lodash')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var sdk 			= apigeetool.getPromiseSDK()
-
 var adapter = function () {
     this.clean 			= clean
     this.build 			= build
@@ -39,9 +37,6 @@ function deploy(context, resourceName, subResourceName, params, cb) {
         }
 
     })
-
-
-
 }
 
 function create_cache(item, callback) {
