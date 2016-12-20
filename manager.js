@@ -1,6 +1,7 @@
 var fs                              = require('fs')
 var baseAdapter                     = require('./baseAdapter')
-
+var lodash 			                = require('lodash')
+var lib                             = require('./lib')
 //var Promise = require("bluebird");
 
 var instance;
@@ -31,21 +32,26 @@ function manager() {
             console.log('ERROR retriving config, check parameters')
             return
         }
+
+
         if(!resourceName && !subResourceName) {
             for(var i=0; i<config.length; i++){
                 var resourceType        = config[i].type;
                 var adapter             = this.getAdapter(resourceType);
 
-                var resourceName        = config[i].name
+                var resourceName        = config[i].name;
+
                 adapter.doTask(taskName, context, resourceName, subResourceName, params);
             }
         } else if (!subResourceName) {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
+
             adapter.doTask(taskName, context, resourceName, subResourceName, params);
         } else {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
+
             adapter.doTask(taskName, context, resourceName, subResourceName, params);
         }
     }
@@ -63,18 +69,30 @@ function manager() {
             var adapter_obj             = new adapter;
             return adapter_obj
         } else {
-            console.log('ERROR retrieving adapter')
+            console.log('ERROR retrieving adapter');
+        }
+    }
+
+    this.prompt = function (context, resourceName, cb) {
+        var config                      = context.getConfig(resourceName);
+
+        if (config.properties.inputs && config.properties.inputs.length > 0) {
+            var inputs = config.properties.inputs;
+
+            lib.prompt(inputs, function (err, results) {
+                if (!err) {
+                    cb(results)
+                } else {
+                    console.log('ERROR while prompt');
+                    console.log(err);
+                }
+            });
         }
     }
 
 }
 
 
-function getName(resourceName, subResourceName) {
-
-    var name = '.' + (resourceName)?resourceName:''+(subResourceName)?'.'+subResourceName:'';
-    return name;
-}
 
 this.getLog = function() {
     var log = function() {

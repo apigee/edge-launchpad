@@ -3,7 +3,10 @@ var argv                = require('yargs').argv;
 var gutil               = require('gulp-util');
 var context_builder     = require('./context');
 var manager_builder     = require('./manager');
-/*
+var async               = require('async');
+
+var prompt              = require('gulp-prompt')
+    /*
 var gutil = require('gulp-util')
 var build = require('gulp-build')
 var async = require('async')
@@ -47,6 +50,8 @@ gulp.task('init', function() {
 
     context             = context_builder.getContext(config_file, env)
     manager             = manager_builder.getManager()
+
+    manager.prompt(context, 'openbank_apis')
 
 });
 

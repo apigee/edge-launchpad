@@ -8,6 +8,8 @@
     "lodash": "^4.17.2",
     "mustache": "^2.3.0",
     "path": "^0.12.7",
+    "prompt": "^1.0.0",
+    "q": "^1.4.1",
     "yargs": "^6.5.0"
   },
   "devDependencies": {
