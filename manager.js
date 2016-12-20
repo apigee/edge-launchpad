@@ -73,7 +73,7 @@ function manager() {
         }
     }
 
-    this.prompt = function (context, resourceName, cb) {
+    this.prompt = function (context, resourceName) {
         var config                      = context.getConfig(resourceName);
 
         if (config.properties.inputs && config.properties.inputs.length > 0) {
@@ -81,10 +81,11 @@ function manager() {
 
             lib.prompt(inputs, function (err, results) {
                 if (!err) {
-                    cb(results)
+                    return results;
                 } else {
                     console.log('ERROR while prompt');
                     console.log(err);
+                    throw err;
                 }
             });
         }
