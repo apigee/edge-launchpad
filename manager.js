@@ -34,31 +34,31 @@ function manager() {
         }
 
 
-        if(!resourceName && !subResourceName) {
-            for(var i=0; i<config.length; i++){
-                var resourceType        = config[i].type;
-                var adapter             = this.getAdapter(resourceType);
+            if(!resourceName && !subResourceName) {
+                for(var i=0; i<config.length; i++){
+                    var resourceType        = config[i].type;
+                    var adapter             = this.getAdapter(resourceType);
 
-                var resourceName        = config[i].name;
+                    var resourceName        = config[i].name;
+
+                    adapter.doTask(taskName, context, resourceName, subResourceName, params);
+                }
+            } else if (!subResourceName) {
+                var resourceType            = config.type;
+                var adapter                 = this.getAdapter(resourceType);
 
                 adapter.doTask(taskName, context, resourceName, subResourceName, params);
-            }
-        } else if (!subResourceName) {
-            var resourceType            = config.type;
-            var adapter                 = this.getAdapter(resourceType);
+            } else {
+                var resourceType            = config.type;
+                var adapter                 = this.getAdapter(resourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params);
-        } else {
-            var resourceType            = config.type;
-            var adapter                 = this.getAdapter(resourceType);
-
-            adapter.doTask(taskName, context, resourceName, subResourceName, params);
+                adapter.doTask(taskName, context, resourceName, subResourceName, params);
         }
     }
 
     this.getAdapter = function (resourceType, subResourceType) {
         if(subResourceType){
-            var s_type                    = resourceType + '.' + subResourceType;
+            var s_type                  = resourceType + '.' + subResourceType;
             var adapter                 = require(this.adapters[s_type]).adapter;
             adapter.prototype           = baseAdapter.baseAdapter;
             var adapter_obj             = new adapter;
@@ -92,8 +92,7 @@ function manager() {
 
 }
 
-
-
+/*
 this.getLog = function() {
     var log = function() {
         this.logs = {};
@@ -123,7 +122,7 @@ this.getLog = function() {
         }
     }
 }
-
+*/
 //provide registerAdapter methods
 //while registering if there is already an adapter for the type, make it the parent for to be registered adapter
 //registerResourceAdapter(resourceType, adapter);

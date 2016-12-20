@@ -1,5 +1,5 @@
 var apigeetool 		= require('apigeetool')
-var lib				= require('./lib')
+var lib				= require('../../lib')
 
 var sdk 			= apigeetool.getPromiseSDK()
 

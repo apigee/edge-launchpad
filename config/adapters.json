@@ -1,7 +1,9 @@
 {
-  "solutions.api": "./adapters/resources/deploy_api_resource",
-  "solutions.api.apis":"./adapters/subresources/deploy_proxy",
-  "solutions.api.app":"./adapters/subresources/deploy_app",
-  "solutions.api.proxies":"./adapters/subresources/deploy_proxy",
-  "solutions.api.cache":"./adapters/subresources/deploy_cache"
+  "solutions.api": "./adapters/resources/api_resource",
+  "solutions.api.proxy":"./adapters/subresources/proxy",
+  "solutions.api.app":"./adapters/subresources/app",
+  "solutions.api.cache":"./adapters/subresources/cache",
+  "solutions.api.developer":"./adapters/subresources/developer",
+  "solutions.api.product":"./adapters/subresources/product",
+  "solutions.api.configSubstitutions":"./adapters/subresources/configSubstitution"
 }

@@ -16,6 +16,7 @@ function build(context) {
 }
 
 function deploy(context, resourceName, subResourceName) {
+	/*
 	deployment_opts 			= {}
 
 	// prepare deployment_opts object for deploying proxy
@@ -33,10 +34,12 @@ function deploy(context, resourceName, subResourceName) {
 		function(err){
 			//developer creation failed
 		});
+	*/
 }
 
 
 function clean(context, resourceName, subResourceName) {
+	/*
     deployment_opts 			= {}
 
 	// prepare deployment_opts object for deploying proxy
@@ -55,6 +58,7 @@ function clean(context, resourceName, subResourceName) {
 		function(err){
 			//developer delete failed
 		});
+		*/
 }
 
 exports.adapter 			= adapter

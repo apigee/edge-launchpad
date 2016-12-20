@@ -8,7 +8,7 @@ function build_opts(context, resourceName, subResourceName){
 	opts 						= {}
 
 	// prepare deployment_opts object for deploying proxy
-	where_to_deploy 			= context.get_where_to_deploy()
+	where_to_deploy 			= context.getDeploymentInfo()
 
 
 	lodash.merge(opts, where_to_deploy)

@@ -85,8 +85,10 @@ function context(config, env) {
         return env;
     }
     
-    this.getDeployInfo = function () {
+    this.getDeploymentInfo = function () {
         var deploy_info                 = {};
+        // TODO get from prompt variables
+        /*
         var edgeOrg                     = this.config.resources.properties.edgeOrg;
 
         deploy_info.org                 = edgeOrg.org;
@@ -94,6 +96,7 @@ function context(config, env) {
         deploy_info.username            = edgeOrg.username;
         deploy_info.password            = edgeOrg.password;
         deploy_info.env                 = this.getEnvironment();
+        */
 
         return deploy_info;
     }

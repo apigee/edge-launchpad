@@ -77,7 +77,7 @@ resources:
         filePaths:
         value: '{{ugbase}}/customers/{accesstoken.customer_number}'
     - name: bank_apis
-      type: proxies
+      type: proxy
       items:
       - name: accounts
       - name: accounts-connector
@@ -91,12 +91,12 @@ resources:
       - name: transfers-connector
       - name: userinfo
     - name: developers
-      type: developers
+      type: developer
       items:
       - payload: '{"email":"openbank@apigee.net", "firstName":"OpenBank","lastName":"Developer","userName":"openbank"}'
         email: openbank@apigee.net
     - name: apiProducts
-      type: products
+      type: product
       items:
       - payload: '{"approvalType":"auto", "displayName":"Open Data APIs","name":"open_data_apis","environments":["test","prod"],"scopes":["openid", "atms", "branches"], "proxies":["oauth", "locations"]}'
         name: open_data_apis
@@ -107,7 +107,7 @@ resources:
       - payload: '{"approvalType":"auto", "attributes":[{"name":"access","value":"private"}], "displayName":"Internal Consent APIs","name":"internal_consent_apis","environments":["test","prod"],"scopes":[], "proxies":["session", "sms-token", "authentication-connector", "oauth"]}'
         name: internal_consent_apis
     - name: developerApps
-      type: apps
+      type: app
       items:
       - payload: "{name:'AISP_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'account_access_apis'}"
         name: AISP_App
@@ -130,7 +130,7 @@ resources:
         filePaths: ['consent-app/apiproxy/resources/node/config.orig']
         value: '{{proxyhost}}'
     - name: consent_apis
-      type: proxies
+      type: proxy
       items:
       - name: consent-app
       - name: consent-app-transfers
