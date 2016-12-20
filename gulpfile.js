@@ -51,7 +51,7 @@ gulp.task('init', function() {
     context             = context_builder.getContext(config_file, env)
     manager             = manager_builder.getManager()
 
-    manager.prompt(context, 'openbank_apis')
+    //manager.prompt(context, 'openbank_apis')
 
 });
 

@@ -4,7 +4,7 @@ var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
 var child_process	= require('child_process')
-var lib 			= require('./lib')
+var lib 			= require('../../lib')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -15,6 +15,7 @@ var adapter = function () {
 }
 
 function build(context, subResourceName) {
+	/*
 	// copy proxy files to target folder
 	var proxy_dir 				= path.join(context.basePath, '/src/gateway/', subResourceName, 'apiproxy')
 	var proxy_target_dir		= path.join(context.basePath, '/src/gateway/', subResourceName, 'target')
@@ -50,10 +51,11 @@ function build(context, subResourceName) {
 	// npm install only local dependencies
 
 	// run npm install inside proxy folder
-
+	*/
 }
 
 function deploy(context, subResourceName) {
+	/*
 	deployment_opts 			= {}
 
 	// prepare deployment_opts object for deploying proxy
@@ -74,11 +76,13 @@ function deploy(context, subResourceName) {
 		    console.log(err)
 		    console.log('deploy failed')
 	})
+	*/
 
 }
 
 
 function clean(context, subResourceName) {
+	/*
 	var proxy_target_dir		= path.join(context.basePath, '/src/gateway/', subResourceName, 'target')
 	fs.emptyDir(proxy_target_dir, function(err){
 		if (err) {
@@ -87,6 +91,7 @@ function clean(context, subResourceName) {
 			console.log('done vacuming cleaning')
 		}
 	})
+	*/
 }
 
 exports.adapter 			= adapter
