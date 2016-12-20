@@ -14,7 +14,7 @@ var adapter = function () {
 	this.deploy 		= deploy
 }
 
-function build(context, subResourceName) {
+function build(context, resourceName, subResourceName, params) {
 	/*
 	// copy proxy files to target folder
 	var proxy_dir 				= path.join(context.basePath, '/src/gateway/', subResourceName, 'apiproxy')
@@ -54,7 +54,7 @@ function build(context, subResourceName) {
 	*/
 }
 
-function deploy(context, subResourceName) {
+function deploy(context, resourceName, subResourceName, params) {
 	/*
 	deployment_opts 			= {}
 
@@ -81,7 +81,7 @@ function deploy(context, subResourceName) {
 }
 
 
-function clean(context, subResourceName) {
+function clean(context, resourceName, subResourceName, params) {
 	/*
 	var proxy_target_dir		= path.join(context.basePath, '/src/gateway/', subResourceName, 'target')
 	fs.emptyDir(proxy_target_dir, function(err){

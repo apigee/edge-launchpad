@@ -10,17 +10,17 @@ var adapter = function () {
     this.deploy 		= deploy
 }
 
-function build(context) {
+function build(context, resourceName, subResourceName, params) {
 
 }
 
-function deploy(context, resourceName, subResourceName) {
+function deploy(context, resourceName, subResourceName, params) {
     opts = lib.build_opts(context, resourceName, subResourceName)
 
 }
 
 
-function clean(context) {
+function clean(context, resourceName, subResourceName, params) {
     opts = lib.build_opts(context, resourceName, subResourceName)
 
 

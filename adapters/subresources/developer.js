@@ -11,11 +11,11 @@ var adapter = function () {
 	this.deploy 		= deploy
 }
 
-function build(context) {
+function build(context, resourceName, subResourceName, params) {
 
 }
 
-function deploy(context, resourceName, subResourceName) {
+function deploy(context, resourceName, subResourceName, params) {
 	/*
 	deployment_opts 			= {}
 
@@ -38,7 +38,7 @@ function deploy(context, resourceName, subResourceName) {
 }
 
 
-function clean(context, resourceName, subResourceName) {
+function clean(context, resourceName, subResourceName, params) {
 	/*
     deployment_opts 			= {}
 
