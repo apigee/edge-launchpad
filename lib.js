@@ -2,12 +2,15 @@ var lodash 			= require('lodash')
 var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
+var prompt_lib			= require('prompt');
 
 function build_opts(context, resourceName, subResourceName){
 	opts 						= {}
 
 	// prepare deployment_opts object for deploying proxy
-	where_to_deploy 			= {} //context.get_where_to_deploy()
+	where_to_deploy 			= context.get_where_to_deploy()
+
+
 	lodash.merge(opts, where_to_deploy)
 
 	config 						= {}//context.getSubResourceConfig(resourceName, subResourceName)
@@ -62,6 +65,22 @@ function npm_install_local_only(npm_dir, callback) {
 	});		
 }
 
+function prompt(inputs, cb) {
+	var required_values = []
+
+	for(var i=0; i<inputs.length; i++){
+		required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string', required: true})
+	}
+
+	prompt_lib.start();
+
+	prompt_lib.get(required_values, function(err, results) {
+		cb(err, result)
+	});
+
+}
+
 exports.build_opts 				= build_opts
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
+exports.prompt 					= prompt

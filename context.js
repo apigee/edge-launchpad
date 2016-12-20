@@ -54,7 +54,7 @@ function context(config, env) {
     //setVariable; set the variable in the context
 
     this.setVariable = function(name, value) {
-        variables[name] = value;
+        variables[name]             = value;
     }
 
     this.getConfig = function (resourceName, subResourceName) {
@@ -83,6 +83,19 @@ function context(config, env) {
 
     this.getEnvironment = function() {
         return env;
+    }
+    
+    this.getDeployInfo = function () {
+        var deploy_info                 = {};
+        var edgeOrg                     = this.config.resources.properties.edgeOrg;
+
+        deploy_info.org                 = edgeOrg.org;
+        deploy_info.token               = edgeOrg.token;
+        deploy_info.username            = edgeOrg.username;
+        deploy_info.password            = edgeOrg.password;
+        deploy_info.env                 = this.getEnvironment();
+
+        return deploy_info;
     }
 }
 
