@@ -109,14 +109,14 @@ resources:
     - name: developerApps
       type: app
       items:
-      - payload: "{name:'AISP_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'account_access_apis'}"
-        name: AISP_App
+      - name: AISP_App
+        payload: '{"name":"AISP_App","callback":"http://apigee.com/about","email":"openbank@apigee.net","apiProducts":"account_access_apis"}'
       - name: PISP_App
-        payload: "{name:'PISP_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'payment_transfer_apis'}"
+        payload: '{"name":"PISP_App","callback":"http://apigee.com/about","email":"openbank@apigee.net","apiProducts":"payment_transfer_apis"}'
       - name: Opendata_App
-        payload: "{name:'Opendata_App',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'open_data_apis'}"
+        payload: '{"name":"Opendata_App","callback":"http://apigee.com/about","email":"openbank@apigee.net","apiProducts":"open_data_apis"}'
       - name: internal_consent_app
-        payload: "{name:'internal_consent_app',callback:'http://apigee.com/about',email:'openbank@apigee.net',apiProducts:'internal_consent_apis'}"
+        payload: '{"name":"internal_consent_app","callback":"http://apigee.com/about","email":"openbank@apigee.net","apiProducts":"internal_consent_apis"}'
         assignResponse:
         - name: consent_app_key
           value: apiKey

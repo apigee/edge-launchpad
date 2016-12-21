@@ -7,8 +7,6 @@ baseAdapter = {
 
     doTask: function(taskName,context,resourceName,subResourceName, params, cb) {
 
-        //TODO:
-
         /*
         var rName                           = config.configName;
         if (!this.adapterContext[rName]) {
@@ -100,11 +98,6 @@ baseAdapter = {
             //if there is an error then log the error (getLog().logErrorStatus(config, error))
 
         }
-
-        var err;
-        var result;
-
-        cb(err, result)
     },
 
 
