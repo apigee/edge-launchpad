@@ -43,17 +43,22 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 function create_product(item, callback) {
 	var opts 			= {}
 
-	opts.name  			= item.name
-	loadash.merge(opts, JSON.parse(item.payload))
+	opts.productName  	= item.name
+	opts.environments 	= item.env
+	// TODO conflict for environments attribute
+	loadash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 	opts.username       = item.username
 	opts.password       = item.password
+	opts.organization 	= item.org
 
 	sdk.createProduct(opts)
 		.then(function(result){
 			//cache create success
+			lib.print('info', 'created product ' + item.name)
 			callback()
 		},function(err){
 			//cache create failed
+			lib.print('error', 'error creating product ' + item.name)
 			callback(err)
 		}) ;
 }
@@ -86,17 +91,22 @@ function clean(context, resourceName, subResourceName, params, cb) {
 function delete_product(item, callback) {
 	var opts 			= {}
 
-	opts.name  			= item.name
-	loadash.merge(opts, JSON.parse(item.payload))
+	opts.productName  	= item.name
 	opts.username       = item.username
 	opts.password       = item.password
+	opts.organization 	= item.org
+	opts.environments 	= item.env
+	// TODO conflict for environments attribute
+	loadash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
 	sdk.deleteProduct(opts)
 		.then(function(result){
 			//cache create success
+			lib.print('info', 'deleted product ' + item.name)
 			callback()
 		},function(err){
 			//cache create failed
+			lib.print('error', 'error deleting product ' + item.name)
 			callback(err)
 		}) ;
 }
