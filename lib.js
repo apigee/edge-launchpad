@@ -92,6 +92,40 @@ function handle_configuration(config){
 
 }
 
+function normalize_data(obj) {
+	if(obj.scopes){
+		var str = ''
+		obj.scopes.forEach(function(item){
+			if(item && item.trim()!= '') {
+				str += item.trim() + ","
+			}
+		})
+		obj.scopes = str
+	}
+
+	if(obj.environments){
+		var str = ''
+		obj.environments.forEach(function(item){
+			if(item && item.trim()!= '') {
+				str += item.trim() + ","
+			}
+		})
+		obj.environments = str
+	}
+
+	if(obj.proxies){
+		var str = ''
+		obj.proxies.forEach(function(item){
+			if(item && item.trim()!= '') {
+				str += item.trim() + ","
+			}
+		})
+		obj.proxies = str
+	}
+
+	return obj
+}
+
 exports.build_opts 				= build_opts
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
@@ -99,3 +133,4 @@ exports.prompt 					= prompt
 exports.handle_configuration 	= handle_configuration
 exports.handle_inputs 			= handle_inputs
 exports.print 					= print
+exports.normalize_data 			= normalize_data

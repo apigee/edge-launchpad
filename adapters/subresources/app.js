@@ -29,7 +29,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 		loadash.merge(items[i], deploy_info)
 	}
 
-	async.each(items, app, function(err){
+	async.each(items, create_app, function(err){
 		if(err){
 			lib.print('ERRROR', err)
 			cb(err)
@@ -44,16 +44,20 @@ function create_app(item, callback) {
 	var opts 			= {}
 
 	opts.name  			= item.name
-	loadash.merge(opts, JSON.parse(item.payload))
+	opts.organization 	= item.org
+	opts.environments 	= item.env
+	loadash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 	opts.username       = item.username
 	opts.password       = item.password
 
 	sdk.createApp(opts)
 		.then(function(result){
 			//cache create success
+			lib.print('info', 'created app ' + item.name)
 			callback()
 		},function(err){
 			//cache create failed
+			lib.print('error', 'error creating app ' + item.name)
 			callback(err)
 		}) ;
 }
@@ -87,16 +91,20 @@ function delete_app(item, callback) {
 	var opts 			= {}
 
 	opts.name  			= item.name
-	loadash.merge(opts, JSON.parse(item.payload))
 	opts.username       = item.username
 	opts.password       = item.password
+	opts.organization 	= item.org
+	opts.environments 	= item.env
+	loadash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
 	sdk.deleteApp(opts)
 		.then(function(result){
 			//cache create success
+			lib.print('info', 'deleted app  ' + item.name)
 			callback()
 		},function(err){
 			//cache create failed
+			lib.print('error', 'error deleting app ' + item.name)
 			callback(err)
 		}) ;
 }
