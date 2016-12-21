@@ -5,22 +5,46 @@ var fs				= require('fs-extra')
 var mustache 		= require('mustache')
 var child_process	= require('child_process')
 var lib 			= require('../../lib')
+var async 			= require('async')
+var lodash 			= require('lodash')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
 var adapter = function () {
-	this.clean 			= clean
-	this.build 			= build
-	this.deploy 		= deploy
+	this.clean 				= clean
+	this.build 				= build
+	this.deploy 			= deploy
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-	/*
-	// copy proxy files to target folder
-	var proxy_dir 				= path.join(context.basePath, '/src/gateway/', subResourceName, 'apiproxy')
-	var proxy_target_dir		= path.join(context.basePath, '/src/gateway/', subResourceName, 'target')
+	lib.print('info','building proxy')
 
-	
+	var config          	= context.getConfig(resourceName, subResourceName)
+
+	var items           	= config.items
+
+	context.resourceName 	= resourceName
+
+	for (var i=0; i< items.length; i++) {
+		items[i].context 	= context
+	}
+
+	async.eachSeries(items, build_proxy, function(err){
+		if(err){
+			lib.print('error', err)
+			cb(err)
+		} else {
+			cb()
+		}
+
+	})
+}
+
+function build_proxy(item, callback) {
+	lib.print('info', 'building proxy ' + item.name)
+	var proxy_dir 				= path.join(item.context.getBasePath(item.context.resourceName), '/src/gateway/', item.name, 'apiproxy')
+	var proxy_target_dir		= path.join(item.context.getBasePath(item.context.resourceName), '/src/gateway/', item.name, 'target')
+
 	if (!fs.existsSync(proxy_target_dir)){
 		fs.mkdirSync(proxy_target_dir)
 	}
@@ -28,70 +52,113 @@ function build(context, resourceName, subResourceName, params, cb) {
 	// copy contents from apiproxy to target
 	fs.copy(proxy_dir, proxy_target_dir, function (err) {
 		if (err) {
-			console.error(err)
+			lib.print('error', 'error building proxy, while copying to taret folder ' + item.name)
+			callback(err)
 		} else {
-			var inject_object = context.getAllVariables()
-			lib.replace_variables(proxy_target_dir, inject_object)
-		}
-
-		// do a npm install
-		var npm_dir = path.join(proxy_target_dir, 'resources/node')
-		if (fs.existsSync(npm_dir)){
-			lib.npm_install_local_only(npm_dir,function(code){
-				if (code != 0) {
-					console.error(err)
+			var inject_object = item.context.getAllVariables()
+			lib.replace_variables(proxy_target_dir, inject_object, function () {
+				// do a npm install
+				var npm_dir = path.join(proxy_target_dir, 'resources/node')
+				if (fs.existsSync(npm_dir)){
+					lib.npm_install_local_only(npm_dir,function(code){
+						if (code != 0) {
+							lib.print('error', 'error building proxy ' + item.name)
+							callback(err)
+						} else {
+							lib.print('info', 'built proxy ' + item.name)
+							callback()
+						}
+					})
 				} else {
-					console.log('build complete ... yayy')
+					callback()
 				}
 			})
 		}
-		
 	});
-
-	// npm install only local dependencies
-
-	// run npm install inside proxy folder
-	*/
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-	/*
-	deployment_opts 			= {}
+	lib.print('info','deploying proxy')
 
-	// prepare deployment_opts object for deploying proxy
-	where_to_deploy 			= context.get_where_to_deploy()
-	lodash.merge(deployment_opts, where_to_deploy)
-	deployment_opts.directory 	= path.join(context.basePath, 'src/gateway', subResourceName, 'target')
-	deployment_opts.api 		= subResourceName
-	
-	// deploy proxy
-	sdk.deployProxy(deployment_opts).then( 
-		function(result){
-		    //deploy success
-		    console.log(result)
-		    console.log('deploy successful')
-	    },
-	    function(err){
-		    //deploy failed 
-		    console.log(err)
-		    console.log('deploy failed')
+	var config          = context.getConfig(resourceName, subResourceName)
+
+	var items           = config.items
+
+	var deploy_info     = context.getDeploymentInfo()
+
+	for (var i=0; i< items.length; i++) {
+		lodash.merge(items[i], deploy_info)
+		items[i].api		= items[i].name
+		items[i].directory 	= path.join(context.getBasePath(resourceName), 'src/gateway', items[i].name, 'target')
+	}
+
+	async.eachSeries(items, deploy_proxy, function(err){
+		if(err){
+			lib.print('error', err)
+			cb(err)
+		} else {
+			cb()
+		}
+
 	})
-	*/
 
+	/*
+	
+
+*/
 }
 
+function deploy_proxy(opts, callback) {
+	lib.print('info', 'deploying proxy ' + opts.name)
+	sdk.deployProxy(opts).then(
+		function(result){
+			//deploy success
+			lib.print('info', 'deployed proxy ' + opts.name)
+			callback()
+		},
+		function(err){
+			//deploy failed
+			lib.print('error', 'error deploying proxy ' + item.name)
+			callback(err)
+		})
+}
 
 function clean(context, resourceName, subResourceName, params, cb) {
-	/*
-	var proxy_target_dir		= path.join(context.basePath, '/src/gateway/', subResourceName, 'target')
+	lib.print('info','cleaning proxy resource')
+
+	var config          = context.getConfig(resourceName, subResourceName)
+
+	var items           = config.items
+
+	context.resourceName 	= resourceName
+
+	for (var i=0; i< items.length; i++) {
+		items[i].context 	= context
+	}
+
+	async.each(items, clean_proxy, function(err){
+		if(err){
+			lib.print('error', err)
+			cb(err)
+		} else {
+			cb()
+		}
+
+	})
+}
+
+function clean_proxy(item, callback) {
+	var proxy_target_dir		= path.join(item.context.getBasePath(item.context.resourceName), '/src/gateway/', item.name, 'target')
+
 	fs.emptyDir(proxy_target_dir, function(err){
 		if (err) {
-			console.error(err)
+			lib.print('error', 'error cleaning proxy ' + item.name)
+			callback(err)
 		} else {
-			console.log('done vacuming cleaning')
+			lib.print('info', 'cleaned proxy ' + item.name)
+			callback()
 		}
-	})
-	*/
+ 	})
 }
 
 exports.adapter 			= adapter
