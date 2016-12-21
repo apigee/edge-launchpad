@@ -40,7 +40,7 @@ function build(context,resourceName,subResourceName, params, cb) {
 
 	config = context.getConfig(resourceName);
 
-	lib.handle_inputs(config)
+	//lib.handle_inputs(config)
 	lib.handle_configuration(config)
 	handle_dependencies(config)
 	handle_data_sources(config)

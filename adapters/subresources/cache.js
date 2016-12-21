@@ -16,7 +16,6 @@ function build(context, resourceName, subResourceName, params, cb) {
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    //opts = lib.build_opts(context, resourceName, subResourceName)
     lib.print('INFO','deploying cache resources')
     var config          = context.getConfig(resourceName, subResourceName)
 
@@ -56,9 +55,46 @@ function create_cache(item, callback) {
         }) ;
 }
 
+function delete_cache(item, callback) {
+    var opts             = {}
+
+    opts.cache           = item.name
+    opts.username        = item.username
+    opts.password        = item.password
+
+    sdk.deletecache(opts)
+        .then(function(result){
+            //cache create success
+            callback()
+        },function(err){
+            //cache create failed
+            callback(err)
+        }) ;
+}
+
 function clean(context, resourceName, subResourceName, params, cb) {
     //opts = lib.build_opts(context, resourceName, subResourceName)
     lib.print('INFO','cleaning cache resources')
+
+    var config          = context.getConfig(resourceName, subResourceName)
+
+    var items           = config.items
+
+    var deploy_info     = context.getDeploymentInfo()
+
+    for (var i=0; i< items.length; i++) {
+        loadash.merge(items[i], deploy_info)
+    }
+
+    async.each(items, delete_cache, function(err){
+        if(err){
+            lib.print('ERRROR', err)
+            cb(err)
+        } else {
+            cb()
+        }
+
+    })
 }
 
 exports.adapter 			= adapter

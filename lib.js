@@ -2,7 +2,7 @@ var lodash 			= require('lodash')
 var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
-var prompt_lib			= require('prompt');
+var prompt_lib		= require('prompt');
 
 function build_opts(context, resourceName, subResourceName){
 	opts 						= {}
