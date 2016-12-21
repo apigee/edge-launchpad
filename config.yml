@@ -27,7 +27,7 @@ resources:
       proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
       proxyhost : '{{organization}}-{{environment}}.apigee.net'
     script: gulpfile.js
-    basePath: ./src/gateway/
+    basePath: /Users/gauthamvk/apigee/crap/openbank-master
     dependencies:
     - name: common-consent-controller
       type: node

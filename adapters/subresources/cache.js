@@ -1,7 +1,7 @@
 var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
-var loadash         = require('lodash')
+var lodash         = require('lodash')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -24,7 +24,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
     var deploy_info     = context.getDeploymentInfo()
 
     for (var i=0; i< items.length; i++) {
-        loadash.merge(items[i], deploy_info)
+        lodash.merge(items[i], deploy_info)
     }
 
     async.each(items, create_cache, function(err){
@@ -70,7 +70,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
     var deploy_info     = context.getDeploymentInfo()
 
     for (var i=0; i< items.length; i++) {
-        loadash.merge(items[i], deploy_info)
+        lodash.merge(items[i], deploy_info)
     }
 
     async.each(items, delete_cache, function(err){

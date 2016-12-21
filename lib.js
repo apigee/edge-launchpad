@@ -2,7 +2,8 @@ var lodash 			= require('lodash')
 var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
-var prompt_lib		= require('prompt');
+var prompt_lib		= require('prompt')
+var child_process   = require('child_process')
 
 function build_opts(context, resourceName, subResourceName){
 	opts 						= {}
@@ -20,11 +21,10 @@ function build_opts(context, resourceName, subResourceName){
 	return opts
 }
 
-function replace_variables(proxy_target_dir, inject_object) {
+function replace_variables(proxy_target_dir, inject_object, cb) {
 	fs.walk(proxy_target_dir)
 	.on('data', function (item) {
 		if(item.stats.isFile()) {
-			console.log(item.path)
 			var path_to_template = item.path
 			fs.readFile(path_to_template, function(err, data) {
 				if (err) {
@@ -43,24 +43,24 @@ function replace_variables(proxy_target_dir, inject_object) {
 		
 	})
 	.on('end', function () {
-		console.log('done replacing variables')
+		cb()
 	})
 }
 
 function npm_install_local_only(npm_dir, callback) {
 	var npm_process 			= child_process.spawn('npm', ['install'],{'cwd': npm_dir})
-	
-	npm_process.stdout.on('data', (data) => {
+	npm_process.stdout.setEncoding('utf8');
+	npm_process.stderr.setEncoding('utf8');
+
+	npm_process.stdout.on('data', function (data) {
 		console.log(data)
 	});
 
-	npm_process.stderr.on('data', (data) => {
+	npm_process.stderr.on('data', function (data) {
 		console.log(data)
 	});
 
-	npm_process.on('exit', (code) => {
-		console.log(code)
-		console.log('npm install over !!')
+	npm_process.on('exit', function(code){
 		callback(code)
 	});		
 }

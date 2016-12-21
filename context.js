@@ -49,7 +49,9 @@ function context(config, env) {
         return this.variables[vName];
     }
 
-    //setVariable; set the variable in the context
+    this.getAllVariables = function(){
+        return this.variables
+    }
 
     this.setVariable = function(name, value) {
         this.variables[name]             = value;
@@ -96,6 +98,10 @@ function context(config, env) {
         deploy_info.env                 = this.getVariable('env');
 
         return deploy_info;
+    }
+
+    this.getBasePath = function (resourceName) {
+        return this.getConfig(resourceName).properties.basePath
     }
 }
 

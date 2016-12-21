@@ -1,7 +1,7 @@
 var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
-var loadash         = require('lodash')
+var lodash         = require('lodash')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -26,7 +26,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 	var deploy_info     = context.getDeploymentInfo()
 
 	for (var i=0; i< items.length; i++) {
-		loadash.merge(items[i], deploy_info)
+		lodash.merge(items[i], deploy_info)
 	}
 
 	async.each(items, create_app, function(err){
@@ -46,7 +46,7 @@ function create_app(item, callback) {
 	opts.name  			= item.name
 	opts.organization 	= item.org
 	opts.environments 	= item.env
-	loadash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 	opts.username       = item.username
 	opts.password       = item.password
 
@@ -73,7 +73,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 	var deploy_info     = context.getDeploymentInfo()
 
 	for (var i=0; i< items.length; i++) {
-		loadash.merge(items[i], deploy_info)
+		lodash.merge(items[i], deploy_info)
 	}
 
 	async.each(items, delete_app, function(err){
@@ -95,7 +95,7 @@ function delete_app(item, callback) {
 	opts.password       = item.password
 	opts.organization 	= item.org
 	opts.environments 	= item.env
-	loadash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
 	sdk.deleteApp(opts)
 		.then(function(result){
