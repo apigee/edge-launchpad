@@ -3,6 +3,7 @@ var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
 var prompt_lib		= require('prompt');
+var Promise = require('bluebird');
 
 function build_opts(context, resourceName, subResourceName){
 	opts 						= {}
@@ -47,37 +48,43 @@ function replace_variables(proxy_target_dir, inject_object) {
 	})
 }
 
-function npm_install_local_only(npm_dir, callback) {
-	var npm_process 			= child_process.spawn('npm', ['install'],{'cwd': npm_dir})
-	
-	npm_process.stdout.on('data', (data) => {
-		console.log(data)
-	});
+//function npm_install_local_only(npm_dir, callback) {
+//	var npm_process 			= child_process.spawn('npm', ['install'],{'cwd': npm_dir})
+//
+//	npm_process.stdout.on('data', (data) => {
+//		console.log(data)
+//	});
+//
+//	npm_process.stderr.on('data', (data) => {
+//		console.log(data)
+//	});
+//
+//	npm_process.on('exit', (code) => {
+//		console.log(code)
+//		console.log('npm install over !!')
+//		callback(code)
+//	});
+//}
 
-	npm_process.stderr.on('data', (data) => {
-		console.log(data)
-	});
+function prompt(inputs) {
 
-	npm_process.on('exit', (code) => {
-		console.log(code)
-		console.log('npm install over !!')
-		callback(code)
-	});		
-}
+    return new Promise(function(resolve, reject){
+        var required_values = [];
 
-function prompt(inputs, cb) {
-	var required_values = []
+        for(var i=0; i<inputs.length; i++){
+            required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string', required: true})
+        }
 
-	for(var i=0; i<inputs.length; i++){
-		required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string', required: true})
-	}
+        prompt_lib.start();
 
-	prompt_lib.start();
-
-	prompt_lib.get(required_values, function(err, results) {
-		cb(err, result)
-	});
-
+        prompt_lib.get(required_values, function(err, results) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
 }
 
 function print(level, msg){
@@ -128,7 +135,7 @@ function normalize_data(obj) {
 
 exports.build_opts 				= build_opts
 exports.replace_variables 		= replace_variables
-exports.npm_install_local_only	= npm_install_local_only
+//exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
 exports.handle_configuration 	= handle_configuration
 exports.handle_inputs 			= handle_inputs

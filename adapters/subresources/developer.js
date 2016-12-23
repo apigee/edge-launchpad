@@ -5,10 +5,10 @@ var async			= require('async');
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var adapter = function () {
-	this.clean 			= clean
-	this.build 			= build
-	this.deploy 		= deploy
+function developer() {
+    this.clean = clean;
+    this.build = build;
+    this.deploy = deploy;
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
@@ -61,5 +61,5 @@ function clean(context, resourceName, subResourceName, params, cb) {
 		*/
 }
 
-exports.adapter 			= adapter
+exports.adapter 			= developer;
 

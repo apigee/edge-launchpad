@@ -21,17 +21,21 @@ function context(config, env) {
     this.variables                  = {};
     this.env                        = env;
     this.config                     = {};
+    this.resourceContext            = {};
 
     //TODO:if object assign as it is; if text, load (find file type and load accordingly) and assign
     if (typeof config === 'string' || config instanceof String ) {
+        console.log('create context: ' + config);
         var configObj               = null;
 
         try {
             var current_dir         = process.cwd();
             var config_file_path    = path.join(current_dir, config)
             configObj = yaml.safeLoad(fs.readFileSync(config_file_path, 'utf8'));
+            console.log('configObj: ' + configObj);
         } catch(e) {
             console.log('ERROR reading config file');
+            console.log('error: ' + e);
         }
 
         this.config                 = configObj;
@@ -66,6 +70,7 @@ function context(config, env) {
                             return config[i].properties.subResources[j];
                         }
                     }
+                    return config[i];//subResource not found or config[i] - depending on the client logic
                 }
             }
         } else if (resourceName) {
@@ -74,8 +79,9 @@ function context(config, env) {
                     return config[i];
                 }
             }
+            return config;//resourceName not found
         } else {
-            return config;
+            return config;//handled properly in the calling function?
         }
     }
 
@@ -96,6 +102,20 @@ function context(config, env) {
         deploy_info.env                 = this.getVariable('env');
 
         return deploy_info;
+    }
+
+    this.isResourceInitialized = function(resourceName) {
+        var rContext = this.resourceContext[resourceName];
+        return (rContext?rContext.isInitialized?true:false:false);
+    };
+
+    this.setResourceInitialized = function(resourceName, isInitialized) {
+        var rContext = this.resourceContext[resourceName];
+        if (!rContext) {
+            rContext = {};
+            this.resourceContext[resourceName] = rContext;
+        }
+        rContext.isInitialized = (isInitialized?isInitialized:true);
     }
 }
 
