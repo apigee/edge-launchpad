@@ -28,6 +28,7 @@ Params
 var env                 = 'test'
 var config_file         = 'config.yml'
 var context             = {}
+var manager             = {}
 
 gulp.task('init', function() {
     //TODO: getArguments() { to return all passed arguments}
@@ -48,28 +49,41 @@ gulp.task('init', function() {
     print('ENV : ' + env)
     print('CONIG_FILE : ' + config_file)
 
-    context             = context_builder.getContext(config_file, env)
-    manager             = manager_builder.getManager()
+    context             = context_builder.getContext(config_file, env);
+
+    console.log("after getting context");
+    manager             = manager_builder.getManager();
+
+    console.log("after getting manager");
 
     // set arguments passed to context
     var args_passed     = argv
-    delete args_passed['_']
-    delete args_passed['$0']
+    delete args_passed['_'];//Muthu: some assumption seems to be made here, will it be same always
+    delete args_passed['$0'];
+
+    //Muthu:  might want to ignore few more arguments like --with-clean
 
     for (var i=0; i<Object.keys(args_passed).length; i++) {
         context.setVariable(Object.keys(args_passed)[i], args_passed[Object.keys(args_passed)[i]])
     }
 
+    console.log("after setting parameters");
+
     //manager.prompt(context, 'openbank_apis')
 
 });
 
+//Muthu: init() gets called every time...  if a deploy task is called,
+
 gulp.task('clean', ['init'], function(){
+
     params = {}
     manager.doTask('CLEAN', context, argv.resource ,argv.subresource, params, function () {
         
     })
 });
+
+//Muthu: build may require clean as well, may be optional
 
 gulp.task('build',['init'], function(){
     params = {}
@@ -84,6 +98,14 @@ gulp.task('deploy', ['init','build'], function(){
         
     })
 });
+
+gulp.task('default', ['init','build'], function(){
+    params = {}
+    manager.doTask('DEPLOY', context, argv.resource ,argv.subresource, params, function () {
+
+    })
+});
+
 
 
 
@@ -105,3 +127,4 @@ function baseopts () {
     }
     return opts
 }
+

@@ -6,10 +6,37 @@ var lib 			= require('../../lib')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var adapter = function () {
-	this.clean 			= clean
-	this.build 			= build
-	this.deploy 		= deploy
+function api_resources () {
+    this.build = function build(context,resourceName,subResourceName, params, cb) {
+        console.log('building api resource')
+
+        var config = context.getConfig(resourceName);
+
+        //lib.handle_inputs(config)
+        lib.handle_configuration(config)
+        handle_dependencies(config)
+        handle_data_sources(config)
+        this.gotoSubResources('build', context, resourceName, subResourceName, params, function (err, result) {
+            cb(err, result)
+        })
+
+    };
+
+    this.deploy = function deploy(context,resourceName,subResourceName, params, cb) {
+
+        console.log('deploying api resource')
+        this.gotoSubResources('deploy', context, resourceName, subResourceName, params, function (err, result) {
+            cb(err, result)
+        })//dataSources.deploy()
+    };
+
+
+    this.clean = function clean(context,resourceName,subResourceName, params, cb) {
+
+        this.gotoSubResources('clean', context, resourceName, subResourceName, params, function (err, result) {
+            cb(err, result)
+        })
+    }
 }
 
 var context = {
@@ -35,42 +62,15 @@ var context = {
 	}
 }
 
-function build(context,resourceName,subResourceName, params, cb) {
-	console.log('building api resource')
 
-	config = context.getConfig(resourceName);
-
-	//lib.handle_inputs(config)
-	lib.handle_configuration(config)
-	handle_dependencies(config)
-	handle_data_sources(config)
-	this.gotoSubResources('build', context, resourceName, subResourceName, params, function (err, result) {
-		cb(err, result)
-	})
-
-}
-
-function deploy(context,resourceName,subResourceName, params, cb) {
-
-	console.log('deploying api resource')
-	this.gotoSubResources('deploy', context, resourceName, subResourceName, params, function (err, result) {
-		cb(err, result)
-	})//dataSources.deploy()
-}
-
-
-function clean(context,resourceName,subResourceName, params, cb) {
-
-	this.gotoSubResources('clean', context, resourceName, subResourceName, params, function (err, result) {
-		cb(err, result)
-	})
-}
 
 function handle_data_sources(config) {
 	
 }
 
 function handle_dependencies(config) {
+
+    //Muthu: get logger from context() or baseAdapter() and use it to log...
 	lib.print('INFO','Downloading dependencies')
 	// pull dependency to solutions-common folder
 	/*
@@ -108,5 +108,5 @@ function pull_api(context, dependency){
 }
 
 
-exports.adapter 		= adapter
+exports.adapter 		= new api_resources();
 

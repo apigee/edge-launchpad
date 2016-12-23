@@ -5,10 +5,10 @@ var loadash         = require('lodash')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
-var adapter = function () {
-	this.clean 			= clean
-	this.build 			= build
-	this.deploy 		= deploy
+function product()  {
+    this.clean = clean;
+    this.build = build;
+    this.deploy = deploy;
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
@@ -111,4 +111,4 @@ function delete_product(item, callback) {
 		}) ;
 }
 
-exports.adapter 			= adapter
+exports.adapter 			= product;
