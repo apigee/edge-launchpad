@@ -2,7 +2,6 @@ var fs                              = require('fs')
 var baseAdapter                     = require('./baseAdapter')
 var lodash 			                = require('lodash')
 var lib                             = require('./lib')
-//var Promise = require("bluebird");
 
 var instance;
 
@@ -33,7 +32,7 @@ function manager() {
             return
         }
 
-
+        //TODO use promise here, clean vari
         if(!resourceName && !subResourceName) {
             for(var i=0; i<config.length; i++){
                 var resourceType        = config[i].type;
@@ -41,16 +40,20 @@ function manager() {
 
                 var resourceName        = config[i].name;
 
-                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                    cb(err, result)
+                adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
+                    adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
+                        cb(err, result)
+                    });
                 });
             }
         } else if (!subResourceName) {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function (err, result) {
-                cb(err, result)
+            adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
+                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
+                    cb(err, result)
+                });
             });
         } else {
             var subResourceType         = config.type;
@@ -59,46 +62,41 @@ function manager() {
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType, subResourceType);
 
-            adapter.doTask(taskName, context, resourceName, subResourceName, params,  function (err, result) {
-                cb(err, result)
+            adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
+                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
+                    cb(err, result)
+                });
             });
         }
     }
 
     this.getAdapter = function (resourceType, subResourceType) {
-        if(subResourceType){
-            var s_type                  = resourceType + '.' + subResourceType;
-            var adapter                 = require(this.adapters[s_type]).adapter;
-            adapter.prototype           = baseAdapter.baseAdapter;
-            var adapter_obj             = new adapter;
-            return adapter_obj
-        } else if(resourceType) {
-            var adapter                 = require(this.adapters[resourceType]).adapter;
-            adapter.prototype           = baseAdapter.baseAdapter;
-            var adapter_obj             = new adapter;
-            return adapter_obj
+        var name = (resourceType)?((subResourceType)?resourceType+'.'+subResourceType:resourceType):'.';
+
+        var adapter = this.adapters[name];
+
+        if (!adapter) {
+            //error
+            console.log("Adapter not found for : " + name);
         } else {
-            lib.print('error','ERROR retrieving adapter');
+            return adapter;
         }
     }
 
-    this.prompt = function (context, resourceName) {
-        var config                      = context.getConfig(resourceName);
-
-        if (config.properties.inputs && config.properties.inputs.length > 0) {
-            var inputs = config.properties.inputs;
-
-            lib.prompt(inputs, function (err, results) {
-                if (!err) {
-                    return results;
-                } else {
-                    lib.print('error','ERROR while prompt');
-                    lib.print('error', err);
-                }
-            });
+    this.loadAdapters = function (configFile) {
+        var adapterConfigs                   = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+        if (adapterConfigs) {
+            for (var x in adapterConfigs) {
+                var adapter                 = require(adapterConfigs[x]).adapter;
+                adapter.prototype           = baseAdapter.baseAdapter;
+                this.adapters[x]            = new adapter;
+            }
         }
+
+        this.adapters['.'] = baseAdapter;
     }
 
+    this.loadAdapters('./config/adapters.json');
 }
 
 /*

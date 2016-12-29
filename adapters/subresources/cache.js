@@ -13,6 +13,7 @@ var adapter = function () {
 
 function build(context, resourceName, subResourceName, params, cb) {
     lib.print('INFO','building cache resources')
+    cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
@@ -29,8 +30,8 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
     async.each(items, create_cache, function(err){
         if(err){
-            lib.print('ERRROR', err)
-            cb(err)
+            lib.print('ERROR', err)
+            cb()
         } else {
             cb()
         }
@@ -39,24 +40,26 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 }
 
 function create_cache(item, callback) {
-    var opts             = {}
+    var opts             = item
 
     opts.cache           = item.name
-    opts.username        = item.username
-    opts.password        = item.password
-    opts.organization    = item.org
-    opts.environment 	 = item.env
+    lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+    var environments    = item.environments
+    for (var i=0; i<environments.length; i++){
+        opts.environment = environments[i]
+        sdk.createcache(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'created cache ' + item.name + ' for env ' + item.environment)
+                callback()
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error creating cache ' + item.name + ' for env ' + item.environment)
+                lib.print('ERROR', err)
+                callback()
+            }) ;
+    }
 
-    sdk.createcache(opts)
-        .then(function(result){
-            //cache create success
-            lib.print('info', 'created cache ' + item.name)
-            callback()
-        },function(err){
-            //cache create failed
-            lib.print('error', 'error creating cache ' + item.name)
-            callback(err)
-        }) ;
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -76,7 +79,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
     async.each(items, delete_cache, function(err){
         if(err){
             lib.print('ERROR', err)
-            cb(err)
+            cb()
         } else {
             cb()
         }
@@ -85,13 +88,10 @@ function clean(context, resourceName, subResourceName, params, cb) {
 }
 
 function delete_cache(item, callback) {
-    var opts             = {}
+    var opts             = item
 
     opts.cache           = item.name
-    opts.username        = item.username
-    opts.password        = item.password
-    opts.environment 	 = item.env
-    opts.organization    = item.org
+    lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
     sdk.deletecache(opts)
         .then(function(result){
@@ -101,7 +101,8 @@ function delete_cache(item, callback) {
         },function(err){
             //cache create failed
             lib.print('error', 'error deleting cache ' + item.name)
-            callback(err)
+            lib.print('ERRROR', err)
+            callback()
         }) ;
 }
 

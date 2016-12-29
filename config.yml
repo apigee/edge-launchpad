@@ -3,9 +3,9 @@ resources:
   type: solutions.api
   properties:
     inputs:
-    - name: organization
+    - name: org
       prompt: Edge Org name
-    - name: environment
+    - name: env
       prompt: Edge Org Environment
     - name: token
       prompt: Edge Auth token
@@ -18,20 +18,30 @@ resources:
     - name: usergrid_secret
       prompt: App services App Client Secret
     configurations:
-    - env : test
-      ugbase : "https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}"
-      proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
-      proxyhost : '{{organization}}-{{environment}}.apigee.net'
+    - env: test
+      external_url: http://some-test.com
     - env : prod
-      ugbase : 'https://api.usergrid.com/{{usergrid_org}}/{{usergrid_app}}'
-      proxybase : 'https://{{organization}}-{{environment}}.apigee.net'
-      proxyhost : '{{organization}}-{{environment}}.apigee.net'
+      externam_url: http://some-prod.com
+
     script: gulpfile.js
-    basePath: /Users/gauthamvk/apigee/crap/openbank-master
+    basePath: /Users/gauthamvk/apigee/git/openbank-fork
     dependencies:
-    - name: common-consent-controller
-      type: node
-      version:
+    - name: oauth
+      type: proxy
+      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
+      version: v1.0.0
+#    - name: session
+#      type: proxy
+#      url: git@revision.aeip.apigee.net:solution-commons/session.git
+#      version: v1.0.0
+#    - name: oauth
+#      type: userinfo
+#      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
+#      version: v1.0.0
+#    - name: authentication-connector
+#      type: proxy
+#      url: git@revision.aeip.apigee.net:solution-commons/authentication-connector.git
+#     version: v1.0.0
     edgeOrg:
       orgName:'{{organization}}'
       env:'{{environment}}'
@@ -47,35 +57,26 @@ resources:
       type: cache
       items:
       - name: consent-session-cache
-        payload: "{ name: 'consent-session-cache'}"
+        payload: '{ "name": "consent-session-cache"}'
       - name: application-session-cache
-        payload: "{ name: 'application-session-cache'}"
-      - name: nonce-cache
-        payload: "{ name: 'sms-token-cache'}"
+        payload: '{ "name": "application-session-cache"}'
+      - name: sms-token-cache
+        payload: '{ "name": "sms-token-cache"}'
     - name: replaceorgvalues
       type: configSubstitutions
       items:
-      - name: authentication_connector_target_url
-        filePaths: ['authentication-connector/apiproxy/targets/default.xml']
-        value: '{{ugbase}}/customers/{customerNumber}'
-      - name: accounts_connector_appBasePath
-        filePaths:
-        value: '{{ugbase}}'
-      - name: location_connector_appBasePath
-        filePaths:
-        value: '{{ugbase}}'
-      - name: oauth_consent_app_redirect
-        filePaths:
-        value: '{{proxybase}}/internal/consent?sessionid={messageid}'
-      - name: transfers_consent_app_redirect
-        filePaths:
-        value: '{{proxybase}}/internal/transfer-consent?sessionid={messageid}'
-      - name: transfers_connector_targeturl
-        filePaths:
-        value: '{{ugbase}}/transactions'
-      - name: userinfo_getuser_url
-        filePaths:
-        value: '{{ugbase}}/customers/{accesstoken.customer_number}'
+      - name: baas_org
+        filePaths: ['src/gateway/accounts-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/locations-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/products-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/transfers-connector/target/apiproxy/policies/Callout.AddTransactionToAccount.xml','src/gateway/transfers-connector/target/apiproxy/targets/default.xml','src/gateway/userinfo/target/apiproxy/policies/Callout.GetUserDetails.xml','src/gateway/authentication-connector/target/apiproxy/targets/default.xml']
+        value: usergrid_org
+      - name: baas_app
+        filePaths: ['src/gateway/accounts-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/locations-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/products-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/transfers-connector/target/apiproxy/policies/Callout.AddTransactionToAccount.xml','src/gateway/transfers-connector/target/apiproxy/targets/default.xml','src/gateway/userinfo/target/apiproxy/policies/Callout.GetUserDetails.xml','src/gateway/authentication-connector/target/apiproxy/targets/default.xml']
+        value: usergrid_app
+      - name: org
+        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign.RedirectConsentApp.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
+        value: org
+      - name: env
+        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign.RedirectConsentApp.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
+        value: env
     - name: bank_apis
       type: proxy
       items:
@@ -90,6 +91,7 @@ resources:
       - name: transfers
       - name: transfers-connector
       - name: userinfo
+
     - name: developers
       type: developer
       items:
@@ -118,17 +120,20 @@ resources:
       - name: internal_consent_app
         payload: '{"name":"internal_consent_app","callback":"http://apigee.com/about","email":"openbank@apigee.net","apiProducts":"internal_consent_apis"}'
         assignResponse:
-        - name: consent_app_key
-          value: apiKey
+        - from: consumerKey
+          to: apiKey
     - name: replace_consent_app_key
       type: configSubstitutions
       items:
       - name: consent_app_key
-        filePaths: ['consent-app/apiproxy/resources/node/config.orig']
-        value: '{{consent_app_key}}'
-      - name: proxy_host
-        filePaths: ['consent-app/apiproxy/resources/node/config.orig']
-        value: '{{proxyhost}}'
+        filePaths: ['src/gateway/consent-app/target/apiproxy/resources/node/config.json','src/gateway/consent-app-transfers/target/apiproxy/resources/node/config.json']
+        value: apiKey
+      - name: org
+        filePaths: ['src/gateway/consent-app/target/apiproxy/resources/node/config.json','src/gateway/consent-app-transfers/target/apiproxy/resources/node/config.json']
+        value: org
+      - name: env
+        filePaths: ['src/gateway/consent-app/target/apiproxy/resources/node/config.json','src/gateway/consent-app-transfers/target/apiproxy/resources/node/config.json']
+        value: env
     - name: consent_apis
       type: proxy
       items:

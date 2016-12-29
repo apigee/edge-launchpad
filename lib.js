@@ -4,24 +4,37 @@ var fs				= require('fs-extra')
 var mustache 		= require('mustache')
 var prompt_lib		= require('prompt')
 var child_process   = require('child_process')
+var gutil 			= require('gulp-util')
 
-function build_opts(context, resourceName, subResourceName){
-	opts 						= {}
+function replace_variables(paths, inject_object) {
+	for(var i=0; i<paths.length; i++){
+		var path_to_template = paths[i]
 
-	// prepare deployment_opts object for deploying proxy
-	where_to_deploy 			= context.getDeploymentInfo()
+		var data
 
+		try {
+			data = fs.readFileSync(path_to_template, 'utf8')
+		} catch(e){
+			console.log(e)
+		}
 
-	lodash.merge(opts, where_to_deploy)
+		var mu_template = String(data)
 
-	config 						= {}//context.getSubResourceConfig(resourceName, subResourceName)
-	opts.name 					= subResourceName
-	lodash.merge(opts, config.payload)
+		try {
+			var output = mustache.render(mu_template, inject_object)
+		} catch(e) {
+			console.log(e)
+		}
 
-	return opts
-}
+		try {
+			fs.outputFileSync(path_to_template, output)
+		} catch (e){
+			console.log(e)
+		}
 
-function replace_variables(proxy_target_dir, inject_object, cb) {
+		output = '< yet to copy from original template >'
+	}
+	/*
 	fs.walk(proxy_target_dir)
 	.on('data', function (item) {
 		if(item.stats.isFile()) {
@@ -31,7 +44,11 @@ function replace_variables(proxy_target_dir, inject_object, cb) {
 					console.error(err)
 				} else {
 					var mu_template = String(data)
-					var output 	= mustache.render(mu_template, inject_object)
+					try {
+						var output = mustache.render(mu_template, inject_object)
+					} catch(e) {
+						print('error' + e)
+					}
 					fs.outputFile(path_to_template, output, function (err) {
 						if (err) {
 							console.error(err)
@@ -45,6 +62,7 @@ function replace_variables(proxy_target_dir, inject_object, cb) {
 	.on('end', function () {
 		cb()
 	})
+	*/
 }
 
 function npm_install_local_only(npm_dir, callback) {
@@ -62,7 +80,7 @@ function npm_install_local_only(npm_dir, callback) {
 
 	npm_process.on('exit', function(code){
 		callback(code)
-	});		
+	});
 }
 
 function prompt(inputs, cb) {
@@ -81,56 +99,55 @@ function prompt(inputs, cb) {
 }
 
 function print(level, msg){
-	console.log(msg)
-}
-
-function handle_inputs(config) {
-	print('INFO','Handling inputs')
-}
-
-function handle_configuration(config){
-
+	if(level.toUpperCase() == 'ERROR')
+		gutil.log(gutil.colors.red(msg));
+	else if(level.toUpperCase() == 'INFO')
+		gutil.log(gutil.colors.green(msg));
+	else
+		console.log(msg)
 }
 
 function normalize_data(obj) {
 	if(obj.scopes){
+		var list = obj.scopes
 		var str = ''
-		obj.scopes.forEach(function(item){
-			if(item && item.trim()!= '') {
-				str += item.trim() + ","
+		for (var i=0; i< list.length-1; i++) {
+			if(list[i] && list[i].trim()!= '') {
+				str += list[i].trim() + ","
 			}
-		})
+		}
+		str += list[list.length-1]
 		obj.scopes = str
 	}
-
 	if(obj.environments){
+		var list = obj.environments
 		var str = ''
-		obj.environments.forEach(function(item){
-			if(item && item.trim()!= '') {
-				str += item.trim() + ","
+		for (var i=0; i< list.length-1; i++) {
+			if(list[i] && list[i].trim()!= '') {
+				str += list[i].trim() + ","
 			}
-		})
+		}
+		str += list[list.length-1]
 		obj.environments = str
 	}
 
 	if(obj.proxies){
+		var list = obj.proxies
 		var str = ''
-		obj.proxies.forEach(function(item){
-			if(item && item.trim()!= '') {
-				str += item.trim() + ","
+		for (var i=0; i< list.length-1; i++) {
+			if(list[i] && list[i].trim()!= '') {
+				str += list[i].trim() + ","
 			}
-		})
+		}
+		str += list[list.length-1]
 		obj.proxies = str
 	}
 
 	return obj
 }
 
-exports.build_opts 				= build_opts
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
-exports.handle_configuration 	= handle_configuration
-exports.handle_inputs 			= handle_inputs
 exports.print 					= print
 exports.normalize_data 			= normalize_data

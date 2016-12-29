@@ -2,10 +2,15 @@
  * Created by Muthu on 28/11/16.
  */
 
-baseAdapter = {
-    adapterContext: {},
+var prompt_lib		                = require('prompt');
+var manager_builder                 = require('./manager');
+var async                           = require('async');
 
-    doTask: function(taskName,context,resourceName,subResourceName, params, cb) {
+
+function baseAdapter () {
+    this.adapterContext = {};
+
+    this.doTask = function(taskName,context,resourceName,subResourceName, params, cb) {
 
         /*
         var rName                           = config.configName;
@@ -40,11 +45,8 @@ baseAdapter = {
 
 
     //do the same activity for all subresources/resources; don't override
-    gotoSubResources: function(taskName, context, resourceName, subResourceName, params, cb) {
-
-        var manager_builder                 = require('./manager');
-        var async                           = require('async')
-        manager                             = manager_builder.getManager();
+    this.gotoSubResources = function(taskName, context, resourceName, subResourceName, params, cb) {
+        var manager                         = manager_builder.getManager();
 
         console.log('climbing down the tree ... ')
 
@@ -54,7 +56,12 @@ baseAdapter = {
 
         if (!config) return;
 
-        subResources                        = config.properties.subResources;
+        if(taskName.toUpperCase() != 'CLEAN'){
+            subResources                        = config.properties.subResources;
+        } else {
+            subResources                        = config.properties.subResources;
+            subResources.reverse();
+        }
 
         if (subResources && subResources.length > 0) {
             console.log('deploying all subresources')
@@ -65,7 +72,7 @@ baseAdapter = {
                     var subResourceType         = subResource.type;
                     var subResourceName         = subResource.name;
 
-                    console.log(taskName+'ing : '+ subResourceName);
+                    console.log(taskName +'ing : '+ subResourceName);
 
                     var adapter                 = manager.getAdapter(resourceType, subResourceType);
 
@@ -82,12 +89,16 @@ baseAdapter = {
                     if(!err) {
                         cb()
                     } else {
-                        lib.print('ERROR',err)
+                        lib.print('ERROR',err);
                         cb(err)
                     }
 
                 }
             );
+
+            if(taskName.toUpperCase() == 'CLEAN'){
+                subResources.reverse();
+            }
 
 
             //use promise - synchronous invocation
@@ -101,28 +112,50 @@ baseAdapter = {
     },
 
 
-    clean: function(context,config,resourceName,subResourceName,params,cb) {
-
-        //do cleaning activity
+    this.clean = function(context, resourceName, subResourceName, params, cb) {
+        console.log('base clean');
         this.gotoSubResources();
     },
 
-    build: function(context,config,resourceName,subResourceName,params,cb) {
-
+    this.build = function(context, resourceName, subResourceName, params, cb) {
+        console.log('base build');
         this.gotoSubResources();
     },
 
-    deploy: function(context,config,resourceName,subResourceName,params,cb) {
-        console.log('base deploy')
+    this.deploy = function(context, resourceName, subResourceName, params, cb) {
+        console.log('base deploy');
         this.gotoSubResources();
     },
 
 
-    prompt: function(context, config) {
+    this.prompt = function(context, resourceName, subResourceName, params, cb) {
+        var config = context.getConfig(resourceName);
+        if (config.properties.inputs && config.properties.inputs.length > 0) {
+            var inputs = config.properties.inputs;
+
+            var required_values = [];
+
+            for(var i=0; i<inputs.length; i++){
+                if(!context.getVariable(inputs[i].name)) {
+                    required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string'});
+                }
+            }
+
+            prompt_lib.start();
+
+            prompt_lib.get(required_values, function(err, results) {
+                var keys = Object.keys(results)
+                for(var i=0; i<keys.length; i++){
+                    context.setVariable(keys[i], results[keys[i]])
+                }
+                cb(err, results);
+            });
+        }
+
         //check is there inputParams for the specific config
         //check whether all inputParams are found in context.getVariable(); if not prompt and store the input value in the variables (setVariable())
 
     }
 }
 
-exports.baseAdapter 			= baseAdapter;
+exports.baseAdapter 			= new baseAdapter();

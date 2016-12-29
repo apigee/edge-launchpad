@@ -13,10 +13,10 @@ var adapter = function () {
 
 function build(context, resourceName, subResourceName, params, cb) {
 	lib.print('INFO','building app resources')
+	cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-	//opts = lib.build_opts(context, resourceName, subResourceName)
 	lib.print('INFO','deploying app resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
@@ -27,12 +27,13 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 	for (var i=0; i< items.length; i++) {
 		lodash.merge(items[i], deploy_info)
+		items[i].context = context
 	}
 
 	async.each(items, create_app, function(err){
 		if(err){
-			lib.print('ERRROR', err)
-			cb(err)
+			lib.print('ERROR', err)
+			cb()
 		} else {
 			cb()
 		}
@@ -41,25 +42,36 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 }
 
 function create_app(item, callback) {
-	var opts 			= {}
+	var opts 			= item
+	var context			= item.context
+	delete item.context
 
-	opts.name  			= item.name
-	opts.organization 	= item.org
-	opts.environments 	= item.env
 	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
-	opts.username       = item.username
-	opts.password       = item.password
+
 
 	sdk.createApp(opts)
 		.then(function(result){
 			//cache create success
 			lib.print('info', 'created app ' + item.name)
+			if(item.assignResponse && item.assignResponse.length > 0){
+				extract_response(context, item.assignResponse, result)
+			}
 			callback()
 		},function(err){
 			//cache create failed
 			lib.print('error', 'error creating app ' + item.name)
-			callback(err)
+			lib.print('ERROR', err)
+			callback()
 		}) ;
+}
+
+function extract_response(context, collect_info, result) {
+	for (var i=0; i<collect_info.length; i++){
+		lib.print('info', 'extracting ' + collect_info[i]['from'] + ' from result')
+		// TODO how to extract values
+		var value = result.credentials[0][[collect_info[i]['from']]]
+		context.setVariable(collect_info[i]['to'], value)
+	}
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -78,8 +90,8 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	async.each(items, delete_app, function(err){
 		if(err){
-			lib.print('ERRROR', err)
-			cb(err)
+			lib.print('ERROR', err)
+			cb()
 		} else {
 			cb()
 		}
@@ -88,13 +100,8 @@ function clean(context, resourceName, subResourceName, params, cb) {
 }
 
 function delete_app(item, callback) {
-	var opts 			= {}
+	var opts 			= item
 
-	opts.name  			= item.name
-	opts.username       = item.username
-	opts.password       = item.password
-	opts.organization 	= item.org
-	opts.environments 	= item.env
 	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
 	sdk.deleteApp(opts)
@@ -105,7 +112,8 @@ function delete_app(item, callback) {
 		},function(err){
 			//cache create failed
 			lib.print('error', 'error deleting app ' + item.name)
-			callback(err)
+			lib.print('ERROR', err)
+			callback()
 		}) ;
 }
 
