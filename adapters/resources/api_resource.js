@@ -34,12 +34,13 @@ function build(context,resourceName,subResourceName, params, cb) {
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
+	var self 	= this
 	var config 	= context.getConfig(resourceName)
 
 	handle_configuration(context, config)
 
 	deploy_dependencies(context, resourceName, config, function(err){
-		this.gotoSubResources('deploy', context, resourceName, subResourceName, params, function (err, result) {
+		self.gotoSubResources('deploy', context, resourceName, subResourceName, params, function (err, result) {
 			cb(err, result)
 		})
 	})
@@ -104,6 +105,7 @@ function build_dependencies(context, resourceName, config, cb) {
 
 function deploy_dependencies(context, resourceName, config, cb) {
 	lib.print('INFO','Deploying dependencies')
+	cb()
 }
 
 function pull_node(context, resourceName, dependency, callback){

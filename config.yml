@@ -26,14 +26,14 @@ resources:
     script: gulpfile.js
     basePath: /Users/gauthamvk/apigee/git/openbank-fork
     dependencies:
-    - name: oauth
-      type: proxy
-      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
-      version: v1.0.0
-#    - name: session
+#    - name: oauth
 #      type: proxy
-#      url: git@revision.aeip.apigee.net:solution-commons/session.git
+#      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
 #      version: v1.0.0
+    - name: session
+      type: proxy
+      url: git@revision.aeip.apigee.net:solution-commons/session.git
+      version: v1.0.0
 #    - name: oauth
 #      type: userinfo
 #      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
@@ -72,10 +72,10 @@ resources:
         filePaths: ['src/gateway/accounts-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/locations-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/products-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/transfers-connector/target/apiproxy/policies/Callout.AddTransactionToAccount.xml','src/gateway/transfers-connector/target/apiproxy/targets/default.xml','src/gateway/userinfo/target/apiproxy/policies/Callout.GetUserDetails.xml','src/gateway/authentication-connector/target/apiproxy/targets/default.xml']
         value: usergrid_app
       - name: org
-        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign.RedirectConsentApp.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
+        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign-JWT-Payload.xml','src/gateway/oauth/target/apiproxy/policies/Assign-ID-Token-Payload-authorization_code-flow.xml','src/gateway/oauth/target/apiproxy/policies/Redirect-Login-Application.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
         value: org
       - name: env
-        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign.RedirectConsentApp.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
+        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign-JWT-Payload.xml','src/gateway/oauth/target/apiproxy/policies/Assign-ID-Token-Payload-authorization_code-flow.xml','src/gateway/oauth/target/apiproxy/policies/Redirect-Login-Application.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
         value: env
     - name: bank_apis
       type: proxy
