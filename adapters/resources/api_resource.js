@@ -57,7 +57,7 @@ function clean(context,resourceName,subResourceName, params, cb) {
 }
 
 function handle_data_sources(context, config) {
-	
+
 }
 
 function handle_configuration(context, config) {
