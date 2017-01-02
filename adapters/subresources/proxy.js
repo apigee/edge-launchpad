@@ -59,28 +59,28 @@ function build_proxy(item, callback) {
 			// do a npm install
 			var npm_dir = path.join(proxy_target_dir, 'resources/node')
 			/*
-			if (fs.existsSync(npm_dir)){
-				lib.npm_install_local_only(npm_dir,function(code){
-					if (code != 0) {
-						lib.print('error', 'error building proxy ' + item.name)
-						callback()
-					} else {
-						lib.print('info', 'built proxy ' + item.name)
-						callback()
-					}
-				})
-			} else {
-				callback()
-			}
-			*/
+			 if (fs.existsSync(npm_dir)){
+			 lib.npm_install_local_only(npm_dir,function(code){
+			 if (code != 0) {
+			 lib.print('error', 'error building proxy ' + item.name)
+			 callback()
+			 } else {
+			 lib.print('info', 'built proxy ' + item.name)
+			 callback()
+			 }
+			 })
+			 } else {
+			 callback()
+			 }
+			 */
 			callback()
 		}
 		/*
-			var inject_object = item.context.getAllVariables()
-			lib.replace_variables(proxy_target_dir, inject_object, function () {
+		 var inject_object = item.context.getAllVariables()
+		 lib.replace_variables(proxy_target_dir, inject_object, function () {
 
-			})
-		*/
+		 })
+		 */
 	});
 }
 
@@ -172,7 +172,7 @@ function clean_proxy(item, callback) {
 			lib.print('info', 'cleaned proxy ' + item.name)
 			callback()
 		}
- 	})
+	})
 }
 
 exports.adapter 			= adapter
