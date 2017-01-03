@@ -7,8 +7,6 @@ resources:
       prompt: Edge Org name
     - name: env
       prompt: Edge Org Environment
-    - name: token
-      prompt: Edge Auth token
     - name: usergrid_org
       prompt: App services org name
     - name: usergrid_app
@@ -24,7 +22,7 @@ resources:
       externam_url: http://some-prod.com
 
     script: gulpfile.js
-    basePath: /Users/gauthamvk/apigee/git/openbank-fork
+    basePath: /Users/muthu/Documents/muthu/work/test/openbank
     dependencies:
 #    - name: oauth
 #      type: proxy
