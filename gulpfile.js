@@ -11,16 +11,13 @@ var config_file         = 'config.yml'
 var context
 var manager
 
+// TODO: cache creation with cache properties
+// TODO: data load
+// TODO: standardize extract variables
+// TODO: don't use spawn for NPM install
+// TODO: standardize sequential execution of tasks
+
 gulp.task('init', function() {
-    //TODO: getArguments() { to return all passed arguments}
-
-    //TODO: get all arguments
-
-    //TODO any parameters passed in the argument, set it in context.setVariable(parameterName, value);
-
-    //TODO not sure what this means : if a specific resource name or resource name & sub resource name are passed then
-
-
     if (argv.env)
         env             = argv.env
 

@@ -58,22 +58,19 @@ function build_proxy(item, callback) {
 		} else {
 			// do a npm install
 			var npm_dir = path.join(proxy_target_dir, 'resources/node')
-			/*
 			 if (fs.existsSync(npm_dir)){
-			 lib.npm_install_local_only(npm_dir,function(code){
-			 if (code != 0) {
-			 lib.print('error', 'error building proxy ' + item.name)
-			 callback()
-			 } else {
-			 lib.print('info', 'built proxy ' + item.name)
-			 callback()
-			 }
+				 lib.npm_install_local_only(npm_dir,function(code){
+					 if (code != 0) {
+					 lib.print('error', 'error building proxy ' + item.name)
+					 callback()
+				 } else {
+					 lib.print('info', 'built proxy ' + item.name)
+					 callback()
+				 }
 			 })
 			 } else {
-			 callback()
+				 callback()
 			 }
-			 */
-			callback()
 		}
 		/*
 		 var inject_object = item.context.getAllVariables()
@@ -99,7 +96,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 		items[i].directory 	= path.join(context.getBasePath(resourceName), 'src/gateway', items[i].name, 'target')
 
 		if(fs.existsSync(path.join(context.getBasePath(resourceName), 'src/gateway', items[i].name, 'target/apiproxy/target/node'))){
-			items[i]['resolve-modules'] = true
+			//items[i]['resolve-modules'] = true
 		}
 
 	}
