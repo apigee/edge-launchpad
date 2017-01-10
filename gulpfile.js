@@ -48,7 +48,8 @@ gulp.task('clean', ['init'], function(cb){
 });
 
 gulp.task('build',['init','clean'], function(cb){
-    params = {}
+    params = {};
+
     manager.doTask('BUILD', context, argv.resource ,argv.subresource, params, function () {
         cb()
     })

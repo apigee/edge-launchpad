@@ -5,7 +5,7 @@
 var prompt_lib		                = require('prompt');
 var manager_builder                 = require('./manager');
 var async                           = require('async');
-
+var lib 			= require('./lib');
 
 function baseAdapter () {
     this.adapterContext = {};
@@ -56,6 +56,8 @@ function baseAdapter () {
 
         if (!config) return;
 
+        var subResources;
+
         if(taskName.toUpperCase() != 'CLEAN'){
             subResources                        = config.properties.subResources;
         } else {
@@ -67,6 +69,7 @@ function baseAdapter () {
             console.log('deploying all subresources')
             // TODO async or promise
 
+
             async.eachSeries(subResources,
                 function (subResource, callback) {
                     var subResourceType         = subResource.type;
@@ -77,7 +80,8 @@ function baseAdapter () {
                     var adapter                 = manager.getAdapter(resourceType, subResourceType);
 
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                       if(!err) {
+                        lib.print("info","in return of doTask: " + subResource.name);
+                        if(!err) {
                            callback()
                        } else {
                            callback(err)
@@ -87,6 +91,7 @@ function baseAdapter () {
 
                 function (err) {
                     if(!err) {
+                        lib.print("info","In return of async eachSeries");
                         cb()
                     } else {
                         lib.print('ERROR',err);
@@ -127,6 +132,9 @@ function baseAdapter () {
         this.gotoSubResources();
     },
 
+    this.isAsynchable = function() {
+        return false;
+    }
 
     this.prompt = function(context, resourceName, subResourceName, params, cb) {
         var config = context.getConfig(resourceName);
