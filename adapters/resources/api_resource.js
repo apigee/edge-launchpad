@@ -27,7 +27,7 @@ function build(context,resourceName,subResourceName, params, cb) {
 		} else {
 			lib.print('info','Dependencies resolved successful')
 			self.gotoSubResources('build', context, resourceName, subResourceName, params, function (err, result) {
-				cb(err, result)
+				cb(err, result);
 			})
 		}
 	})
