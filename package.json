@@ -1,4 +1,5 @@
 {
+  "main": "./gulpfile.js",
   "dependencies": {
     "apigeetool": "^0.6.6",
     "async": "^2.1.4",
