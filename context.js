@@ -28,8 +28,8 @@ function context(config, env) {
 
         try {
             var current_dir         = process.cwd();
-            var config_file_path    = path.join(current_dir, config)
-            configObj = yaml.safeLoad(fs.readFileSync(config_file_path, 'utf8'));
+            var config_file_path    = path.join(current_dir, config);
+            configObj               = yaml.safeLoad(fs.readFileSync(config_file_path, 'utf8'));
         } catch(e) {
             console.log('ERROR reading config file');
         }
@@ -38,6 +38,20 @@ function context(config, env) {
 
     } else {
         this.config                 = config;
+    }
+
+    this.loadConfiguration = function (resourceName) {
+        var config                  = this.getConfig(resourceName)
+        var configurations          = config.properties.configurations
+
+        for(var i=0; i<configurations.length; i++){
+            if(configurations[i].env == this.getEnvironment()){
+                var keys            = Object.keys(configurations[i])
+                for(var j=0; j<keys.length; j++){
+                    this.setVariable(keys[j], configurations[i][keys[j]])
+                }
+            }
+        }
     }
 
     this.getVariable = function (variableName) {
