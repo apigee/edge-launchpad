@@ -94,7 +94,6 @@ function delete_product(item, callback) {
 	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
 	sdk.deleteProduct(opts)
-	sdk.deleteProduct(opts)
 		.then(function(result){
 			//cache create success
 			lib.print('info', 'deleted product ' + item.name)

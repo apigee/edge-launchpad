@@ -40,6 +40,8 @@ function manager() {
 
                 var resourceName        = config[i].name;
 
+                context.loadConfiguration(resourceName);
+
                 adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
                         cb(err, result)
@@ -47,6 +49,8 @@ function manager() {
                 });
             }
         } else if (!subResourceName) {
+            context.loadConfiguration(resourceName);
+
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
 
@@ -56,6 +60,8 @@ function manager() {
                 });
             });
         } else {
+            context.loadConfiguration(resourceName);
+
             var subResourceType         = config.type;
             // to get resource type
             var config                  = context.getConfig(resourceName, null);

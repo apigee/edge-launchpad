@@ -12,10 +12,13 @@ var context
 var manager
 
 // TODO: cache creation with cache properties
-// TODO: data load
-// TODO: standardize extract variables
-// TODO: don't use spawn for NPM install
+// TODO: standardize extract variables (discuss with muthu)
 // TODO: standardize sequential execution of tasks
+// TODO: constants to diff file eg. baasLoadData.js limit=200
+// TODO: p1 literal
+// TODO: p1 index.js
+// TODO: org, data source
+
 
 gulp.task('init', function() {
     if (argv.env)
