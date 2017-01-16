@@ -8,34 +8,33 @@ resources:
     - name: env
       prompt: Edge Org Environment
     - name: usergrid_org
-      prompt: App services org name
+      prompt: BaaS services org name
     - name: usergrid_app
-      prompt: App services app name
+      prompt: BaaS services app name
     - name: usergrid_client_id
       prompt: App services App Client Id
     - name: usergrid_secret
       prompt: App services App Client Secret
     configurations:
     - env: test
-      external_url: http://some-test.com
+      baas_host: https://apibaas-trial.apigee.net
+      usergrid_org: camaro
+      usergrid_app: open_bank
     - env : prod
-      externam_url: http://some-prod.com
+      external_url: https://apibaas-trial.apigee.net
 
     script: gulpfile.js
-    basePath: /Users/muthu/Documents/muthu/work/test/openbank
+    basePath: /Users/gauthamvk/apigee/git/openbank-fork
     dependencies:
 #    - name: oauth
 #      type: proxy
 #      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
 #      version: v1.0.0
-    - name: session
-      type: proxy
-      url: git@revision.aeip.apigee.net:solution-commons/session.git
-      version: v1.0.0
-#    - name: oauth
-#      type: userinfo
-#      url: git@revision.aeip.apigee.net:solution-commons/oauth.git
+#    - name: session
+#      type: proxy
+#      url: git@revision.aeip.apigee.net:solution-commons/session.git
 #      version: v1.0.0
+
 #    - name: authentication-connector
 #      type: proxy
 #      url: git@revision.aeip.apigee.net:solution-commons/authentication-connector.git
@@ -51,6 +50,30 @@ resources:
       appClientId: '{{usergrid_client_id}}'
       appSecret: '{{usergrid_secret}}'
     subResources:
+    - name: baas_data_load
+      type: baasLoadData
+      items:
+      - name: banks
+        permissions: ['get,post,delete:banks','get,post,delete:banks/*','get,post,delete:banks/**']
+      - name: transactions
+        permissions: ['get,post,delete:transactions','get,post,delete:transactions/*','get,post,delete:transactions/**']
+      - name: accounts
+        file: setup/data/accounts.json
+        permissions: ['get,post,delete:accounts','get,post,delete:accounts/*','get,post,delete:accounts/**']
+      - name: customers
+        file: setup/data/customers.json
+        permissions: ['get,post,delete:customers','get,post,delete:customers/*','get,post,delete:customers/**']
+      - name: locations
+        file: setup/data/locations.json
+        permissions: ['get,post,delete:locations','get,post,delete:locations/*','get,post,delete:locations/**']
+      - name: products
+        file: setup/data/products.json
+        permissions: ['get,post,delete:products','get,post,delete:products/*','get,post,delete:products/**']
+    - name: create_connections
+      type: baasConnection
+      items:
+      - name: connections
+        file: setup/connections.json
     - name: cacheResources
       type: cache
       items:

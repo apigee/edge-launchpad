@@ -2,6 +2,7 @@ var fs                              = require('fs')
 var baseAdapter                     = require('./baseAdapter')
 var lodash 			                = require('lodash')
 var lib                             = require('./lib')
+var path                            = require('path')
 
 var instance;
 
@@ -17,7 +18,7 @@ function getManager() {
 function manager() {
 
     this.isDebug                    = true;
-    this.adapters                   = JSON.parse(fs.readFileSync('./config/adapters.json', 'utf8'));
+    this.adapters                   = JSON.parse(fs.readFileSync(path.join(__dirname,'config/adapters.json'), 'utf8'));
 
     this.doTask = function(taskName, context, resourceName, subResourceName, params, cb ) {
 
@@ -102,7 +103,7 @@ function manager() {
         this.adapters['.'] = baseAdapter;
     }
 
-    this.loadAdapters('./config/adapters.json');
+    this.loadAdapters(path.join(__dirname, 'config/adapters.json'));
 }
 
 /*
