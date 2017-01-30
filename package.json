@@ -20,5 +20,21 @@
   },
   "devDependencies": {
     "gulp": "^3.9.1"
-  }
+  },
+  "name": "launchpad",
+  "version": "1.0.0",
+  "description": "deploy solutions",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@revision.aeip.apigee.net:solution-commons/launchpad.git"
+  },
+  "keywords": [
+    "solutions",
+    "deploy"
+  ],
+  "author": "",
+  "license": "ISC"
 }
