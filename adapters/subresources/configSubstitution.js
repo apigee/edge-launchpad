@@ -2,6 +2,7 @@ var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var sdk 			= apigeetool.getPromiseSDK()
 var path            = require('path')
+var mustache        = require('mustache')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -37,7 +38,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
         }
 
         var toReplace   = items[i].name
-        var replaceBy   = context.getVariable(items[i].value)
+        var replaceBy   = mustache.render(items[i].value, context.getAllVariables())
 
         if(!replaceBy){
             lib.print('ERROR', '' + items[i].value +' not found in context')

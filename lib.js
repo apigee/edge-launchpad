@@ -5,6 +5,7 @@ var mustache 		= require('mustache')
 var prompt_lib		= require('prompt')
 var child_process   = require('child_process')
 var gutil 			= require('gulp-util')
+var zipdir          = require('zip-dir');
 
 function replace_variables(paths, inject_object) {
 	for(var i=0; i<paths.length; i++){
@@ -146,8 +147,15 @@ function normalize_data(obj) {
 	return obj
 }
 
+function zip(dir, cb) {
+    zipdir(dir, function (err, buffer) {
+        cb(buffer)
+    });
+}
+
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
 exports.print 					= print
 exports.normalize_data 			= normalize_data
+exports.zip                     = zip

@@ -1,7 +1,7 @@
 var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
-var lodash         = require('lodash')
+var lodash          = require('lodash')
 
 var sdk 			= apigeetool.getPromiseSDK()
 

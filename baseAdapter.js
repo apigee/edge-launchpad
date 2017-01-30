@@ -80,7 +80,6 @@ function baseAdapter () {
                     var adapter                 = manager.getAdapter(resourceType, subResourceType);
 
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                        lib.print("info","in return of doTask: " + subResource.name);
                         if(!err) {
                            callback()
                        } else {
@@ -90,8 +89,11 @@ function baseAdapter () {
                 },
 
                 function (err) {
+                    if(taskName.toUpperCase() == 'CLEAN'){
+                        subResources.reverse();
+                    }
+
                     if(!err) {
-                        lib.print("info","In return of async eachSeries");
                         cb()
                     } else {
                         lib.print('ERROR',err);
@@ -101,9 +103,6 @@ function baseAdapter () {
                 }
             );
 
-            if(taskName.toUpperCase() == 'CLEAN'){
-                subResources.reverse();
-            }
 
 
             //use promise - synchronous invocation
