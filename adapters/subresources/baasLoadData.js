@@ -8,6 +8,8 @@ var fs              = require('fs-extra')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
+var LIMIT = 200
+
 var adapter = function () {
     this.clean 			= clean
     this.build 			= build
@@ -192,7 +194,7 @@ function delete_collection(item, callback) {
     var baas_org        = context.getVariable('usergrid_org')
     var baas_app        = context.getVariable('usergrid_app')
 
-    var uri             = context.getVariable('baas_host') + '/' + baas_org  + '/' + baas_app + '/' + item.name +'?ql=select *&limit=200&access_token=' + token
+    var uri             = context.getVariable('baas_host') + '/' + baas_org  + '/' + baas_app + '/' + item.name +'?ql=select *&limit='+ LIMIT +'&access_token=' + token
     var options = {
         uri: uri,
         method: 'DELETE'

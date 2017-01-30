@@ -5,6 +5,7 @@
 var yaml                            = require('js-yaml');
 var fs                              = require('fs');
 var path                            = require('path');
+var mustache                        = require('mustache');
 
 var instance;
 
@@ -21,6 +22,7 @@ function context(config, env) {
     this.variables                  = {};
     this.env                        = env;
     this.config                     = {};
+    this.cmdLineVariables           = {};
 
     //TODO:if object assign as it is; if text, load (find file type and load accordingly) and assign
     if (typeof config === 'string' || config instanceof String ) {
@@ -40,20 +42,6 @@ function context(config, env) {
         this.config                 = config;
     }
 
-    this.loadConfiguration = function (resourceName) {
-        var config                  = this.getConfig(resourceName)
-        var configurations          = config.properties.configurations
-
-        for(var i=0; i<configurations.length; i++){
-            if(configurations[i].env == this.getEnvironment()){
-                var keys            = Object.keys(configurations[i])
-                for(var j=0; j<keys.length; j++){
-                    this.setVariable(keys[j], configurations[i][keys[j]])
-                }
-            }
-        }
-    }
-
     this.getVariable = function (variableName) {
         // variables[variableName] if not found return undefined
         if (!variableName) return undefined;
@@ -62,16 +50,58 @@ function context(config, env) {
         return this.variables[vName];
     }
 
-    this.getAllVariables = function(){
-        return this.variables
-    }
-
     this.setVariable = function(name, value) {
         this.variables[name]             = value;
     }
 
     this.cleanVariables = function(name, value) {
         this.variables                   = {}
+    }
+
+    this.getAllVariables = function(){
+        return this.variables
+    }
+
+    this.loadCmdLineVariables = function (){
+        var cmd_variables = this.cmdLineVariables
+
+        for (var i=0; i<Object.keys(cmd_variables).length; i++) {
+            this.setVariable(Object.keys(cmd_variables)[i], cmd_variables[Object.keys(cmd_variables)[i]])
+        }
+    }
+    this.loadOrgDetail = function (resourceName) {
+        var config                  = this.getConfig(resourceName)
+        var orgDetails              = config.properties.edgeOrg
+
+        if(orgDetails && orgDetails.org)
+            this.setVariable('org', mustache.render(orgDetails.org, this.getAllVariables()))
+
+        if(orgDetails && orgDetails.env)
+            this.setVariable('env', mustache.render(orgDetails.env, this.getAllVariables()))
+
+        if(orgDetails && orgDetails.token)
+            this.setVariable('token', mustache.render(orgDetails.token, this.getAllVariables()))
+
+        if(orgDetails && orgDetails.username)
+            this.setVariable('username', mustache.render(orgDetails.username, this.getAllVariables()))
+
+        if(orgDetails && orgDetails.password)
+            this.setVariable('password', mustache.render(orgDetails.password, this.getAllVariables()))
+
+    }
+
+    this.loadConfiguration = function (resourceName) {
+        var config                  = this.getConfig(resourceName)
+        var configurations          = config.properties.configurations
+
+        for(var i=0; i<configurations.length; i++){
+            if(configurations[i].env == this.getEnvironment()){
+                var keys            = Object.keys(configurations[i])
+                for(var j=0; j<keys.length; j++){
+                    this.setVariable(keys[j], mustache.render(configurations[i][keys[j]], this.getAllVariables()))
+                }
+            }
+        }
     }
 
     this.getConfig = function (resourceName, subResourceName) {
@@ -108,7 +138,8 @@ function context(config, env) {
 
         //var edgeOrg                     = this.config.resources.properties.edgeOrg;
 
-        deploy_info.organization         = this.getVariable('org');
+        deploy_info.baseuri             = this.getVariable('edge_host');
+        deploy_info.organization        = this.getVariable('org');
         //deploy_info.token               = this.getVariable('token');
         deploy_info.username            = this.getVariable('username');
         deploy_info.password            = this.getVariable('password');
@@ -119,6 +150,10 @@ function context(config, env) {
 
     this.getBasePath = function (resourceName) {
         return this.getConfig(resourceName).properties.basePath
+    }
+
+    this.setCmdLineVariables = function (args_passed){
+        this.cmdLineVariables           = args_passed;
     }
 }
 

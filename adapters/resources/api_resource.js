@@ -16,6 +16,7 @@ var adapter = function () {
 }
 
 function build(context,resourceName,subResourceName, params, cb) {
+
 	var self	= this
 	var config 	= context.getConfig(resourceName)
 

@@ -18,11 +18,19 @@ resources:
     configurations:
     - env: test
       baas_host: https://apibaas-trial.apigee.net
+      edge_host: https://api.enterprise.apigee.com
       usergrid_org: camaro
       usergrid_app: open_bank
     - env : prod
-      external_url: https://apibaas-trial.apigee.net
-
+      baas_host: https://apibaas-trial.apigee.net
+      edge_host: https://api.enterprise.apigee.com
+    edgeOrg:
+    dataSources:
+    - name: default
+      orgName: '{{usergrid_org}}'
+      appName: '{{usergrid_app}}'
+      appClientId: '{{usergrid_client_id}}'
+      appSecret: '{{usergrid_secret}}'
     script: gulpfile.js
     basePath: /Users/gauthamvk/apigee/git/openbank-fork
     dependencies:
@@ -39,16 +47,6 @@ resources:
 #      type: proxy
 #      url: git@revision.aeip.apigee.net:solution-commons/authentication-connector.git
 #     version: v1.0.0
-    edgeOrg:
-      orgName:'{{organization}}'
-      env:'{{environment}}'
-      token:'{{token}}'
-    dataSources:
-    - name: default
-      orgName: '{{usergrid_org}}'
-      appName: '{{usergrid_app}}'
-      appClientId: '{{usergrid_client_id}}'
-      appSecret: '{{usergrid_secret}}'
     subResources:
     - name: baas_data_load
       type: baasLoadData
@@ -86,18 +84,15 @@ resources:
     - name: replaceorgvalues
       type: configSubstitutions
       items:
-      - name: baas_org
+      - name: appBasePath
         filePaths: ['src/gateway/accounts-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/locations-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/products-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/transfers-connector/target/apiproxy/policies/Callout.AddTransactionToAccount.xml','src/gateway/transfers-connector/target/apiproxy/targets/default.xml','src/gateway/userinfo/target/apiproxy/policies/Callout.GetUserDetails.xml','src/gateway/authentication-connector/target/apiproxy/targets/default.xml']
-        value: usergrid_org
-      - name: baas_app
-        filePaths: ['src/gateway/accounts-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/locations-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/products-connector/target/apiproxy/policies/Assign.TargetURL.xml','src/gateway/transfers-connector/target/apiproxy/policies/Callout.AddTransactionToAccount.xml','src/gateway/transfers-connector/target/apiproxy/targets/default.xml','src/gateway/userinfo/target/apiproxy/policies/Callout.GetUserDetails.xml','src/gateway/authentication-connector/target/apiproxy/targets/default.xml']
-        value: usergrid_app
-      - name: org
-        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign-JWT-Payload.xml','src/gateway/oauth/target/apiproxy/policies/Assign-ID-Token-Payload-authorization_code-flow.xml','src/gateway/oauth/target/apiproxy/policies/Redirect-Login-Application.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
-        value: org
-      - name: env
-        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Assign-JWT-Payload.xml','src/gateway/oauth/target/apiproxy/policies/Assign-ID-Token-Payload-authorization_code-flow.xml','src/gateway/oauth/target/apiproxy/policies/Redirect-Login-Application.xml','src/gateway/transfers/target/apiproxy/policies/Assign.RedirectConsentApp.xml']
-        value: env
+        value: 'https://api.usergrid.com/{{ usergrid_org }}/{{ usergrid_app }}'
+      - name: redirectConsentOauth
+        filePaths: ['src/gateway/oauth/target/apiproxy/policies/Redirect-Login-Application.xml']
+        value: 'https://{{ org }}-{{ env }}.apigee.net/internal/consent?sessionid={messageid}'
+      - name: redirectConsentTransfers
+        filePaths: ['src/gateway/transfers/target/apiproxy/target/default.xml']
+        value: 'https://{{ org }}-{{ env }}.apigee.net/internal/transfer-consent?sessionid={messageid}'
     - name: bank_apis
       type: proxy
       items:

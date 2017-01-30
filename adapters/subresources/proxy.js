@@ -7,6 +7,7 @@ var child_process	= require('child_process')
 var lib 			= require('../../lib')
 var async 			= require('async')
 var lodash 			= require('lodash')
+var request 		= require('request')
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -94,6 +95,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 		lodash.merge(items[i], deploy_info)
 		items[i].api		= items[i].name
 		items[i].directory 	= path.join(context.getBasePath(resourceName), 'src/gateway', items[i].name, 'target')
+		items[i].context 	= context
 
 		if(fs.existsSync(path.join(context.getBasePath(resourceName), 'src/gateway', items[i].name, 'target/apiproxy/target/node'))){
 			//items[i]['resolve-modules'] = true
@@ -115,8 +117,66 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 function deploy_proxy(opts, callback) {
 	lib.print('info', 'deploying proxy ' + opts.name)
+	var context 			= opts.context
 	delete opts.context
 
+//	curl -X POST -H ":" \
+//https://api.enterprise.apigee.com/v1/o/{org_name}/environments/{env-name}/apis/{api_name}/revisions/{revision_number}/deployments \
+//	-u email:password
+	//curl -X POST -u email:password -F "file=@apiproxy.zip" "https://api.enterprise.apigee.com/v1/organizations/{org-name}/apis?action=import&name=example"
+
+    lib.zip(opts.directory, function (zip_buffer) {
+
+        var options = {
+            uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/apis?action=import&name=' + opts.api,
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/octet-stream'
+            },
+            auth: {
+                user: opts.username,
+                password: opts.password
+            },
+            body: zip_buffer
+
+        }
+
+        request(options, function (error, response, body) {
+            if (!error && (response.statusCode == 200 || response.statusCode == 201)) {
+                var data = JSON.parse(body)
+                var revision = data.revision
+
+                var options = {
+                    uri: 'https://api.enterprise.apigee.com/v1/o/' + opts.organization + '/environments/' + opts.environments + '/apis/' + opts.api + '/revisions/' + revision + '/deployments?override=true',
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded'
+                    },
+                    auth: {
+                        user: opts.username,
+                        password: opts.password
+                    }
+
+                }
+
+                request(options, function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                        lib.print('info', 'deployed proxy ' + opts.name)
+                        callback()
+                    } else {
+                        lib.print('error', 'error deploying proxy ' + opts.name)
+                        lib.print('ERROR', JSON.stringify(response))
+                        callback()
+                    }
+                })
+
+            } else {
+                lib.print('ERROR', JSON.stringify(response))
+                callback()
+            }
+        })
+    })
+/*
 	sdk.deployProxy(opts).then(
 		function(result){
 			//deploy success
@@ -129,6 +189,8 @@ function deploy_proxy(opts, callback) {
 			lib.print('ERROR', err)
 			callback()
 		})
+*/
+
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {

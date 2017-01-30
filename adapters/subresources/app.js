@@ -69,7 +69,15 @@ function extract_response(context, collect_info, result) {
 	for (var i=0; i<collect_info.length; i++){
 		lib.print('info', 'extracting ' + collect_info[i]['from'] + ' from result')
 		// TODO how to extract values
-		var value = result.credentials[0][[collect_info[i]['from']]]
+
+		var pattern = collect_info[i]['from'].split('.')
+
+		var value = result
+
+		for (var j=0; j<pattern.length; j++) {
+			value = data[pattern[j]]
+		}
+
 		context.setVariable(collect_info[i]['to'], value)
 	}
 }

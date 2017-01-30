@@ -33,7 +33,7 @@ function manager() {
             return
         }
 
-        //TODO use promise here, clean vari
+        //TODO use promise here, clean context variables
         if(!resourceName && !subResourceName) {
             for(var i=0; i<config.length; i++){
                 var resourceType        = config[i].type;
@@ -41,27 +41,34 @@ function manager() {
 
                 var resourceName        = config[i].name;
 
-                context.loadConfiguration(resourceName);
+                context.loadOrgDetail(resourceName);
+                context.loadCmdLineVariables();
 
                 adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
+                    context.loadConfiguration(resourceName);
+
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
                         cb(err, result)
                     });
                 });
             }
         } else if (!subResourceName) {
-            context.loadConfiguration(resourceName);
+            context.loadOrgDetail(resourceName);
+            context.loadCmdLineVariables();
 
             var resourceType            = config.type;
             var adapter                 = this.getAdapter(resourceType);
 
             adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
+                context.loadConfiguration(resourceName);
+
                 adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
                     cb(err, result)
                 });
             });
         } else {
-            context.loadConfiguration(resourceName);
+            context.loadOrgDetail(resourceName);
+            context.loadCmdLineVariables();
 
             var subResourceType         = config.type;
             // to get resource type
@@ -70,6 +77,8 @@ function manager() {
             var adapter                 = this.getAdapter(resourceType, subResourceType);
 
             adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
+                context.loadConfiguration(resourceName);
+
                 adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
                     cb(err, result)
                 });
