@@ -12,13 +12,13 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-	lib.print('INFO','building product resources')
+	lib.print('meta','building product resources')
 	cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
 	//opts = lib.build_opts(context, resourceName, subResourceName)
-	lib.print('INFO','deploying product resources')
+	lib.print('meta','deploying product resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
@@ -62,7 +62,7 @@ function create_product(item, callback) {
 
 function clean(context, resourceName, subResourceName, params, cb) {
 	//opts = lib.build_opts(context, resourceName, subResourceName)
-	lib.print('INFO','cleaning product resources')
+	lib.print('meta','cleaning product resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 

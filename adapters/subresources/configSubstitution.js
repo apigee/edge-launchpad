@@ -17,7 +17,7 @@ function build(context, resourceName, subResourceName, params, cb) {
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','deploying config substitution')
+    lib.print('meta','deploying config substitution')
 
     var config          = context.getConfig(resourceName, subResourceName)
 

@@ -12,13 +12,13 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-	lib.print('INFO','building developer resources')
+	lib.print('meta','building developer resources')
 	cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
 	//opts = lib.build_opts(context, resourceName, subResourceName)
-	lib.print('INFO','deploying developer resources')
+	lib.print('meta','deploying developer resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
@@ -32,7 +32,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 	async.each(items, create_developer, function(err){
 		if(err){
-			lib.print('ERRROR', err)
+			lib.print('ERROR', err)
 			cb()
 		} else {
 			cb()
@@ -51,11 +51,11 @@ function create_developer(item, callback) {
 	sdk.createDeveloper(opts)
 		.then(function(result){
 			//cache create success
-			lib.print('info', 'created product ' + item.email)
+			lib.print('info', 'created developer ' + item.email)
 			callback()
 		},function(err){
 			//cache create failed
-			lib.print('error', 'error creating product ' + item.email)
+			lib.print('error', 'error creating developer ' + item.email)
 			lib.print('ERROR', err)
 			callback()
 		}) ;
@@ -63,7 +63,7 @@ function create_developer(item, callback) {
 
 function clean(context, resourceName, subResourceName, params, cb) {
 	//opts = lib.build_opts(context, resourceName, subResourceName)
-	lib.print('INFO','cleaning developer resources')
+	lib.print('meta','cleaning developer resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 

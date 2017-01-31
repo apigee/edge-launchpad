@@ -75,8 +75,6 @@ function baseAdapter () {
                     var subResourceType         = subResource.type;
                     var subResourceName         = subResource.name;
 
-                    console.log(taskName +'ing : '+ subResourceName);
-
                     var adapter                 = manager.getAdapter(resourceType, subResourceType);
 
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {

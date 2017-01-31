@@ -15,12 +15,12 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','building connection resources')
+    lib.print('meta','building connection resources')
     cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','deploying connection resources')
+    lib.print('meta','deploying connection resources')
 
     var config          = context.getConfig(resourceName, subResourceName)
 
@@ -105,7 +105,7 @@ function create_connection(item, callback) {
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','cleaning connection resources')
+    lib.print('meta','cleaning connection resources')
 
     var config          = context.getConfig(resourceName, subResourceName)
 

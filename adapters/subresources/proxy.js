@@ -18,7 +18,7 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-	lib.print('info','building proxy')
+	lib.print('meta','building proxy')
 
 	var config          	= context.getConfig(resourceName, subResourceName)
 
@@ -83,7 +83,7 @@ function build_proxy(item, callback) {
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-	lib.print('info','deploying proxy')
+	lib.print('meta','deploying proxy')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
@@ -194,7 +194,7 @@ function deploy_proxy(opts, callback) {
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
-	lib.print('info','cleaning proxy resource')
+	lib.print('meta','cleaning proxy resource')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
