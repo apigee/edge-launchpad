@@ -1,10 +1,11 @@
-var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
-var sdk 			= apigeetool.getPromiseSDK()
 var path            = require('path')
 var mustache        = require('mustache')
 
-var sdk 			= apigeetool.getPromiseSDK()
+mustache.escape = function (value) {
+    return value;
+};
+
 
 var adapter = function () {
     this.clean 			= clean
