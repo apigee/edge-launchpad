@@ -1,8 +1,8 @@
 var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
-var lodash         = require('lodash')
-
+var lodash          = require('lodash')
+var request         = require('request')
 var sdk 			= apigeetool.getPromiseSDK()
 
 var adapter = function () {
@@ -12,12 +12,12 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','building cache resources')
+    lib.print('meta','building cache resources')
     cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','deploying cache resources')
+    lib.print('meta','deploying cache resources')
     var config          = context.getConfig(resourceName, subResourceName)
 
     var items           = config.items
@@ -64,7 +64,7 @@ function create_cache(item, callback) {
 
 function clean(context, resourceName, subResourceName, params, cb) {
     //opts = lib.build_opts(context, resourceName, subResourceName)
-    lib.print('INFO','cleaning cache resources')
+    lib.print('meta','cleaning cache resources')
 
     var config          = context.getConfig(resourceName, subResourceName)
 
@@ -74,6 +74,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
     for (var i=0; i< items.length; i++) {
         lodash.merge(items[i], deploy_info)
+        items[i].context = context
     }
 
     async.each(items, delete_cache, function(err){
@@ -89,21 +90,35 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 function delete_cache(item, callback) {
     var opts             = item
-
+    var context          = item.context
     opts.cache           = item.name
     lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
-    sdk.deletecache(opts)
-        .then(function(result){
-            //cache create success
-            lib.print('info', 'deleted cache ' + item.name)
+    delete item.context
+
+    var options = {
+        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/caches/' + opts.cache +  '/entries?action=clear',
+        method: 'POST',
+        headers: {
+        },
+        auth: {
+            user: opts.username,
+            password: opts.password
+        }
+    }
+
+    request(options, function (error, response, body) {
+        if (!error) {
+            lib.print('info', 'cleared cache ' + item.name)
             callback()
-        },function(err){
+        } else {
             //cache create failed
-            lib.print('error', 'error deleting cache ' + item.name)
-            lib.print('ERRROR', err)
+            lib.print('error', 'error clearing cache ' + item.name)
+            lib.print('ERROR', error)
             callback()
-        }) ;
+        }
+    });
+
 }
 
 exports.adapter 			= adapter

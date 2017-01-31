@@ -17,12 +17,12 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','building data resources')
+    lib.print('meta','building data resources')
     cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','deploying data resources')
+    lib.print('meta','deploying data resources')
 
     var config          = context.getConfig(resourceName, subResourceName)
 
@@ -149,7 +149,7 @@ function create_collection(item, callback) {
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
-    lib.print('INFO','cleaning data resources')
+    lib.print('meta','cleaning data resources')
 
     var config          = context.getConfig(resourceName, subResourceName)
 

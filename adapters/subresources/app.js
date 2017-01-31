@@ -12,12 +12,12 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-	lib.print('INFO','building app resources')
+	lib.print('meta','building app resources')
 	cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-	lib.print('INFO','deploying app resources')
+	lib.print('meta','deploying app resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
@@ -66,25 +66,20 @@ function create_app(item, callback) {
 }
 
 function extract_response(context, collect_info, result) {
-	for (var i=0; i<collect_info.length; i++){
-		lib.print('info', 'extracting ' + collect_info[i]['from'] + ' from result')
-		// TODO how to extract values
-
-		var pattern = collect_info[i]['from'].split('.')
-
-		var value = result
-
-		for (var j=0; j<pattern.length; j++) {
-			value = data[pattern[j]]
-		}
-
-		context.setVariable(collect_info[i]['to'], value)
-	}
+    for (var i=0; i<collect_info.length; i++){
+        lib.print('info', 'extracting ' + collect_info[i]['from'] + ' from result')
+        var pattern = collect_info[i]['from'].split('.')
+        var value = result
+        for (var j=0; j<pattern.length; j++) {
+			value = value[pattern[j]]
+        }
+        context.setVariable(collect_info[i]['to'], value)
+    }
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
 	//opts = lib.build_opts(context, resourceName, subResourceName)
-	lib.print('INFO','cleaning app resources')
+	lib.print('meta','cleaning app resources')
 
 	var config          = context.getConfig(resourceName, subResourceName)
 

@@ -5,9 +5,13 @@ var mustache 		= require('mustache')
 var prompt_lib		= require('prompt')
 var child_process   = require('child_process')
 var gutil 			= require('gulp-util')
-var zipdir          = require('zip-dir');
+var zipdir          = require('zip-dir')
 
 function replace_variables(paths, inject_object) {
+    mustache.escape = function (value) {
+        return value;
+    };
+
 	for(var i=0; i<paths.length; i++){
 		var path_to_template = paths[i]
 
@@ -104,6 +108,8 @@ function print(level, msg){
 		gutil.log(gutil.colors.red(msg));
 	else if(level.toUpperCase() == 'INFO')
 		gutil.log(gutil.colors.green(msg));
+	else if(level.toUpperCase() == 'META')
+        gutil.log(gutil.colors.yellow(msg));
 	else
 		console.log(msg)
 }
