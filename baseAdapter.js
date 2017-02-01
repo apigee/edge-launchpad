@@ -141,7 +141,7 @@ function baseAdapter () {
             var required_values = [];
 
             for(var i=0; i<inputs.length; i++){
-                if(!context.getVariable(inputs[i].name)) {
+                if(!context.getVariable(inputs[i].name) && !context.getVariable(inputs[i].ifNotPresent)) {
                     required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string'});
                 }
             }

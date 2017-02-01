@@ -134,12 +134,17 @@ function deploy_proxy(opts, callback) {
                 'Content-type': 'application/octet-stream'
             },
             auth: {
-                user: opts.username,
-                password: opts.password
             },
             body: zip_buffer
 
         }
+
+        if(opts.token){
+        	options.auth.bearer = opts.token
+		} else {
+        	options.auth.username = opts.username
+			options.auth.password = opts.password
+		}
 
         request(options, function (error, response, body) {
             if (!error && (response.statusCode == 200 || response.statusCode == 201)) {
@@ -153,10 +158,15 @@ function deploy_proxy(opts, callback) {
                         'Content-type': 'application/x-www-form-urlencoded'
                     },
                     auth: {
-                        user: opts.username,
-                        password: opts.password
                     }
 
+                }
+
+                if(opts.token){
+                    options.auth.bearer = opts.token
+                } else {
+                    options.auth.username = opts.username
+                    options.auth.password = opts.password
                 }
 
                 request(options, function (error, response, body) {
@@ -165,13 +175,13 @@ function deploy_proxy(opts, callback) {
                         callback()
                     } else {
                         lib.print('error', 'error deploying proxy ' + opts.name)
-                        lib.print('ERROR', JSON.stringify(response))
+                        lib.print('error', JSON.stringify(response))
                         callback()
                     }
                 })
 
             } else {
-                lib.print('ERROR', JSON.stringify(response))
+                lib.print('error', JSON.stringify(response))
                 callback()
             }
         })
@@ -225,7 +235,7 @@ function clean_proxy(item, callback) {
 	fs.emptyDir(proxy_target_dir, function(err){
 		if (err) {
 			lib.print('error', 'error cleaning proxy ' + item.name)
-			lib.print('ERROR', err)
+			lib.print('error', err)
 			callback()
 		} else {
 			lib.print('info', 'cleaned proxy ' + item.name)

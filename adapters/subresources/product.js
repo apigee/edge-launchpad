@@ -76,7 +76,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	async.each(items, delete_product, function(err){
 		if(err){
-			lib.print('ERRROR', err)
+			lib.print('ERROR', err)
 			cb()
 		} else {
 			cb()

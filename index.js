@@ -11,12 +11,12 @@ var prompt              = require('gulp-prompt');
 // TODO: p2 cache creation with cache properties
 // TODO: p2 standardize sequential execution of tasks
 // TODO: p2 data source many
-// TODO: p2 testing configuration
 // TODO: p2 generate load for generating initial report
 // TODO: p2 license check
 // TODO: p2 deploy individual dependency from its gulp
+// TODO: p2 --item =
+// TODO: p2 --subresources=configSubstitution,deployBankApi
 // TODO: p1 final test
-// TODO: p1 deploy stops after app deploy
 
 
 module.exports = function(gulp){

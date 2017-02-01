@@ -134,15 +134,16 @@ function context(config, env) {
 
     this.getDeploymentInfo = function () {
         var deploy_info                 = {};
-        // TODO get from prompt variables
-
-        //var edgeOrg                     = this.config.resources.properties.edgeOrg;
 
         deploy_info.baseuri             = this.getVariable('edge_host');
         deploy_info.organization        = this.getVariable('org');
-        //deploy_info.token               = this.getVariable('token');
-        deploy_info.username            = this.getVariable('username');
-        deploy_info.password            = this.getVariable('password');
+        var token                       = this.getVariable('token');
+        if(token){
+            deploy_info.token               = token;
+        } else {
+            deploy_info.username            = this.getVariable('username');
+            deploy_info.password            = this.getVariable('password');
+        }
         deploy_info.environments        = this.getVariable('env').split(',');
 
         return deploy_info;
