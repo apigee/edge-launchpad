@@ -1,7 +1,7 @@
 {
   "main": "./index.js",
   "dependencies": {
-    "apigeetool": "^0.6.6",
+    "apigeetool": "git+https://github.com/kidiyoor/apigeetool-node.git#master",
     "async": "^2.1.4",
     "extract-zip": "^1.6.0",
     "fs-extra": "^1.0.0",
