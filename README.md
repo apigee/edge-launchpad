@@ -18,6 +18,9 @@ eg1 : gulp deploy
 
 eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --resource openbank_apis
 
+
+NOTE : --strict is used to tell deploy script not to call other tasks internally, eg: 'gulp deploy' will also call clean and build. 
+
 -----------------
 
 
