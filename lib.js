@@ -159,9 +159,27 @@ function zip(dir, cb) {
     });
 }
 
+function filter_items(items, params) {
+	var output = []
+
+	if(params.items) {
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i]
+
+			if (params.items.indexOf(item.name) != -1)
+                output.push(items[i])
+        }
+    } else {
+        output = items
+	}
+
+	return output
+}
+
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
 exports.print 					= print
 exports.normalize_data 			= normalize_data
 exports.zip                     = zip
+exports.filter_items 			= filter_items
