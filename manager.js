@@ -3,6 +3,7 @@ var baseAdapter                     = require('./baseAdapter')
 var lodash 			                = require('lodash')
 var lib                             = require('./lib')
 var path                            = require('path')
+var async                           = require('async')
 
 var instance;
 
@@ -26,15 +27,15 @@ function manager() {
         //TODO call doTask on the adapter
         //TODO:check context and taskName
 
-        var config                  = context.getConfig(resourceName, subResourceName);
-
-        if(!config){
-            lib.print('error','ERROR retriving config, check parameters')
-            return
-        }
-
         //TODO use promise here, clean context variables
         if(!resourceName && !subResourceName) {
+            var config                  = context.getConfig(resourceName, subResourceName);
+
+            if(!config){
+                lib.print('error','ERROR retrieving config, check parameters')
+                return
+            }
+
             for(var i=0; i<config.length; i++){
                 var resourceType        = config[i].type;
                 var adapter             = this.getAdapter(resourceType);
@@ -53,6 +54,12 @@ function manager() {
                 });
             }
         } else if (!subResourceName) {
+            var config                  = context.getConfig(resourceName, subResourceName);
+
+            if(!config){
+                lib.print('error','ERROR retrieving config, check parameters')
+                return
+            }
             context.loadOrgDetail(resourceName);
             context.loadCmdLineVariables();
 
@@ -66,22 +73,40 @@ function manager() {
                     cb(err, result)
                 });
             });
+        } else if(subResourceName && !resourceName){
+            // error
+            console.log("resource name not provided");
         } else {
             context.loadOrgDetail(resourceName);
             context.loadCmdLineVariables();
 
-            var subResourceType         = config.type;
-            // to get resource type
-            var config                  = context.getConfig(resourceName, null);
-            var resourceType            = config.type;
-            var adapter                 = this.getAdapter(resourceType, subResourceType);
+            var subResourceItems = subResourceName.split(',')
+            var self                    = this;
 
-            adapter.doTask('PROMPT', context, resourceName, subResourceName, params, function (err, result) {
-                context.loadConfiguration(resourceName);
+            async.eachSeries(subResourceItems, function (item, callback) {
+                var config                  = context.getConfig(resourceName, item);
 
-                adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                    cb(err, result)
+                if(!config){
+                    lib.print('error','ERROR retrieving config, check parameters')
+                    return
+                }
+
+                var subResourceType         = config.type;
+                // to get resource type
+                var config                  = context.getConfig(resourceName, null);
+                var resourceType            = config.type;
+
+                var adapter                 = self.getAdapter(resourceType, subResourceType);
+
+                adapter.doTask('PROMPT', context, resourceName, item, params, function (err, result) {
+                    context.loadConfiguration(resourceName);
+
+                    adapter.doTask(taskName, context, resourceName, item, params, function (err, result) {
+                        callback(err, result);
+                    });
                 });
+            }, function(err, result){
+                cb(err, result)
             });
         }
     }

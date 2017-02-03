@@ -22,7 +22,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
-	var items           = config.items
+    var items           = lib.filter_items(config.items, params)
 
 	var deploy_info     = context.getDeploymentInfo()
 
@@ -67,7 +67,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	var config          = context.getConfig(resourceName, subResourceName)
 
-	var items           = config.items
+    var items           = lib.filter_items(config.items, params)
 
 	var deploy_info     = context.getDeploymentInfo()
 

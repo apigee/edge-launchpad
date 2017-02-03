@@ -5,14 +5,27 @@ var context_builder     = require('./context');
 var manager_builder     = require('./manager');
 var async               = require('async');
 var prompt              = require('gulp-prompt');
+/*
+gulp <deploy/build/clean>
+    --resource resource1
+    --subresource subresource1,subresource2
+    --item item1,item2
+    --strict
+    --env test
+    --config config.yml
+
+eg1 : gulp deploy
+eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --resource openbank_apis
+
+*/
 
 
 // TODO: p3 constants to diff file eg. baasLoadData.js limit=200
-// TODO: p2 cache creation with cache properties
 // TODO: p2 standardize sequential execution of tasks
 // TODO: p2 data source many
 // TODO: p2 generate load for generating initial report
 // TODO: p2 license check
+// TODO: p2 cache creation with cache properties
 // TODO: p2 deploy individual dependency from its gulp
 // TODO: p2 --item =
 // TODO: p2 --subresources=configSubstitution,deployBankApi
@@ -26,6 +39,7 @@ module.exports = function(gulp){
     var manager
     var strict
     var params              = {}
+    var item
 
     if (argv.env)
         env             = argv.env
@@ -35,6 +49,11 @@ module.exports = function(gulp){
 
     if(argv.strict)
         strict          = argv.strict
+
+    if(argv.item) {
+        item = argv.item
+        params.items = item.split(',')
+    }
 
     gulp.task('init', function() {
 
@@ -53,6 +72,7 @@ module.exports = function(gulp){
         delete args_passed['item']
 
         context.setCmdLineVariables(args_passed)
+
     });
 
     gulp.task('clean', ['init'], function (cb) {

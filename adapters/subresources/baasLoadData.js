@@ -26,7 +26,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
     var config          = context.getConfig(resourceName, subResourceName)
 
-    var items           = config.items
+    var items           = lib.filter_items(config.items, params)
 
     var client_id       = context.getVariable('usergrid_client_id')
     var client_secret   = context.getVariable('usergrid_secret')
@@ -153,7 +153,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
     var config          = context.getConfig(resourceName, subResourceName)
 
-    var items           = config.items
+    var items           = lib.filter_items(config.items, params)
 
     var client_id       = context.getVariable('usergrid_client_id')
     var client_secret   = context.getVariable('usergrid_secret')
