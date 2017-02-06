@@ -190,6 +190,20 @@ resources:
       - name: consent-app-transfers
 ```
 
+----------------
+
+## RELEASE
+
+### v1.0.0
+- initial release
+- basic functionality
+
+### v1.0.1
+- multiple items can be deployed
+- multiple subresources can be deployed from command line
+
+
+
 
 
 
