@@ -176,6 +176,25 @@ function filter_items(items, params) {
 	return output
 }
 
+function extract_response(context, collect_info, result) {
+    for (var i=0; i<collect_info.length; i++){
+        var pattern;
+
+		if(collect_info[i]['from'] && collect_info[i]['from'] != '')
+			pattern = collect_info[i]['from'].split('.')
+
+		var value = result
+
+		if(pattern != undefined) {
+            for (var j = 0; j < pattern.length; j++) {
+                value = value[pattern[j]]
+            }
+        }
+
+        context.setVariable(collect_info[i]['to'], value)
+    }
+}
+
 exports.replace_variables 		= replace_variables
 exports.npm_install_local_only	= npm_install_local_only
 exports.prompt 					= prompt
@@ -183,3 +202,4 @@ exports.print 					= print
 exports.normalize_data 			= normalize_data
 exports.zip                     = zip
 exports.filter_items 			= filter_items
+exports.extract_response 		= extract_response

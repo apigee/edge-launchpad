@@ -26,6 +26,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
     for (var i=0; i< items.length; i++) {
         lodash.merge(items[i], deploy_info)
+        items[i].context = context
     }
 
     async.each(items, create_cache, function(err){
@@ -41,16 +42,23 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 function create_cache(item, callback) {
     var opts             = item
+    var context          = item.context
 
     opts.cache           = item.name
     lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
     var environments    = item.environments
+
     for (var i=0; i<environments.length; i++){
         opts.environment = environments[i]
         sdk.createcache(opts)
             .then(function(result){
                 //cache create success
                 lib.print('info', 'created cache ' + item.name + ' for env ' + item.environment)
+
+                if(item.assignResponse && item.assignResponse.length > 0){
+                    lib.extract_response(context, item.assignResponse, result)
+                }
+
                 callback()
             },function(err){
                 //cache create failed
