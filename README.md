@@ -6,7 +6,7 @@ A deployment tool for apigee solutions. Helps orchestrating the deployement of a
 
 # DOCUMENTATION
 
-###Developer guide
+### Developer guide
 ref : https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvxKCi7vZOJbrSQ/edit?usp=sharing
 
 
