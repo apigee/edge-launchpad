@@ -4,6 +4,13 @@ A deployment tool for apigee solutions. Helps orchestrating the deployement of a
 
 ----------------
 
+# DOCUMENTATION
+
+### Developer guide
+ref : https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvxKCi7vZOJbrSQ/edit?usp=sharing
+
+
+----------------
 ## COMMAND
 
 gulp <deploy/build/clean>
@@ -25,7 +32,6 @@ NOTE : --strict is used to tell deploy script not to call other tasks internally
 
 
 ## TODO
-
 
 - p2 data source many
 
@@ -189,6 +195,20 @@ resources:
       - name: consent-app
       - name: consent-app-transfers
 ```
+
+----------------
+
+## RELEASE
+
+### v1.0.0
+- initial release
+- basic functionality
+
+### v1.0.1
+- multiple items can be deployed
+- multiple subresources can be deployed from command line
+
+
 
 
 
