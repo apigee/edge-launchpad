@@ -208,6 +208,9 @@ resources:
 - multiple items can be deployed
 - multiple subresources can be deployed from command line
 
+### v1.0.2
+- new subResource localCommand added
+- assignResponse subResource is genralized for app, product,proxy,cache, developer subresources
 
 
 
