@@ -54,7 +54,7 @@ function create_app(item, callback) {
 			//cache create success
 			lib.print('info', 'created app ' + item.name)
 			if(item.assignResponse && item.assignResponse.length > 0){
-				extract_response(context, item.assignResponse, result)
+				lib.extract_response(context, item.assignResponse, result)
 			}
 			callback()
 		},function(err){
@@ -63,18 +63,6 @@ function create_app(item, callback) {
 			lib.print('ERROR', err)
 			callback()
 		}) ;
-}
-
-function extract_response(context, collect_info, result) {
-    for (var i=0; i<collect_info.length; i++){
-        lib.print('info', 'extracting ' + collect_info[i]['from'] + ' from result')
-        var pattern = collect_info[i]['from'].split('.')
-        var value = result
-        for (var j=0; j<pattern.length; j++) {
-			value = value[pattern[j]]
-        }
-        context.setVariable(collect_info[i]['to'], value)
-    }
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {

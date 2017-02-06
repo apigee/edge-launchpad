@@ -115,15 +115,19 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 }
 
-function deploy_proxy(opts, callback) {
-	lib.print('info', 'deploying proxy ' + opts.name)
-	var context 			= opts.context
+function deploy_proxy(item, callback) {
+    lib.print('info', 'deploying proxy ' + item.name)
+
+    var opts                = item
+    var context 			= opts.context
+
 	delete opts.context
+    delete opts.assignResponse
 
 //	curl -X POST -H ":" \
-//https://api.enterprise.apigee.com/v1/o/{org_name}/environments/{env-name}/apis/{api_name}/revisions/{revision_number}/deployments \
+//  https://api.enterprise.apigee.com/v1/o/{org_name}/environments/{env-name}/apis/{api_name}/revisions/{revision_number}/deployments \
 //	-u email:password
-	//curl -X POST -u email:password -F "file=@apiproxy.zip" "https://api.enterprise.apigee.com/v1/organizations/{org-name}/apis?action=import&name=example"
+//  curl -X POST -u email:password -F "file=@apiproxy.zip" "https://api.enterprise.apigee.com/v1/organizations/{org-name}/apis?action=import&name=example"
 
     lib.zip(opts.directory, function (zip_buffer) {
 
@@ -172,6 +176,11 @@ function deploy_proxy(opts, callback) {
                 request(options, function (error, response, body) {
                     if (!error && response.statusCode == 200) {
                         lib.print('info', 'deployed proxy ' + opts.name)
+
+                        if(item.assignResponse && item.assignResponse.length > 0){
+                            lib.extract_response(context, item.assignResponse, body)
+                        }
+
                         callback()
                     } else {
                         lib.print('error', 'error deploying proxy ' + opts.name)

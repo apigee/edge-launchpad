@@ -28,11 +28,12 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 	for (var i=0; i< items.length; i++) {
 		lodash.merge(items[i], deploy_info)
+        items[i].context = context
 	}
 
 	async.each(items, create_product, function(err){
 		if(err){
-			lib.print('ERRROR', err)
+			lib.print('ERROR', err)
 			cb()
 		} else {
 			cb()
@@ -43,7 +44,10 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 function create_product(item, callback) {
 	var opts 			= item
-	opts.productName  	= item.name
+	var context         = item.context
+
+    opts.productName  	= item.name
+
 	// TODO conflict for environments attribute
 	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
 
@@ -51,7 +55,12 @@ function create_product(item, callback) {
 		.then(function(result){
 			//cache create success
 			lib.print('info', 'created product ' + item.name)
-			callback()
+
+			if(item.assignResponse && item.assignResponse.length > 0){
+                lib.extract_response(context, item.assignResponse, result)
+            }
+
+            callback()
 		},function(err){
 			//cache create failed
 			lib.print('error', 'error creating product ' + item.name)

@@ -19,8 +19,6 @@ eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --r
 
 */
 
-
-// TODO: p3 constants to diff file eg. baasLoadData.js limit=200
 // TODO: p2 standardize sequential execution of tasks
 // TODO: p2 data source many
 // TODO: p2 generate load for generating initial report
@@ -29,7 +27,8 @@ eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --r
 // TODO: p2 deploy individual dependency from its gulp
 // TODO: p2 --item =
 // TODO: p2 --subresources=configSubstitution,deployBankApi
-// TODO: p1 final test
+// TODO: p3 constants to diff file eg. baasLoadData.js limit=200
+// TODO: p3 manage multiple env deployment, eg: in cache deploy, assign variable will be overridden
 
 
 module.exports = function(gulp){
