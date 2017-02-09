@@ -11,42 +11,33 @@ ref : https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qn
 
 
 ----------------
-## COMMAND
+## Usage
 
-gulp <deploy/build/clean>
-    --resource resource1
-    --subresource subresource1,subresource2
-    --item item1,item2
-    --strict
-    --env test
-    --config config.yml
+Usage: gulp < deploy / build / clean > [options]
+
+Options: 
+
+    --resource <RESOURCE>                     Pick any resource defined in config file
+
+    --subresource <SUBRESOURCE1,SUBRESOURCE2> Pick any subresources defined under respective resource in config file 
+
+    --item <ITEM1,ITEM2>                      Pick any items defined in respective RESOURCE,SUBRESOURCE in config file.
+
+    --strict                                  Do not ru dependent tasks. eg. deploy will also run clean and build. 
+
+    --env test                                Choose which edge environment for deployment
+
+    --config <path to config file>            Relative to execution directory
+
+
+Additional parameters can be passed to deploy script to avoid prompt. see eg2.
 
 eg1 : gulp deploy
 
 eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --resource openbank_apis
 
 
-NOTE : --strict is used to tell deploy script not to call other tasks internally, eg: 'gulp deploy' will also call clean and build. 
-
 -----------------
-
-
-## TODO
-
-- p2 data source many
-
-- p2 generate load for generating initial report
-
-- p2 license check
-
-- p2 cache creation with cache properties
-
-- p2 deploy individual dependency from its gulp
-
-- p2 standardize sequential execution of tasks
-
-- p3 constants to diff file eg. baasLoadData.js limit=200
-
 
 ## sample config
 
@@ -212,8 +203,30 @@ resources:
 - new subResource localCommand added
 - assignResponse subResource is genralized for app, product,proxy,cache, developer subresources
 
+### v1.0.3
+- fix dependency pull
+- fix localCommand variable replace
 
+### v1.0.4
+- fix localCommand
 
+-------------------
+
+## TODO
+
+- p2 data source many
+
+- p2 generate load for generating initial report
+
+- p2 license check
+
+- p2 cache creation with cache properties
+
+- p2 deploy individual dependency from its gulp
+
+- p2 standardize sequential execution of tasks
+
+- p3 constants to diff file eg. baasLoadData.js limit=200
 
 
 
