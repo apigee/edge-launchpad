@@ -178,12 +178,16 @@ function filter_items(items, params) {
 
 function extract_response(context, collect_info, result) {
     for (var i=0; i<collect_info.length; i++){
-        var pattern;
+        var pattern
+		var value
 
-		if(collect_info[i]['from'] && collect_info[i]['from'] != '')
-			pattern = collect_info[i]['from'].split('.')
+		if(collect_info[i]['from'] && collect_info[i]['from'] != '') {
+            pattern = collect_info[i]['from'].split('.')
+			value = JSON.parse(result)
+        } else {
+            value = result
+		}
 
-		var value = result
 
 		if(pattern != undefined) {
             for (var j = 0; j < pattern.length; j++) {

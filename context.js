@@ -71,8 +71,13 @@ function context(config, env) {
     }
     this.loadOrgDetail = function (resourceName) {
         var config                  = this.getConfig(resourceName)
-        var orgDetails              = config.properties.edgeOrg
-
+        var orgDetails
+        if(config)
+            orgDetails              = config.properties.edgeOrg
+        else {
+            console.log('ERROR retrieving config, check parameters')
+            return
+        }
         if(orgDetails && orgDetails.org)
             this.setVariable('org', mustache.render(orgDetails.org, this.getAllVariables()))
 
