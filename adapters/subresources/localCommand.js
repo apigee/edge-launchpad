@@ -1,6 +1,12 @@
 var lib				= require('../../lib')
 var child_process   = require('child_process')
 var async           = require('async')
+var mustache        = require('mustache')
+
+mustache.escape = function (value) {
+    return value;
+};
+
 
 var adapter = function () {
     this.clean 			= clean
@@ -40,7 +46,8 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 function run_command(item, callback) {
     var context = item.context
     var basePath = item.basePath
-    var cmds    = item.cmd.split(' ')
+    var cmd     = mustache.render(item.cmd, context.getAllVariables())
+    var cmds    = cmd.split(' ')
     var command = child_process.spawn(cmds[0], cmds.slice(1),{'cwd': basePath})
 
 

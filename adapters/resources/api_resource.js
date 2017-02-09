@@ -77,7 +77,7 @@ function handle_configuration(context, config) {
 
 function build_dependencies(context, resourceName, config, cb) {
 	lib.print('INFO','Downloading dependencies')
-/*
+
 	var dependencies = config.properties.dependencies
 
 	if(dependencies && dependencies.length>0){
@@ -100,8 +100,7 @@ function build_dependencies(context, resourceName, config, cb) {
 			}
 		);
 	}
-*/
-	cb()
+
 	// run npm install inside proxy folder
 }
 
