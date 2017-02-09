@@ -212,7 +212,9 @@ resources:
 - new subResource localCommand added
 - assignResponse subResource is genralized for app, product,proxy,cache, developer subresources
 
-
+### v1.0.3
+- fix dependency pull
+- fix localCommand variable replace
 
 
 
