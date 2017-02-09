@@ -13,7 +13,7 @@ ref : https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qn
 ----------------
 ## Usage
 
-Usage: gulp <deploy/build/clean> [options]
+Usage: gulp < deploy / build / clean > [options]
 
 Options: 
 
