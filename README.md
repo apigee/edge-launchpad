@@ -39,24 +39,6 @@ eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --r
 
 -----------------
 
-
-## TODO
-
-- p2 data source many
-
-- p2 generate load for generating initial report
-
-- p2 license check
-
-- p2 cache creation with cache properties
-
-- p2 deploy individual dependency from its gulp
-
-- p2 standardize sequential execution of tasks
-
-- p3 constants to diff file eg. baasLoadData.js limit=200
-
-
 ## sample config
 
 ```
@@ -225,6 +207,23 @@ resources:
 - fix dependency pull
 - fix localCommand variable replace
 
+-------------------
+
+## TODO
+
+- p2 data source many
+
+- p2 generate load for generating initial report
+
+- p2 license check
+
+- p2 cache creation with cache properties
+
+- p2 deploy individual dependency from its gulp
+
+- p2 standardize sequential execution of tasks
+
+- p3 constants to diff file eg. baasLoadData.js limit=200
 
 
 
