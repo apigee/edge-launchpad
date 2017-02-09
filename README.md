@@ -16,12 +16,21 @@ ref : https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qn
 Usage: gulp <deploy/build/clean> [options]
 
 Options: 
+
     --resource <RESOURCE>                     Pick any resource defined in config file
+
     --subresource <SUBRESOURCE1,SUBRESOURCE2> Pick any subresources defined under respective resource in config file 
+
     --item <ITEM1,ITEM2>                      Pick any items defined user respective RESOURCE,SUBRESOURCE in config file.
+
     --strict                                  Do not ru dependent tasks. eg. deploy will also run clean and build. 
+
     --env test                                Choose which edge environment for deployment
+
     --config <path to config file>            Relative to execution directory
+
+
+Additional parameters can be passed to deploy script to avoid prompt. see eg2.
 
 eg1 : gulp deploy
 
