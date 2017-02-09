@@ -21,7 +21,7 @@ Options:
 
     --subresource <SUBRESOURCE1,SUBRESOURCE2> Pick any subresources defined under respective resource in config file 
 
-    --item <ITEM1,ITEM2>                      Pick any items defined user respective RESOURCE,SUBRESOURCE in config file.
+    --item <ITEM1,ITEM2>                      Pick any items defined in respective RESOURCE,SUBRESOURCE in config file.
 
     --strict                                  Do not ru dependent tasks. eg. deploy will also run clean and build. 
 
