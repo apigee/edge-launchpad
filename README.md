@@ -207,6 +207,9 @@ resources:
 - fix dependency pull
 - fix localCommand variable replace
 
+### v1.0.4
+- fix localCommand
+
 -------------------
 
 ## TODO
