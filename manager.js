@@ -19,7 +19,7 @@ function getManager() {
 function manager() {
 
     this.isDebug                    = true;
-    this.adapters                   = JSON.parse(fs.readFileSync(path.join(__dirname,'config/adapters.json'), 'utf8'));
+    this.adapters                   = JSON.parse(fs.readFileSync(path.join(__dirname, 'config/adapters.json'), 'utf8'));
 
     this.doTask = function(taskName, context, resourceName, subResourceName, params, cb ) {
 

@@ -48,8 +48,8 @@ function run_command(item, callback) {
     var basePath = item.basePath
     var cmd     = mustache.render(item.cmd, context.getAllVariables())
     var cmds    = cmd.split(' ')
-    var command = child_process.spawn(cmds[0], cmds.slice(1),{'cwd': basePath})
 
+    var command = child_process.spawn(cmds[0], cmds.slice(1),{'cwd': basePath})
 
     var result = '';
 
@@ -58,7 +58,7 @@ function run_command(item, callback) {
     });
 
     command.stderr.on('data', function(data) {
-        result += data.toString();
+        //result += data.toString();
     });
 
     command.on('exit', function(code) {
