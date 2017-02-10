@@ -183,7 +183,10 @@ function extract_response(context, collect_info, result) {
 
 		if(collect_info[i]['from'] && collect_info[i]['from'] != '') {
             pattern = collect_info[i]['from'].split('.')
-			value = JSON.parse(result)
+            if(typeof result == 'string')
+			    value = JSON.parse(result)
+            else
+                value = result
         } else {
             value = result
 		}
