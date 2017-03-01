@@ -99,6 +99,9 @@ function build_dependencies(context, resourceName, config, cb) {
 				}
 			}
 		);
+	} else {
+        lib.print('info','No dependencies')
+		cb()
 	}
 
 	// run npm install inside proxy folder

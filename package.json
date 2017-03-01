@@ -18,7 +18,8 @@
     "q": "^1.4.1",
     "request": "^2.79.0",
     "yargs": "^6.5.0",
-    "zip-dir": "^1.0.2"
+    "zip-dir": "^1.0.2",
+    "zip-folder": "^1.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1"
