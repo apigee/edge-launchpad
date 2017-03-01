@@ -5,7 +5,7 @@
 var prompt_lib		                = require('prompt');
 var manager_builder                 = require('./manager');
 var async                           = require('async');
-var lib 			= require('./lib');
+var lib 			                = require('./lib');
 
 function baseAdapter () {
     this.adapterContext = {};
@@ -54,7 +54,6 @@ function baseAdapter () {
 
         var resourceType                    = config.type;
 
-        if (!config) return;
 
         var subResources;
 
@@ -142,7 +141,11 @@ function baseAdapter () {
 
             for(var i=0; i<inputs.length; i++){
                 if(!context.getVariable(inputs[i].name) && !context.getVariable(inputs[i].ifNotPresent)) {
-                    required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string'});
+                    if(inputs[i].name != 'password') {
+                        required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string'});
+                    } else {
+                        required_values.push({name: inputs[i].name, description: inputs[i].prompt, type: 'string', hidden: true});
+                    }
                 }
             }
 

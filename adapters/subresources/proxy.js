@@ -1,5 +1,4 @@
 var apigeetool 		= require('apigeetool')
-var lodash 			= require('lodash')
 var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
@@ -8,8 +7,7 @@ var lib 			= require('../../lib')
 var async 			= require('async')
 var lodash 			= require('lodash')
 var request 		= require('request')
-
-var sdk 			= apigeetool.getPromiseSDK()
+var zipdir          = require('zip-folder')
 
 var adapter = function () {
 	this.clean 				= clean
@@ -59,19 +57,39 @@ function build_proxy(item, callback) {
 		} else {
 			// do a npm install
 			var npm_dir = path.join(proxy_target_dir, 'resources/node')
-			 if (fs.existsSync(npm_dir)){
-				 lib.npm_install_local_only(npm_dir,function(code){
-					 if (code != 0) {
-					 lib.print('error', 'error building proxy ' + item.name)
-					 callback()
-				 } else {
-					 lib.print('info', 'built proxy ' + item.name)
-					 callback()
-				 }
-			 })
-			 } else {
-				 callback()
-			 }
+            if (fs.existsSync(npm_dir)){
+                lib.npm_install_local_only(npm_dir,function(code){
+                    if (code != 0) {
+                        lib.print('error', 'error building proxy ' + item.name)
+                        callback()
+                    } else {
+
+                        /*
+                        // create node_module.zip
+                        zipdir(path.join(npm_dir, 'node_modules'), path.join(npm_dir, 'node_modules.zip'), function (err) {
+                            if(!err) {
+                                // delete node_module folder
+                                fs.remove(path.join(npm_dir, 'node_modules'), function (err) {
+                                    if (!err) {
+                                        lib.print('info', 'built proxy ' + item.name)
+                                        callback()
+                                    } else {
+                                        lib.print('error', 'error deleting node_modules folder for proxy ' + item.name)
+                                    }
+                                })
+                            } else {
+                                lib.print('error', 'error creating node_modules zip for proxy ' + item.name)
+                            }
+                        });
+                        */
+                        lib.print('info', 'built proxy ' + item.name)
+                        callback()
+                    }
+                })
+            } else {
+                lib.print('info', 'built proxy ' + item.name)
+                callback()
+            }
 		}
 		/*
 		 var inject_object = item.context.getAllVariables()

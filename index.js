@@ -30,7 +30,6 @@ eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --r
 // TODO: p3 constants to diff file eg. baasLoadData.js limit=200
 // TODO: p3 manage multiple env deployment, eg: in cache deploy, assign variable will be overridden
 
-
 module.exports = function(gulp){
     var env                 = 'test'
     var config_file         = 'config.yml'
