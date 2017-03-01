@@ -210,6 +210,10 @@ resources:
 ### v1.0.4
 - fix localCommand
 
+### v1.0.5
+- make password invisible
+- fix extract response bugs
+
 -------------------
 
 ## TODO
