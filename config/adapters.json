@@ -8,5 +8,6 @@
   "solutions.api.configSubstitutions":"./adapters/subresources/configSubstitution",
   "solutions.api.baasLoadData":"./adapters/subresources/baasLoadData.js",
   "solutions.api.baasConnection":"./adapters/subresources/baasConnection.js",
-  "solutions.api.localCommand": "./adapters/subresources/localCommand.js"
+  "solutions.api.localCommand": "./adapters/subresources/localCommand.js",
+  "solutions.api.targetServer": "./adapters/subresources/targetServer.js"
 }

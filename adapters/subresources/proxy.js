@@ -202,7 +202,7 @@ function deploy_proxy(item, callback) {
                         callback()
                     } else {
                         lib.print('error', 'error deploying proxy ' + opts.name)
-                        lib.print('error', JSON.stringify(response))
+                        lib.print('error', JSON.stringify(error))
                         callback()
                     }
                 })
