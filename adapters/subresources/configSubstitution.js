@@ -6,7 +6,6 @@ mustache.escape = function (value) {
     return value;
 };
 
-
 var adapter = function () {
     this.clean 			= clean
     this.build 			= build
@@ -14,6 +13,7 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
+    lib.print('meta','building config substitution')
     cb()
 }
 
@@ -56,6 +56,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 
 function clean(context, resourceName, subResourceName, params, cb) {
+    lib.print('meta','cleaning config substitution')
     cb()
 }
 

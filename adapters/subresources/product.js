@@ -1,7 +1,13 @@
 var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
-var lodash         = require('lodash')
+var lodash          = require('lodash')
+var mustache        = require('mustache')
+var request 		= require('request')
+
+mustache.escape = function (value) {
+    return value;
+};
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -45,28 +51,39 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 function create_product(item, callback) {
 	var opts 			= item
 	var context         = item.context
-
-    opts.productName  	= item.name
+    delete item.context
 
 	// TODO conflict for environments attribute
-	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+    var payload = mustache.render(item.payload, context.getAllVariables())
+    lodash.merge(opts, JSON.parse(payload))
 
-	sdk.createProduct(opts)
-		.then(function(result){
-			//cache create success
-			lib.print('info', 'created product ' + item.name)
+    var options = {
+        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/apiproducts',
+        method: 'POST',
+		headers: {
+            'Content-type': 'application/json'
+        },
+		auth: {},
+		body: payload
+    }
 
-			if(item.assignResponse && item.assignResponse.length > 0){
-                lib.extract_response(context, item.assignResponse, result)
-            }
+    if(opts.token){
+        options.auth.bearer = opts.token
+    } else {
+        options.auth.username = opts.username
+        options.auth.password = opts.password
+    }
 
+    request(options, function (error, response, body) {
+        if (!error) {
+            lib.print('info', 'created product ' + item.name)
             callback()
-		},function(err){
-			//cache create failed
-			lib.print('error', 'error creating product ' + item.name)
-			lib.print('ERROR', err)
-			callback()
-		}) ;
+        } else {
+            lib.print('error', 'error creating product ' + item.name)
+            lib.print('error', error)
+            callback()
+        }
+    });
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -81,6 +98,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	for (var i=0; i< items.length; i++) {
 		lodash.merge(items[i], deploy_info)
+		items[i].context = context
 	}
 
 	async.each(items, delete_product, function(err){
@@ -96,11 +114,14 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 function delete_product(item, callback) {
 	var opts 			= item
+    var context			= item.context
+    delete item.context
 
 	opts.productName  	= item.name
 
 	// TODO conflict for environments attribute
-	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+    var payload = mustache.render(item.payload, context.getAllVariables())
+    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
 
 	sdk.deleteProduct(opts)
 		.then(function(result){

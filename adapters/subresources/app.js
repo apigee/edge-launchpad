@@ -2,6 +2,11 @@ var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
 var lodash         = require('lodash')
+var mustache        = require('mustache')
+
+mustache.escape = function (value) {
+    return value;
+};
 
 var sdk 			= apigeetool.getPromiseSDK()
 
@@ -46,8 +51,8 @@ function create_app(item, callback) {
 	var context			= item.context
 	delete item.context
 
-	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
-
+    var payload = mustache.render(item.payload, context.getAllVariables())
+	lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
 
 	sdk.createApp(opts)
 		.then(function(result){
@@ -77,6 +82,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	for (var i=0; i< items.length; i++) {
 		lodash.merge(items[i], deploy_info)
+        items[i].context = context
 	}
 
 	async.each(items, delete_app, function(err){
@@ -92,8 +98,11 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 function delete_app(item, callback) {
 	var opts 			= item
+    var context			= item.context
+    delete item.context
 
-	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+    var payload = mustache.render(item.payload, context.getAllVariables())
+    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
 
 	sdk.deleteApp(opts)
 		.then(function(result){

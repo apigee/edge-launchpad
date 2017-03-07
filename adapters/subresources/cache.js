@@ -4,6 +4,11 @@ var async           = require('async')
 var lodash          = require('lodash')
 var request         = require('request')
 var sdk 			= apigeetool.getPromiseSDK()
+var mustache        = require('mustache')
+
+mustache.escape = function (value) {
+    return value;
+};
 
 var adapter = function () {
     this.clean 			= clean
@@ -43,9 +48,13 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 function create_cache(item, callback) {
     var opts             = item
     var context          = item.context
+    delete item.context
 
     opts.cache           = item.name
-    lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+
+    var payload = mustache.render(item.payload, context.getAllVariables())
+    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
+
     var environments    = item.environments
 
     for (var i=0; i<environments.length; i++){
@@ -100,7 +109,9 @@ function delete_cache(item, callback) {
     var opts             = item
     var context          = item.context
     opts.cache           = item.name
-    lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)))
+
+    var payload = mustache.render(item.payload, context.getAllVariables())
+    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
 
     delete item.context
 
@@ -109,10 +120,14 @@ function delete_cache(item, callback) {
         method: 'POST',
         headers: {
         },
-        auth: {
-            user: opts.username,
-            password: opts.password
-        }
+        auth: {}
+    }
+
+    if(opts.token){
+        options.auth.bearer = opts.token
+    } else {
+        options.auth.username = opts.username
+        options.auth.password = opts.password
     }
 
     request(options, function (error, response, body) {

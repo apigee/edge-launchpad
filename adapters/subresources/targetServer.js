@@ -2,6 +2,11 @@ var lib				= require('../../lib')
 var async           = require('async')
 var lodash          = require('lodash')
 var request         = require('request')
+var mustache        = require('mustache')
+
+mustache.escape = function (value) {
+    return value;
+};
 
 var adapter = function () {
     this.clean 			= clean
@@ -54,7 +59,7 @@ function create_targetServer(item, callback) {
         }
     }
 
-    options.body = item.payload
+    options.body = mustache.render(item.payload, context.getAllVariables())
 
     if(opts.token){
         options.auth.bearer = opts.token
@@ -75,6 +80,7 @@ function create_targetServer(item, callback) {
             callback()
         } else {
             lib.print('error', error)
+            lib.print('error', body)
             callback()
         }
     })
@@ -112,7 +118,8 @@ function delete_targetServer(item, callback) {
     var context			= item.context
     delete item.context
 
-    var name = JSON.parse(item.payload).name
+    var payload = mustache.render(item.payload, context.getAllVariables())
+    var name = JSON.parse(payload).name
 
     var options = {
         uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments  + '/targetservers/' + name ,
