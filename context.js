@@ -7,6 +7,10 @@ var fs                              = require('fs');
 var path                            = require('path');
 var mustache                        = require('mustache');
 
+mustache.escape = function (value) {
+    return value;
+};
+
 var instance;
 
 function getContext(config, env) {

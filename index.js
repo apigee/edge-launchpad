@@ -54,13 +54,13 @@ module.exports = function(gulp){
         params.items = item.split(',')
     }
 
+    context             = context_builder.getContext(config_file, env)
+    manager             = manager_builder.getManager()
+
     gulp.task('init', function() {
 
         print('ENV : ' + env)
         print('CONIG_FILE : ' + config_file)
-
-        context             = context_builder.getContext(config_file, env)
-        manager             = manager_builder.getManager()
 
         // set arguments passed to context
         var  args_passed         = argv
