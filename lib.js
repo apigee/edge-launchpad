@@ -3,9 +3,9 @@ var path 			= require('path')
 var fs				= require('fs-extra')
 var mustache 		= require('mustache')
 var prompt_lib		= require('prompt')
-var child_process   = require('child_process')
 var gutil 			= require('gulp-util')
 var zipdir          = require('zip-dir')
+var spawn 			= require('cross-spawn')
 
 function replace_variables(paths, inject_object) {
     mustache.escape = function (value) {
@@ -71,17 +71,23 @@ function replace_variables(paths, inject_object) {
 }
 
 function npm_install_local_only(npm_dir, callback) {
-	var npm_process 			= child_process.spawn('npm', ['install'],{'cwd': npm_dir})
-	npm_process.stdout.setEncoding('utf8');
-	npm_process.stderr.setEncoding('utf8');
+	var npm_process 			= spawn('npm', ['install'],{'cwd': npm_dir})
 
-	npm_process.stdout.on('data', function (data) {
-		console.log(data)
-	});
+	if(npm_process.stdout){
+        npm_process.stdout.setEncoding('utf8');
 
-	npm_process.stderr.on('data', function (data) {
-		console.log(data)
-	});
+        npm_process.stdout.on('data', function (data) {
+            console.log(data)
+        });
+	}
+
+    if(npm_process.stderr){
+        npm_process.stderr.setEncoding('utf8');
+
+        npm_process.stderr.on('data', function (data) {
+            console.log(data)
+        });
+    }
 
 	npm_process.on('exit', function(code){
 		callback(code)
@@ -153,9 +159,9 @@ function normalize_data(obj) {
 	return obj
 }
 
-function zip(dir, cb) {
-    zipdir(dir, function (err, buffer) {
-        cb(buffer)
+function zip(dir, options, cb) {
+    zipdir(dir, options, function (err, buffer) {
+        cb(err, buffer)
     });
 }
 

@@ -3,6 +3,7 @@
   "dependencies": {
     "apigeetool": "git+https://github.com/kidiyoor/apigeetool-node.git#master",
     "async": "^2.1.4",
+    "cross-spawn": "^5.1.0",
     "extract-zip": "^1.6.0",
     "fs-extra": "^1.0.0",
     "gulp-install": "^0.6.0",

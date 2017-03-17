@@ -3,6 +3,8 @@ var async           = require('async')
 var lodash          = require('lodash')
 var request         = require('request')
 var mustache        = require('mustache')
+var path            = require('path')
+var fs              = require('fs-extra')
 
 mustache.escape = function (value) {
     return value;
@@ -31,6 +33,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
     for (var i=0; i< items.length; i++) {
         lodash.merge(items[i], deploy_info)
         items[i].context = context
+        items[i].resourceName = resourceName
     }
 
     async.each(items, deploy_util, function(err){
@@ -46,12 +49,19 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 function deploy_util(item, callback) {
     var context			= item.context
+    var resourceName = item.resourceName
     delete item.context
+    delete item.resourceName
 
     if(item.action == 'base64.encode') {
         var str = mustache.render(item.value, context.getAllVariables())
         var output = new Buffer(str).toString('base64');
         context.setVariable(item.assignTo, output)
+    } else if(item.action == 'copy') {
+        var from = path.join(context.getBasePath(resourceName), item.from)
+        var to = path.join(context.getBasePath(resourceName), item.to)
+
+        fs.copySync(from, to)
     }
 
     callback()

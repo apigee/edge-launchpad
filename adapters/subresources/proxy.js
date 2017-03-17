@@ -7,7 +7,6 @@ var lib 			= require('../../lib')
 var async 			= require('async')
 var lodash 			= require('lodash')
 var request 		= require('request')
-var zipdir          = require('zip-folder')
 
 var adapter = function () {
 	this.clean 				= clean
@@ -63,10 +62,9 @@ function build_proxy(item, callback) {
                         lib.print('error', 'error building proxy ' + item.name)
                         callback()
                     } else {
-
-                        /*
+						/*
                         // create node_module.zip
-                        zipdir(path.join(npm_dir, 'node_modules'), path.join(npm_dir, 'node_modules.zip'), function (err) {
+                        lib.zip(path.join(npm_dir, 'node_modules'), { saveTo: path.join(npm_dir, 'node_modules.zip')}, function (err, buffer) {
                             if(!err) {
                                 // delete node_module folder
                                 fs.remove(path.join(npm_dir, 'node_modules'), function (err) {
@@ -75,13 +73,16 @@ function build_proxy(item, callback) {
                                         callback()
                                     } else {
                                         lib.print('error', 'error deleting node_modules folder for proxy ' + item.name)
+						 				callback()
                                     }
                                 })
                             } else {
                                 lib.print('error', 'error creating node_modules zip for proxy ' + item.name)
+						 		callback()
                             }
                         });
-                        */
+						*/
+
                         lib.print('info', 'built proxy ' + item.name)
                         callback()
                     }
@@ -147,18 +148,22 @@ function deploy_proxy(item, callback) {
 //	-u email:password
 //  curl -X POST -u email:password -F "file=@apiproxy.zip" "https://api.enterprise.apigee.com/v1/organizations/{org-name}/apis?action=import&name=example"
 
-    lib.zip(opts.directory, function (zip_buffer) {
+	var proxy_zip = opts.directory +  '.zip'
+
+    lib.zip(opts.directory, {saveTo: proxy_zip}, function (err, zip_buffer) {
+
+        var formData = {
+            file: fs.createReadStream(proxy_zip)
+        }
 
         var options = {
             uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/apis?action=import&name=' + opts.api,
-            method: 'POST',
             headers: {
-                'Content-type': 'application/octet-stream'
+                'Content-type': 'multipart/form-data'
             },
             auth: {
             },
-            body: zip_buffer
-
+			formData: formData
         }
 
         if(opts.token){
@@ -168,7 +173,7 @@ function deploy_proxy(item, callback) {
 			options.auth.password = opts.password
 		}
 
-        request(options, function (error, response, body) {
+        request.post(options, function (error, response, body) {
             if (!error && (response.statusCode == 200 || response.statusCode == 201)) {
                 var data = JSON.parse(body)
                 var revision = data.revision
