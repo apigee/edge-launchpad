@@ -38,8 +38,6 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 	var self 	= this
 	var config 	= context.getConfig(resourceName)
 
-	handle_configuration(context, config)
-
 	deploy_dependencies(context, resourceName, config, function(err){
 		self.gotoSubResources('deploy', context, resourceName, subResourceName, params, function (err, result) {
 			cb(err, result)
@@ -59,20 +57,6 @@ function clean(context,resourceName,subResourceName, params, cb) {
 
 function handle_data_sources(context, config) {
 
-}
-
-function handle_configuration(context, config) {
-	var var_set_list = config.properties.configurations
-	for (var i=0; i<var_set_list.length; i++){
-		var var_set = var_set_list[i]
-		if(var_set.env.trim().toUpperCase() == context.getEnvironment().trim().toUpperCase()) {
-			delete var_set.env
-			var keys = Object.keys(var_set)
-			for (var j=0; j < keys.length; j++) {
-				context.setVariable(keys[j], var_set[keys[j]])
-			}
-		}
-	}
 }
 
 function build_dependencies(context, resourceName, config, cb) {

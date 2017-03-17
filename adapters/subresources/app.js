@@ -35,7 +35,7 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 		items[i].context = context
 	}
 
-	async.each(items, create_app, function(err){
+	async.eachSeries(items, create_app, function(err){
 		if(err){
 			lib.print('ERROR', err)
 			cb()
