@@ -115,6 +115,8 @@ function print(level, msg){
 	else if(level.toUpperCase() == 'INFO')
 		gutil.log(gutil.colors.green(msg));
 	else if(level.toUpperCase() == 'META')
+        gutil.log(gutil.colors.magenta(msg));
+    else if(level.toUpperCase() == 'WARNNING')
         gutil.log(gutil.colors.yellow(msg));
 	else
 		console.log(msg)

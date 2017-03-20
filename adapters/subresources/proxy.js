@@ -255,7 +255,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	async.each(items, clean_proxy, function(err){
 		if(err){
-			lib.print('error', err)
+			lib.print('WARNNING', err)
 			cb()
 		} else {
 			cb()
@@ -271,8 +271,8 @@ function clean_proxy(item, callback) {
 
 	fs.emptyDir(proxy_target_dir, function(err){
 		if (err) {
-			lib.print('error', 'error cleaning proxy ' + item.name)
-			lib.print('error', err)
+			lib.print('WARNNING', 'error cleaning proxy ' + item.name)
+			lib.print('WARNNING', err)
 			callback()
 		} else {
 			lib.print('info', 'cleaned proxy ' + item.name)

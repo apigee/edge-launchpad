@@ -96,7 +96,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
     async.each(items, delete_cache, function(err){
         if(err){
-            lib.print('ERROR', err)
+            lib.print('WARNNING', err)
             cb()
         } else {
             cb()
@@ -136,8 +136,8 @@ function delete_cache(item, callback) {
             callback()
         } else {
             //cache create failed
-            lib.print('error', 'error clearing cache ' + item.name)
-            lib.print('ERROR', error)
+            lib.print('WARNNING', 'error clearing cache ' + item.name)
+            lib.print('WARNNING', error)
             callback()
         }
     });

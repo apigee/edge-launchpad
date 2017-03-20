@@ -84,7 +84,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	async.each(items, delete_developer, function(err){
 		if(err){
-			lib.print('ERRROR', err)
+			lib.print('WARNNING', err)
 			cb()
 		} else {
 			cb()
@@ -107,8 +107,8 @@ function delete_developer(item, callback) {
 			callback()
 		},function(err){
 			//cache create failed
-			lib.print('error', 'error deleting developer ' + item.email)
-			lib.print('ERROR', err)
+			lib.print('WARNNING', 'error deleting developer ' + item.email)
+			lib.print('WARNNING', err)
 			callback()
 		}) ;
 }
