@@ -104,7 +104,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
     async.each(items, delete_targetServer, function(err){
         if(err){
-            lib.print('WARNNING', err)
+            lib.print('warning', err)
             cb()
         } else {
             cb()
@@ -151,7 +151,7 @@ function delete_targetServer(item, callback) {
 
             callback()
         } else {
-            lib.print('WARNNING', body)
+            lib.print('warning', body)
             callback()
         }
     })
