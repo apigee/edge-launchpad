@@ -14,10 +14,6 @@
  limitations under the License.
 */
 
-/**
- * Created by Muthu on 28/11/16.
- */
-
 var prompt_lib		                = require('prompt');
 var manager_builder                 = require('./manager');
 var async                           = require('async');
