@@ -12,5 +12,6 @@
   "solutions.api.targetServer": "./adapters/subresources/targetServer.js",
   "solutions.api.getBaasAppCredential": "./adapters/subresources/getBaasAppCredential.js",
   "solutions.api.baasApp": "./adapters/subresources/baasApp.js",
-  "solutions.api.util": "./adapters/subresources/util.js"
+  "solutions.api.util": "./adapters/subresources/util.js",
+  "solutions.api.kvm": "./adapters/subresources/kvm.js"
 }

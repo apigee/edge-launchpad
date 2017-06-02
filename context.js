@@ -14,10 +14,6 @@
  limitations under the License.
  */
 
-/**
- * Created by Muthu on 28/11/16.
- */
-
 var yaml                            = require('js-yaml');
 var fs                              = require('fs');
 var path                            = require('path');
