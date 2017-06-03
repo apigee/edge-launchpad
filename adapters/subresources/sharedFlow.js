@@ -17,9 +17,9 @@
 var apigeetool 		= require('apigeetool')
 var lib				= require('../../lib')
 var async           = require('async')
-var lodash          = require('lodash')
+var lodash         = require('lodash')
 var mustache        = require('mustache')
-var request 		= require('request')
+var path 			= require('path')
 
 mustache.escape = function (value) {
     return value;
@@ -34,13 +34,12 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('meta','building kvm resources')
+    lib.print('meta','building shared flow resources')
     cb()
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    //opts = lib.build_opts(context, resourceName, subResourceName)
-    lib.print('meta','deploying kvm resources')
+    lib.print('meta','deploying shared flow resources')
 
     var config          = context.getConfig(resourceName, subResourceName)
 
@@ -48,12 +47,14 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
     var deploy_info     = context.getDeploymentInfo()
 
+    context.resourceName 	= resourceName
+
     for (var i=0; i< items.length; i++) {
         lodash.merge(items[i], deploy_info)
         items[i].context = context
     }
 
-    async.each(items, create_kvm, function(err){
+    async.eachSeries(items, create_shared_flow, function(err){
         if(err){
             lib.print('ERROR', err)
             cb()
@@ -64,92 +65,70 @@ function deploy(context, resourceName, subResourceName, params, cb) {
     })
 }
 
-function create_kvm(item, callback) {
-    var opts 			= item
-    var context         = item.context
-    delete item.context
-
-    // TODO conflict for environments attribute
-    var payload = mustache.render(item.payload, context.getAllVariables())
-
-    var options = {
-        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/keyvaluemaps',
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        auth: {},
-        body: payload
-    }
-
-    if(opts.token){
-        options.auth.bearer = opts.token
-    } else {
-        options.auth.username = opts.username
-        options.auth.password = opts.password
-    }
-
-    request(options, function (error, response, body) {
-        if (!error) {
-            lib.print('info', 'created kvm ' + item.name)
-            callback()
-        } else {
-            lib.print('error', 'error creating kvm ' + item.name)
-            lib.print('error', error)
-            callback()
-        }
-    });
-}
-
-function clean(context, resourceName, subResourceName, params, cb) {
-    //opts = lib.build_opts(context, resourceName, subResourceName)
-    lib.print('meta','cleaning kvm resources')
-
-    var config          = context.getConfig(resourceName, subResourceName)
-
-    var items           = lib.filter_items(config.items, params)
-
-    var deploy_info     = context.getDeploymentInfo()
-
-    for (var i=0; i< items.length; i++) {
-        lodash.merge(items[i], deploy_info)
-        items[i].context = context
-    }
-
-    async.each(items, delete_kvm, function(err){
-        if(err){
-            lib.print('ERROR', err)
-            cb()
-        } else {
-            cb()
-        }
-
-    })
-}
-
-function delete_kvm(item, callback) {
+function create_shared_flow(item, callback) {
     var opts 			= item
     var context			= item.context
     delete item.context
 
-    opts.mapName  	= item.name
+    opts.directory = path.join(context.getBasePath(context.resourceName), '/src/shared_flow/', item.name)
+    opts.environments = opts.environments.join(',')
 
-    // TODO conflict for environments attribute
-    var payload = mustache.render(item.payload, context.getAllVariables())
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
-
-    opts.mapName  	    = opts.name
-    opts.environment    = opts.environments[0]
-
-    sdk.deleteKVM(opts)
+    sdk.deploySharedflow(opts)
         .then(function(result){
             //cache create success
-            lib.print('info', 'deleted kvm ' + opts.mapName)
+            lib.print('info', 'created shared flow ' + item.name)
+            if(item.assignResponse && item.assignResponse.length > 0){
+                lib.extract_response(context, item.assignResponse, result)
+            }
             callback()
         },function(err){
             //cache create failed
-            lib.print('error', 'error deleting kvm ' + opts.mapName)
-            lib.print('error', err)
+            lib.print('error', 'error creating shared flow ' + item.name)
+            lib.print('ERROR', err)
+            callback()
+        }) ;
+}
+
+function clean(context, resourceName, subResourceName, params, cb) {
+    //opts = lib.build_opts(context, resourceName, subResourceName)
+    lib.print('meta','cleaning shared flow resources')
+
+    var config          = context.getConfig(resourceName, subResourceName)
+
+    var items           = lib.filter_items(config.items, params)
+
+    var deploy_info     = context.getDeploymentInfo()
+
+    for (var i=0; i< items.length; i++) {
+        lodash.merge(items[i], deploy_info)
+        items[i].context = context
+    }
+
+    async.each(items, delete_shared_flow, function(err){
+        if(err){
+            lib.print('ERROR', err)
+            cb()
+        } else {
+            cb()
+        }
+
+    })
+}
+
+function delete_shared_flow(item, callback) {
+    var opts 			= item
+    var context			= item.context
+    delete item.context
+
+    sdk.deleteSharedflow(opts)
+        .then(function(result){
+            //cache create success
+            lib.print('info', 'deleted shared flow  ' + item.name)
+            callback()
+        },function(err){
+            //cache create failed
+            lib.print('error', 'error deleting shared flow ' + item.name)
+            lib.print('ERROR', err)
             callback()
         }) ;
 }
