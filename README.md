@@ -33,35 +33,7 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 
 
 ## Sample config
-![samples/configuration/config_one.yml](sample/configuration/config_one.yml)
-
-## Release
-
-### v1.0.0
-- initial release
-- basic functionality
-
-### v1.0.1
-- multiple items can be deployed
-- multiple subresources can be deployed from command line
-
-### v1.0.2
-- new subResource localCommand added
-- assignResponse subResource is genralized for app, product,proxy,cache, developer subresources
-
-### v1.0.3
-- fix dependency pull
-- fix localCommand variable replace
-
-### v1.0.4
-- fix localCommand
-
-### v1.0.7
-- using multipart for proxy upload 
-- copy util added 
-- fix deploy phase variable replacement 
-- app deploy made sync 
-- using cross-spawn to run npm commands, to make windows compatible
+![samples/configuration/config_one.yml](samples/configuration/config_one.yml)
 
 -------------------
 
