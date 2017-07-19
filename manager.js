@@ -14,12 +14,12 @@
  limitations under the License.
  */
 
-var fs                              = require('fs')
-var baseAdapter                     = require('./baseAdapter')
-var lodash 			                = require('lodash')
-var lib                             = require('./lib')
-var path                            = require('path')
-var async                           = require('async')
+var fs                              = require('fs');
+var baseAdapter                     = require('./baseAdapter');
+var lodash 			                = require('lodash');
+var lib                             = require('./lib');
+var path                            = require('path');
+var async                           = require('async');
 
 var instance;
 
@@ -39,17 +39,13 @@ function manager() {
 
     this.doTask = function(taskName, context, resourceName, subResourceName, params, cb ) {
 
-        //TODO get the specific adapter from manager.getResource/SubResourceAdapter(resourceName, subResourceName);
-        //TODO call doTask on the adapter
-        //TODO:check context and taskName
 
-        //TODO use promise here, clean context variables
-        if(!resourceName && !subResourceName) {
+        if(!resourceName) { // if no resource name supplied then iterate over all available resources in config file
             var config                  = context.getConfig(resourceName, subResourceName);
 
             if(!config){
-                lib.print('error','ERROR retrieving config, check parameters')
-                return
+                lib.print('error', 'ERROR retrieving config, check parameters');
+                return;
             }
 
             for(var i=0; i<config.length; i++){
@@ -65,17 +61,19 @@ function manager() {
                     context.loadConfiguration(resourceName);
 
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                        cb(err, result)
+                        cb(err, result);
                     });
                 });
             }
-        } else if (!subResourceName) {
+            //
+        } else if (resourceName && !subResourceName) { // if resource name is specified and subresource is not specified call adapter of that specific
             var config                  = context.getConfig(resourceName, subResourceName);
 
             if(!config){
-                lib.print('error','ERROR retrieving config, check parameters')
+                lib.print('error', 'ERROR retrieving config, check parameters')
                 return
             }
+
             context.loadOrgDetail(resourceName);
             context.loadCmdLineVariables();
 
@@ -86,29 +84,28 @@ function manager() {
                 context.loadConfiguration(resourceName);
 
                 adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                    cb(err, result)
+                    cb(err, result);
                 });
             });
-        } else if(subResourceName && !resourceName){
-            // error
-            console.log("resource name not provided");
-        } else {
+        } else if(!resourceName  && subResourceName){ // This combination is not valid
+            lib.print('error', 'ERROR resource name not provided');
+        } else { // both resource name and subresource name is specified
             context.loadOrgDetail(resourceName);
             context.loadCmdLineVariables();
 
-            var subResourceItems = subResourceName.split(',')
+            var subResourceItems = subResourceName.split(',');
             var self                    = this;
 
             async.eachSeries(subResourceItems, function (item, callback) {
                 var config                  = context.getConfig(resourceName, item);
 
                 if(!config){
-                    lib.print('error','ERROR retrieving config, check parameters')
+                    lib.print('error', 'ERROR retrieving config, check parameters');
                     return
                 }
 
                 var subResourceType         = config.type;
-                // to get resource type
+                // Get resource type
                 var config                  = context.getConfig(resourceName, null);
                 var resourceType            = config.type;
 
@@ -122,26 +119,26 @@ function manager() {
                     });
                 });
             }, function(err, result){
-                cb(err, result)
+                cb(err, result);
             });
         }
-    }
+    };
 
     this.getAdapter = function (resourceType, subResourceType) {
-        var name = (resourceType)?((subResourceType)?resourceType+'.'+subResourceType:resourceType):'.';
+        var name = (resourceType) ? ((subResourceType) ? resourceType + '.' + subResourceType : resourceType) : '.';
 
         var adapter = this.adapters[name];
 
         if (!adapter) {
-            //error
-            console.log("Adapter not found for : " + name);
+            lib.print("error", "Adapter not found for : " + name);
         } else {
             return adapter;
         }
-    }
+    };
 
     this.loadAdapters = function (configFile) {
-        var adapterConfigs                   = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+        var adapterConfigs                  = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+
         if (adapterConfigs) {
             for (var x in adapterConfigs) {
                 var adapter                 = require(adapterConfigs[x]).adapter;
@@ -150,8 +147,8 @@ function manager() {
             }
         }
 
-        this.adapters['.'] = baseAdapter;
-    }
+        this.adapters['.']                  = baseAdapter;
+    };
 
     this.loadAdapters(path.join(__dirname, 'config/adapters.json'));
 }
@@ -187,6 +184,7 @@ this.getLog = function() {
     }
 }
 */
+
 //provide registerAdapter methods
 //while registering if there is already an adapter for the type, make it the parent for to be registered adapter
 //registerResourceAdapter(resourceType, adapter);
@@ -194,16 +192,5 @@ this.getLog = function() {
 // other adapter._prototype = baseAdapter and adapters[resourceType] = adapter
 //simlarly for registerSubResourceAdapter(resourceType, subResourceType, adapter);
 //deregister() methods
-
-
-
-
-//repeatAll(taskName, context, config, resourceName, subResourceName, params) {
-    //if resources collection exists in config, for each each resource do the following; otherwise for each subresource do the following
-    //for (x in config.resources or config.subresources) {
-    // get specific adapter
-    // call doTask(taskName, ....) in sequence.
-//}
-
 
 exports.getManager = getManager;

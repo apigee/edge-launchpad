@@ -14,123 +14,123 @@
  limitations under the License.
  */
 
-var apigeetool 		= require('apigeetool')
-var lib				= require('../../lib')
-var async           = require('async')
-var lodash         = require('lodash')
-var mustache        = require('mustache')
-var path 			= require('path')
+var apigeetool 		= require('apigeetool');
+var lib				= require('../../lib');
+var async           = require('async');
+var lodash         = require('lodash');
+var mustache        = require('mustache');
+var path 			= require('path');
 
 mustache.escape = function (value) {
     return value;
 };
 
-var sdk 			= apigeetool.getPromiseSDK()
+var sdk 			= apigeetool.getPromiseSDK();
 
 var adapter = function () {
-    this.clean 			= clean
-    this.build 			= build
-    this.deploy 		= deploy
+    this.clean 			= clean;
+    this.build 			= build;
+    this.deploy 		= deploy;
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('meta','building shared flow resources')
-    cb()
+    lib.print('meta','building shared flow resources');
+    cb();
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    lib.print('meta','deploying shared flow resources')
+    lib.print('meta','deploying shared flow resources');
 
-    var config          = context.getConfig(resourceName, subResourceName)
+    var config          = context.getConfig(resourceName, subResourceName);
 
-    var items           = lib.filter_items(config.items, params)
+    var items           = lib.filter_items(config.items, params);
 
-    var deploy_info     = context.getDeploymentInfo()
+    var deploy_info     = context.getDeploymentInfo();
 
-    context.resourceName 	= resourceName
+    context.resourceName 	= resourceName;
 
     for (var i=0; i< items.length; i++) {
-        lodash.merge(items[i], deploy_info)
-        items[i].context = context
+        lodash.merge(items[i], deploy_info);
+        items[i].context = context;
     }
 
     async.eachSeries(items, create_shared_flow, function(err){
         if(err){
-            lib.print('ERROR', err)
-            cb()
+            lib.print('ERROR', err);
+            cb();
         } else {
-            cb()
+            cb();
         }
-
-    })
+    });
 }
 
 function create_shared_flow(item, callback) {
-    var opts 			= item
-    var context			= item.context
-    delete item.context
+    var opts 			= item;
+    var context			= item.context;
+    delete item.context;
 
-    opts.directory = path.join(context.getBasePath(context.resourceName), '/src/shared_flow/', item.name)
-    opts.environments = opts.environments.join(',')
+    opts.directory = path.join(context.getBasePath(context.resourceName), '/src/shared_flow/', item.name);
+    opts.environments = opts.environments.join(',');
 
     sdk.deploySharedflow(opts)
         .then(function(result){
             //cache create success
-            lib.print('info', 'created shared flow ' + item.name)
+            lib.print('info', 'created shared flow ' + item.name);
+
             if(item.assignResponse && item.assignResponse.length > 0){
-                lib.extract_response(context, item.assignResponse, result)
+                lib.extract_response(context, item.assignResponse, result);
             }
-            callback()
+
+            callback();
         },function(err){
             //cache create failed
-            lib.print('error', 'error creating shared flow ' + item.name)
-            lib.print('ERROR', err)
-            callback()
+            lib.print('error', 'error creating shared flow ' + item.name);
+            lib.print('ERROR', err);
+            callback();
         }) ;
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
     //opts = lib.build_opts(context, resourceName, subResourceName)
-    lib.print('meta','cleaning shared flow resources')
+    lib.print('meta','cleaning shared flow resources');
 
-    var config          = context.getConfig(resourceName, subResourceName)
+    var config          = context.getConfig(resourceName, subResourceName);
 
-    var items           = lib.filter_items(config.items, params)
+    var items           = lib.filter_items(config.items, params);
 
-    var deploy_info     = context.getDeploymentInfo()
+    var deploy_info     = context.getDeploymentInfo();
 
     for (var i=0; i< items.length; i++) {
-        lodash.merge(items[i], deploy_info)
-        items[i].context = context
+        lodash.merge(items[i], deploy_info);
+        items[i].context = context;
     }
 
     async.each(items, delete_shared_flow, function(err){
         if(err){
-            lib.print('ERROR', err)
-            cb()
+            lib.print('ERROR', err);
+            cb();
         } else {
-            cb()
+            cb();
         }
-
-    })
+    });
 }
 
 function delete_shared_flow(item, callback) {
-    var opts 			= item
-    var context			= item.context
-    delete item.context
+    var opts 			= item;
+    var context			= item.context;
+    delete item.context;
 
     sdk.deleteSharedflow(opts)
         .then(function(result){
             //cache create success
-            lib.print('info', 'deleted shared flow  ' + item.name)
-            callback()
+            lib.print('info', 'deleted shared flow  ' + item.name);
+            callback();
         },function(err){
             //cache create failed
-            lib.print('error', 'error deleting shared flow ' + item.name)
-            lib.print('ERROR', err)
-            callback()
-        }) ;
+            lib.print('error', 'error deleting shared flow ' + item.name);
+            lib.print('ERROR', err);
+            callback();
+        });
 }
 
-exports.adapter 			= adapter
+exports.adapter 			= adapter;

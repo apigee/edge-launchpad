@@ -14,6 +14,11 @@
  limitations under the License.
  */
 
+/*
+ This is context object. It is the configuration hub. It stores all the variables and provides it to adapters during runtime.
+*/
+
+
 var yaml                            = require('js-yaml');
 var fs                              = require('fs');
 var path                            = require('path');
@@ -40,7 +45,6 @@ function context(config, env) {
     this.config                     = {};
     this.cmdLineVariables           = {};
 
-    //TODO:if object assign as it is; if text, load (find file type and load accordingly) and assign
     if (typeof config === 'string' || config instanceof String ) {
         var configObj               = null;
 
@@ -64,71 +68,75 @@ function context(config, env) {
         var vName = variableName.replace("$","").replace("\'","");
 
         return this.variables[vName];
-    }
+    };
 
     this.setVariable = function(name, value) {
         this.variables[name]             = value;
-    }
+    };
 
-    this.cleanVariables = function(name, value) {
-        this.variables                   = {}
-    }
+    this.cleanVariables = function() {
+        this.variables                   = {};
+    };
 
     this.getAllVariables = function(){
-        return this.variables
-    }
+        return this.variables;
+    };
 
     this.loadCmdLineVariables = function (){
-        var cmd_variables = this.cmdLineVariables
+        var cmd_variables = this.cmdLineVariables;
 
         for (var i=0; i<Object.keys(cmd_variables).length; i++) {
-            this.setVariable(Object.keys(cmd_variables)[i], cmd_variables[Object.keys(cmd_variables)[i]])
+            this.setVariable(Object.keys(cmd_variables)[i], cmd_variables[Object.keys(cmd_variables)[i]]);
         }
-    }
+    };
+
     this.loadOrgDetail = function (resourceName) {
-        var config                  = this.getConfig(resourceName)
-        var orgDetails
+        var config                  = this.getConfig(resourceName);
+        var orgDetails;
+
         if(config)
-            orgDetails              = config.properties.edgeOrg
+            orgDetails              = config.properties.edgeOrg;
         else {
-            console.log('ERROR retrieving config, check parameters')
-            return
+            console.log('ERROR retrieving config, check parameters');
+            return;
         }
+
         if(orgDetails && orgDetails.org)
-            this.setVariable('org', mustache.render(orgDetails.org, this.getAllVariables()))
+            this.setVariable('org', mustache.render(orgDetails.org, this.getAllVariables()));
 
         if(orgDetails && orgDetails.env)
-            this.setVariable('env', mustache.render(orgDetails.env, this.getAllVariables()))
+            this.setVariable('env', mustache.render(orgDetails.env, this.getAllVariables()));
 
         if(orgDetails && orgDetails.token)
-            this.setVariable('token', mustache.render(orgDetails.token, this.getAllVariables()))
+            this.setVariable('token', mustache.render(orgDetails.token, this.getAllVariables()));
 
         if(orgDetails && orgDetails.username)
-            this.setVariable('username', mustache.render(orgDetails.username, this.getAllVariables()))
+            this.setVariable('username', mustache.render(orgDetails.username, this.getAllVariables()));
 
         if(orgDetails && orgDetails.password)
-            this.setVariable('password', mustache.render(orgDetails.password, this.getAllVariables()))
+            this.setVariable('password', mustache.render(orgDetails.password, this.getAllVariables()));
 
-    }
+    };
 
     this.loadConfiguration = function (resourceName) {
-        var config                  = this.getConfig(resourceName)
-        var configurations          = config.properties.configurations
+        var config                  = this.getConfig(resourceName);
+        var configurations          = config.properties.configurations;
 
         for(var i=0; i<configurations.length; i++){
             if(configurations[i].env == this.getEnvironment()){
-                var keys            = Object.keys(configurations[i])
+                var keys            = Object.keys(configurations[i]);
+
                 for(var j=0; j<keys.length; j++){
-                    this.setVariable(keys[j], mustache.render(configurations[i][keys[j]], this.getAllVariables()))
+                    this.setVariable(keys[j], mustache.render(configurations[i][keys[j]], this.getAllVariables()));
                 }
             }
         }
-    }
+    };
 
     this.getConfig = function (resourceName, subResourceName) {
         var config = this.config['resources'];
 
-        if (subResourceName) {
+        if (subResourceName) { // return config scope of respective subresource
             for(var i=0; i<config.length; i++){
                 if(config[i].name == resourceName) {
                     for(var j=0; j<config[i].properties.subResources.length; j++){
@@ -138,45 +146,49 @@ function context(config, env) {
                     }
                 }
             }
-        } else if (resourceName) {
+        } else if (resourceName) { // return config scope of respective resource
             for(var i=0; i<config.length; i++){
                 if(config[i].name == resourceName) {
                     return config[i];
                 }
             }
-        } else {
+        } else { // return complete config
             return config;
         }
-    }
+    };
 
     this.getEnvironment = function() {
         return this.env;
-    }
+    };
 
     this.getDeploymentInfo = function () {
         var deploy_info                 = {};
 
         deploy_info.baseuri             = this.getVariable('edge_host');
         deploy_info.organization        = this.getVariable('org');
+
         var token                       = this.getVariable('token');
+
         if(token){
-            deploy_info.token               = token;
+            deploy_info.token           = token;
         } else {
-            deploy_info.username            = this.getVariable('username');
-            deploy_info.password            = this.getVariable('password');
+            deploy_info.username        = this.getVariable('username');
+            deploy_info.password        = this.getVariable('password');
         }
+
+        // making environments variable 'list' since apigeetool expects it that way
         deploy_info.environments        = this.getVariable('env').split(',');
 
         return deploy_info;
-    }
+    };
 
     this.getBasePath = function (resourceName) {
-        return this.getConfig(resourceName).properties.basePath
-    }
+        return this.getConfig(resourceName).properties.basePath;
+    };
 
     this.setCmdLineVariables = function (args_passed){
         this.cmdLineVariables           = args_passed;
-    }
+    };
 }
 
 exports.getContext = getContext;
