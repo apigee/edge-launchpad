@@ -33,7 +33,9 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 
 
 ## Sample config
-![samples/configuration/config_one.yml](samples/configuration/config_one.yml)
+[samples/configuration/config_one.yml](samples/configuration/config_one.yml)
+
+refer openbank and healthapix repo for reference implementation - [openbank](https://github.com/apigee/openbank), [healthapix](https://github.com/apigee/flame/tree/master/src/gateway)
 
 -------------------
 
