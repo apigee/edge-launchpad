@@ -33,7 +33,7 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 
 
 ## Sample config
-![sample/configuration/config_one.yml](sample/configuration/config_one.yml)
+![samples/configuration/config_one.yml](sample/configuration/config_one.yml)
 
 ## Release
 
