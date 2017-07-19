@@ -193,7 +193,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
         async.each(items, delete_collection, function(err){
             if(err){
-                lib.print('ERROR', err)
+                lib.print('warning', err)
                 cb()
             } else {
                 cb()
@@ -220,7 +220,7 @@ function delete_collection(item, callback) {
         if (!error && response.statusCode == 200) {
             callback()
         } else {
-            lib.print('ERROR', 'error deleting collection for ' + item.name)
+            lib.print('WARNING', 'error deleting collection for ' + item.name)
             console.log(body)
             callback()
         }

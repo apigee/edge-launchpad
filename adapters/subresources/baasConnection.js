@@ -129,7 +129,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
     async.each(items, delete_data, function(err){
         if(err){
-            lib.print('ERROR', err)
+            lib.print('warning', err)
             cb()
         } else {
             cb()

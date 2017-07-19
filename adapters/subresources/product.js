@@ -119,7 +119,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
 
 	async.each(items, delete_product, function(err){
 		if(err){
-			lib.print('ERROR', err)
+			lib.print('warning', err)
 			cb()
 		} else {
 			cb()
@@ -146,8 +146,8 @@ function delete_product(item, callback) {
 			callback()
 		},function(err){
 			//cache create failed
-			lib.print('error', 'error deleting product ' + item.name)
-			lib.print('ERROR', err)
+			lib.print('warning', 'error deleting product ' + item.name)
+			lib.print('warning', err)
 			callback()
 		}) ;
 }
