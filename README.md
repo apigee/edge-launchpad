@@ -210,6 +210,13 @@ resources:
 ### v1.0.4
 - fix localCommand
 
+### v1.0.7
+- using multipart for proxy upload 
+- copy util added 
+- fix deploy phase variable replacement 
+- app deploy made sync 
+- using cross-spawn to run npm commands, to make windows compatible
+
 -------------------
 
 ## TODO
@@ -230,3 +237,4 @@ resources:
 
 
 
+### This is not an official Google project

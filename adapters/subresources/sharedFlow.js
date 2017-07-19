@@ -14,15 +14,18 @@
  limitations under the License.
  */
 
+var apigeetool 		= require('apigeetool');
 var lib				= require('../../lib');
 var async           = require('async');
-var lodash          = require('lodash');
-var request         = require('request');
+var lodash         = require('lodash');
 var mustache        = require('mustache');
+var path 			= require('path');
 
 mustache.escape = function (value) {
     return value;
 };
+
+var sdk 			= apigeetool.getPromiseSDK();
 
 var adapter = function () {
     this.clean 			= clean;
@@ -31,12 +34,12 @@ var adapter = function () {
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('meta','building targetServer resources');
+    lib.print('meta','building shared flow resources');
     cb();
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
-    lib.print('meta','deploying targetServer resources');
+    lib.print('meta','deploying shared flow resources');
 
     var config          = context.getConfig(resourceName, subResourceName);
 
@@ -44,12 +47,14 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
     var deploy_info     = context.getDeploymentInfo();
 
+    context.resourceName 	= resourceName;
+
     for (var i=0; i< items.length; i++) {
         lodash.merge(items[i], deploy_info);
         items[i].context = context;
     }
 
-    async.each(items, create_targetServer, function(err){
+    async.eachSeries(items, create_shared_flow, function(err){
         if(err){
             lib.print('ERROR', err);
             cb();
@@ -59,52 +64,35 @@ function deploy(context, resourceName, subResourceName, params, cb) {
     });
 }
 
-function create_targetServer(item, callback) {
+function create_shared_flow(item, callback) {
     var opts 			= item;
     var context			= item.context;
     delete item.context;
 
-    var options = {
-        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments  + '/targetservers',
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        auth: {
-        }
-    };
+    opts.directory = path.join(context.getBasePath(context.resourceName), '/src/shared_flow/', item.name);
+    opts.environments = opts.environments.join(',');
 
-    options.body = mustache.render(item.payload, context.getAllVariables());
-
-    if(opts.token){
-        options.auth.bearer = opts.token;
-    } else {
-        options.auth.username = opts.username;
-        options.auth.password = opts.password;
-    }
-
-    request.post(options, function (error, response, body) {
-        if (!error && (response.statusCode == 200 || response.statusCode == 201)) {
+    sdk.deploySharedflow(opts)
+        .then(function(result){
             //cache create success
-            lib.print('info', 'created targetServer ' + item.name);
+            lib.print('info', 'created shared flow ' + item.name);
 
             if(item.assignResponse && item.assignResponse.length > 0){
                 lib.extract_response(context, item.assignResponse, result);
             }
 
             callback();
-        } else {
-            lib.print('error', error);
-            lib.print('error', body);
+        },function(err){
+            //cache create failed
+            lib.print('error', 'error creating shared flow ' + item.name);
+            lib.print('ERROR', err);
             callback();
-        }
-    });
-
+        }) ;
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
-    //opts = lib.build_opts(context, resourceName, subResourceName);
-    lib.print('meta','cleaning targetServer resources');
+    //opts = lib.build_opts(context, resourceName, subResourceName)
+    lib.print('meta','cleaning shared flow resources');
 
     var config          = context.getConfig(resourceName, subResourceName);
 
@@ -117,7 +105,7 @@ function clean(context, resourceName, subResourceName, params, cb) {
         items[i].context = context;
     }
 
-    async.each(items, delete_targetServer, function(err){
+    async.each(items, delete_shared_flow, function(err){
         if(err){
             lib.print('ERROR', err);
             cb();
@@ -127,48 +115,22 @@ function clean(context, resourceName, subResourceName, params, cb) {
     });
 }
 
-function delete_targetServer(item, callback) {
+function delete_shared_flow(item, callback) {
     var opts 			= item;
     var context			= item.context;
     delete item.context;
 
-    var payload = mustache.render(item.payload, context.getAllVariables());
-    var name = JSON.parse(payload).name;
-
-    var options = {
-        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments  + '/targetservers/' + name ,
-        method: 'DELETE',
-        auth: {
-        },
-        headers: {
-            'Content-type': 'application/json'
-        },
-        auth: {
-        }
-    };
-
-    if(opts.token){
-        options.auth.bearer = opts.token;
-    } else {
-        options.auth.username = opts.username;
-        options.auth.password = opts.password;
-    }
-
-    request(options, function (error, response, body) {
-        if (!error && (response.statusCode == 200)) {
+    sdk.deleteSharedflow(opts)
+        .then(function(result){
             //cache create success
-            lib.print('info', 'deleted targetServer ' + item.name);
-
-            if(item.assignResponse && item.assignResponse.length > 0){
-                lib.extract_response(context, item.assignResponse, body);
-            }
-
+            lib.print('info', 'deleted shared flow  ' + item.name);
             callback();
-        } else {
-            lib.print('error', body);
+        },function(err){
+            //cache create failed
+            lib.print('error', 'error deleting shared flow ' + item.name);
+            lib.print('ERROR', err);
             callback();
-        }
-    });
+        });
 }
 
 exports.adapter 			= adapter;
