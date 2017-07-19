@@ -14,63 +14,62 @@
  limitations under the License.
  */
 
-var apigeetool 		= require('apigeetool')
-var lib				= require('../../lib')
-var async           = require('async')
-var lodash          = require('lodash')
-var mustache        = require('mustache')
-var request 		= require('request')
+var apigeetool 		= require('apigeetool');
+var lib				= require('../../lib');
+var async           = require('async');
+var lodash          = require('lodash');
+var mustache        = require('mustache');
+var request 		= require('request');
 
 mustache.escape = function (value) {
     return value;
 };
 
-var sdk 			= apigeetool.getPromiseSDK()
+var sdk 			= apigeetool.getPromiseSDK();
 
 var adapter = function () {
-    this.clean 			= clean
-    this.build 			= build
-    this.deploy 		= deploy
+    this.clean 			= clean;
+    this.build 			= build;
+    this.deploy 		= deploy;
 }
 
 function build(context, resourceName, subResourceName, params, cb) {
-    lib.print('meta','building kvm resources')
-    cb()
+    lib.print('meta','building kvm resources');
+    cb();
 }
 
 function deploy(context, resourceName, subResourceName, params, cb) {
     //opts = lib.build_opts(context, resourceName, subResourceName)
-    lib.print('meta','deploying kvm resources')
+    lib.print('meta','deploying kvm resources');
 
-    var config          = context.getConfig(resourceName, subResourceName)
+    var config          = context.getConfig(resourceName, subResourceName);
 
-    var items           = lib.filter_items(config.items, params)
+    var items           = lib.filter_items(config.items, params);
 
-    var deploy_info     = context.getDeploymentInfo()
+    var deploy_info     = context.getDeploymentInfo();
 
     for (var i=0; i< items.length; i++) {
-        lodash.merge(items[i], deploy_info)
-        items[i].context = context
+        lodash.merge(items[i], deploy_info);
+        items[i].context = context;
     }
 
     async.each(items, create_kvm, function(err){
         if(err){
-            lib.print('ERROR', err)
-            cb()
+            lib.print('ERROR', err);
+            cb();
         } else {
-            cb()
+            cb();
         }
-
-    })
+    });
 }
 
 function create_kvm(item, callback) {
-    var opts 			= item
-    var context         = item.context
-    delete item.context
+    var opts 			= item;
+    var context         = item.context;
+    delete item.context;
 
     // TODO conflict for environments attribute
-    var payload = mustache.render(item.payload, context.getAllVariables())
+    var payload = mustache.render(item.payload, context.getAllVariables());
 
     var options = {
         uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/keyvaluemaps',
@@ -80,78 +79,78 @@ function create_kvm(item, callback) {
         },
         auth: {},
         body: payload
-    }
+    };
 
     if(opts.token){
-        options.auth.bearer = opts.token
+        options.auth.bearer = opts.token;
     } else {
-        options.auth.username = opts.username
-        options.auth.password = opts.password
+        options.auth.username = opts.username;
+        options.auth.password = opts.password;
     }
 
     request(options, function (error, response, body) {
         if (!error) {
-            lib.print('info', 'created kvm ' + item.name)
-            callback()
+            lib.print('info', 'created kvm ' + item.name);
+            callback();
         } else {
-            lib.print('error', 'error creating kvm ' + item.name)
-            lib.print('error', error)
-            callback()
+            lib.print('error', 'error creating kvm ' + item.name);
+            lib.print('error', error);
+            callback();
         }
     });
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
     //opts = lib.build_opts(context, resourceName, subResourceName)
-    lib.print('meta','cleaning kvm resources')
+    lib.print('meta','cleaning kvm resources');
 
-    var config          = context.getConfig(resourceName, subResourceName)
+    var config          = context.getConfig(resourceName, subResourceName);
 
-    var items           = lib.filter_items(config.items, params)
+    var items           = lib.filter_items(config.items, params);
 
-    var deploy_info     = context.getDeploymentInfo()
+    var deploy_info     = context.getDeploymentInfo();
 
     for (var i=0; i< items.length; i++) {
-        lodash.merge(items[i], deploy_info)
-        items[i].context = context
+        lodash.merge(items[i], deploy_info);
+        items[i].context = context;
     }
 
     async.each(items, delete_kvm, function(err){
         if(err){
-            lib.print('ERROR', err)
-            cb()
+            lib.print('ERROR', err);
+            cb();
         } else {
-            cb()
+            cb();
         }
 
     })
 }
 
 function delete_kvm(item, callback) {
-    var opts 			= item
-    var context			= item.context
-    delete item.context
+    var opts 			= item;
+    var context			= item.context;
+    delete item.context;
 
-    opts.mapName  	= item.name
+    opts.mapName  	= item.name;
 
     // TODO conflict for environments attribute
-    var payload = mustache.render(item.payload, context.getAllVariables())
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)))
+    var payload = mustache.render(item.payload, context.getAllVariables());
+    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    opts.mapName  	    = opts.name
-    opts.environment    = opts.environments[0]
+    opts.mapName  	    = opts.name;
+    opts.environment    = opts.environments[0];
 
     sdk.deleteKVM(opts)
         .then(function(result){
             //cache create success
-            lib.print('info', 'deleted kvm ' + opts.mapName)
-            callback()
+            lib.print('info', 'deleted kvm ' + opts.mapName);
+            callback();
         },function(err){
             //cache create failed
-            lib.print('error', 'error deleting kvm ' + opts.mapName)
-            lib.print('error', err)
-            callback()
-        }) ;
+            lib.print('error', 'error deleting kvm ' + opts.mapName);
+            lib.print('error', err);
+            callback();
+        });
 }
 
-exports.adapter 			= adapter
+exports.adapter 			= adapter;
