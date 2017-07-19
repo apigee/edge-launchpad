@@ -1,4 +1,5 @@
-# LAUNCHPAD
+# Edge-Launchpad
+![](images/edge-launchpad-wall-image.png)
 
 A deployment tool for apigee solutions. Helps orchestrating the deployement of any solution comprising of apps, products, developer, proxy, baas data etc
 
@@ -218,22 +219,6 @@ resources:
 - using cross-spawn to run npm commands, to make windows compatible
 
 -------------------
-
-## TODO
-
-- p2 data source many
-
-- p2 generate load for generating initial report
-
-- p2 license check
-
-- p2 cache creation with cache properties
-
-- p2 deploy individual dependency from its gulp
-
-- p2 standardize sequential execution of tasks
-
-- p3 constants to diff file eg. baasLoadData.js limit=200
 
 
 
