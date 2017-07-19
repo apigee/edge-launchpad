@@ -5,14 +5,12 @@ A deployment tool for apigee solutions. Helps orchestrating the deployement of a
 
 ----------------
 
-# DOCUMENTATION
-
 ### Developer guide
 ref : https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvxKCi7vZOJbrSQ/edit?usp=sharing
 
 
 ----------------
-## Usage
+### Usage
 
 Usage: gulp < deploy / build / clean > [options]
 
@@ -40,7 +38,7 @@ eg2 : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --r
 
 -----------------
 
-## sample config
+## Sample config
 
 ```
 resources:
@@ -190,7 +188,7 @@ resources:
 
 ----------------
 
-## RELEASE
+## Release
 
 ### v1.0.0
 - initial release
