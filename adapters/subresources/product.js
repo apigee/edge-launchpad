@@ -70,35 +70,41 @@ function create_product(item, callback) {
 
 	// TODO conflict for environments attribute
     var payload = mustache.render(item.payload, context.getAllVariables());
-    lodash.merge(opts, JSON.parse(payload));
 
-    var options = {
-        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/apiproducts',
-        method: 'POST',
-		headers: {
-            'Content-type': 'application/json'
-        },
-		auth: {},
-		body: payload
-    };
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, JSON.parse(payload));
 
-    if(opts.token){
-        options.auth.bearer = opts.token;
-    } else {
-        options.auth.username = opts.username;
-        options.auth.password = opts.password;
-    }
+        var options = {
+            uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/apiproducts',
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            auth: {},
+            body: payload
+        };
 
-    request(options, function (error, response, body) {
-        if (!error) {
-            lib.print('info', 'created product ' + item.name);
-            callback();
+        if(opts.token){
+            options.auth.bearer = opts.token;
         } else {
-            lib.print('error', 'error creating product ' + item.name);
-            lib.print('error', error);
-            callback();
+            options.auth.username = opts.username;
+            options.auth.password = opts.password;
         }
-    });
+
+        request(options, function (error, response, body) {
+            if (!error) {
+                lib.print('info', 'created product ' + item.name);
+                callback();
+            } else {
+                lib.print('error', 'error creating product ' + item.name);
+                lib.print('error', error);
+                callback();
+            }
+        });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -136,19 +142,25 @@ function delete_product(item, callback) {
 
 	// TODO conflict for environments attribute
     var payload = mustache.render(item.payload, context.getAllVariables());
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-	sdk.deleteProduct(opts)
-		.then(function(result){
-			//cache create success
-			lib.print('info', 'deleted product ' + item.name);
-			callback();
-		},function(err){
-			//cache create failed
-			lib.print('error', 'error deleting product ' + item.name);
-			lib.print('ERROR', err);
-			callback();
-		}) ;
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
+
+        sdk.deleteProduct(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'deleted product ' + item.name);
+                callback();
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error deleting product ' + item.name);
+                lib.print('ERROR', err);
+                callback();
+            });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 exports.adapter 			= adapter;

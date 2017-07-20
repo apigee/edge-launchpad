@@ -201,6 +201,16 @@ function extract_response(context, collect_info, result) {
     }
 }
 
+function is_json_string(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+
+    return true;
+}
+
 exports.replace_variables 		= replace_variables;
 exports.npm_install_local_only	= npm_install_local_only;
 exports.prompt 					= prompt;
@@ -209,3 +219,4 @@ exports.normalize_data 			= normalize_data;
 exports.zip                     = zip;
 exports.filter_items 			= filter_items;
 exports.extract_response 		= extract_response;
+exports.is_json_string 			= is_json_string;

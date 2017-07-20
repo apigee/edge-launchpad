@@ -28,20 +28,48 @@ function baseAdapter () {
     this.doTask = function(taskName,context,resourceName,subResourceName, params, cb) {
 
         switch (taskName.toUpperCase()) {
-            case 'CLEAN' : this.clean (context, resourceName, subResourceName, params, function (err, result) {
-                cb(err, result)
-            }); break;
-            case 'BUILD' : this.build (context, resourceName, subResourceName, params, function (err, result) {
-                cb(err, result)
-            }); break;
-            case 'DEPLOY': this.deploy(context, resourceName, subResourceName, params, function (err, result) {
-                cb(err, result)
-            }); break;
-            case 'PROMPT': this.prompt(context, resourceName, subResourceName, params, function (err, result) {
-                cb(err, result)
-            }); break;
-        }
+            case 'CLEAN' :
+                try {
+                    this.clean(context, resourceName, subResourceName, params, function (err, result) {
+                        cb(err, result)
+                    });
+                } catch(e){
+                    lib.print('error', e);
+                }
 
+                break;
+
+            case 'BUILD' :
+                try {
+                    this.build(context, resourceName, subResourceName, params, function (err, result) {
+                        cb(err, result)
+                    });
+                } catch(e){
+                    lib.print('error', e);
+                }
+
+                break;
+            case 'DEPLOY' :
+                try {
+                    this.deploy(context, resourceName, subResourceName, params, function (err, result) {
+                        cb(err, result)
+                    });
+                } catch(e){
+                    lib.print('error', e);
+                }
+
+                break;
+            case 'PROMPT' :
+                try {
+                    this.prompt(context, resourceName, subResourceName, params, function (err, result) {
+                        cb(err, result);
+                    });
+                } catch(e){
+                    lib.print('error', e);
+                }
+
+                break;
+        }
     };
 
 
@@ -65,33 +93,34 @@ function baseAdapter () {
 
         if (subResources && subResources.length > 0) {
             // TODO use promise
-            async.eachSeries(
 
+
+            async.eachSeries(
                 subResources,
 
                 function (subResource, callback) {
-                    var subResourceType         = subResource.type;
-                    var subResourceName         = subResource.name;
+                    var subResourceType = subResource.type;
+                    var subResourceName = subResource.name;
 
-                    var adapter                 = manager.getAdapter(resourceType, subResourceType);
+                    var adapter = manager.getAdapter(resourceType, subResourceType);
 
                     adapter.doTask(taskName, context, resourceName, subResourceName, params, function (err, result) {
-                        if(!err) {
-                           callback();
-                       } else {
-                           callback(err);
-                       }
+                        if (!err) {
+                            callback();
+                        } else {
+                            callback(err);
+                        }
                     });
                 },
 
                 function (err) {
                     //
-                    if(taskName.toUpperCase() == 'CLEAN'){
+                    if (taskName.toUpperCase() == 'CLEAN') {
                         // reversing the list after clean so that build and deploy is executed in same order as defined in the config file
                         subResources.reverse();
                     }
 
-                    if(!err) {
+                    if (!err) {
                         cb();
                     } else {
                         lib.print('ERROR', err);

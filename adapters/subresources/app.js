@@ -68,22 +68,28 @@ function create_app(item, callback) {
 	delete item.context;
 
     var payload = mustache.render(item.payload, context.getAllVariables());
-	lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-	sdk.createApp(opts)
-		.then(function(result){
-			//cache create success
-			lib.print('info', 'created app ' + item.name);
-			if(item.assignResponse && item.assignResponse.length > 0){
-				lib.extract_response(context, item.assignResponse, result)
-			}
-			callback();
-		},function(err){
-			//cache create failed
-			lib.print('error', 'error creating app ' + item.name);
-			lib.print('ERROR', err);
-			callback()
-		});
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
+
+        sdk.createApp(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'created app ' + item.name);
+                if(item.assignResponse && item.assignResponse.length > 0){
+                    lib.extract_response(context, item.assignResponse, result)
+                }
+                callback();
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error creating app ' + item.name);
+                lib.print('ERROR', err);
+                callback()
+            });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -118,19 +124,25 @@ function delete_app(item, callback) {
     delete item.context;
 
     var payload = mustache.render(item.payload, context.getAllVariables());
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-	sdk.deleteApp(opts)
-		.then(function(result){
-			//cache create success
-			lib.print('info', 'deleted app  ' + item.name);
-			callback();
-		},function(err){
-			//cache create failed
-			lib.print('error', 'error deleting app ' + item.name);
-			lib.print('ERROR', err);
-			callback();
-		});
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
+
+        sdk.deleteApp(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'deleted app  ' + item.name);
+                callback();
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error deleting app ' + item.name);
+                lib.print('ERROR', err);
+                callback();
+            });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 exports.adapter 			= adapter;

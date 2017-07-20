@@ -68,30 +68,35 @@ function create_cache(item, callback) {
     opts.cache           = item.name;
 
     var payload = mustache.render(item.payload, context.getAllVariables());
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    var environments    = item.environments;
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    for (var i=0; i<environments.length; i++){
-        opts.environment = environments[i];
-        sdk.createcache(opts)
-            .then(function(result){
-                //cache create success
-                lib.print('info', 'created cache ' + item.name + ' for env ' + item.environment);
+        var environments    = item.environments;
 
-                if(item.assignResponse && item.assignResponse.length > 0){
-                    lib.extract_response(context, item.assignResponse, result);
-                }
+        for (var i=0; i<environments.length; i++){
+            opts.environment = environments[i];
+            sdk.createcache(opts)
+                .then(function(result){
+                    //cache create success
+                    lib.print('info', 'created cache ' + item.name + ' for env ' + item.environment);
 
-                callback();
-            },function(err){
-                //cache create failed
-                lib.print('error', 'error creating cache ' + item.name + ' for env ' + item.environment);
-                lib.print('ERROR', err);
-                callback();
-            }) ;
+                    if(item.assignResponse && item.assignResponse.length > 0){
+                        lib.extract_response(context, item.assignResponse, result);
+                    }
+
+                    callback();
+                },function(err){
+                    //cache create failed
+                    lib.print('error', 'error creating cache ' + item.name + ' for env ' + item.environment);
+                    lib.print('ERROR', err);
+                    callback();
+                }) ;
+        }
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
     }
-
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -125,37 +130,42 @@ function delete_cache(item, callback) {
     opts.cache           = item.name;
 
     var payload = mustache.render(item.payload, context.getAllVariables());
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    delete item.context;
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    var options = {
-        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/caches/' + opts.cache +  '/entries?action=clear',
-        method: 'POST',
-        headers: {
-        },
-        auth: {}
-    };
+        delete item.context;
 
-    if(opts.token){
-        options.auth.bearer = opts.token;
-    } else {
-        options.auth.username = opts.username;
-        options.auth.password = opts.password;
-    }
+        var options = {
+            uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/caches/' + opts.cache +  '/entries?action=clear',
+            method: 'POST',
+            headers: {
+            },
+            auth: {}
+        };
 
-    request(options, function (error, response, body) {
-        if (!error) {
-            lib.print('info', 'cleared cache ' + item.name);
-            callback();
+        if(opts.token){
+            options.auth.bearer = opts.token;
         } else {
-            //cache create failed
-            lib.print('error', 'error clearing cache ' + item.name);
-            lib.print('ERROR', error);
-            callback();
+            options.auth.username = opts.username;
+            options.auth.password = opts.password;
         }
-    });
 
+        request(options, function (error, response, body) {
+            if (!error) {
+                lib.print('info', 'cleared cache ' + item.name);
+                callback();
+            } else {
+                //cache create failed
+                lib.print('error', 'error clearing cache ' + item.name);
+                lib.print('ERROR', error);
+                callback();
+            }
+        });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 exports.adapter 			= adapter;

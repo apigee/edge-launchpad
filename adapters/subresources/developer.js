@@ -63,25 +63,31 @@ function create_developer(item, callback) {
 	var context 		= item.context;
 
 	opts.email  		= item.email;
-	// TODO conflict for environments attribute
-	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)));
 
-	sdk.createDeveloper(opts)
-		.then(function(result){
-			//cache create success
-			lib.print('info', 'created developer ' + item.email);
+    if(lib.is_json_string(item.payload)){
+        // TODO conflict for environments attribute
+        lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)));
 
-			if(item.assignResponse && item.assignResponse.length > 0){
-                lib.extract_response(context, item.assignResponse, result);
-            }
+        sdk.createDeveloper(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'created developer ' + item.email);
 
-			callback();
-		},function(err){
-			//cache create failed
-			lib.print('error', 'error creating developer ' + item.email);
-			lib.print('ERROR', err);
-			callback();
-		});
+                if(item.assignResponse && item.assignResponse.length > 0){
+                    lib.extract_response(context, item.assignResponse, result);
+                }
+
+                callback();
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error creating developer ' + item.email);
+                lib.print('ERROR', err);
+                callback();
+            });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -112,20 +118,26 @@ function delete_developer(item, callback) {
 	var opts 			= item;
 
 	opts.email  		= item.email;
-	// TODO conflict for environments attribute
-	lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)));
 
-	sdk.deleteDeveloper(opts)
-		.then(function(result){
-			//cache create success
-			lib.print('info', 'deleted developer ' + item.email);
-			callback();
-		},function(err){
-			//cache create failed
-			lib.print('error', 'error deleting developer ' + item.email);
-			lib.print('ERROR', err);
-			callback();
-		});
+    if(lib.is_json_string(item.payload)){
+        // TODO conflict for environments attribute
+        lodash.merge(opts, lib.normalize_data(JSON.parse(item.payload)));
+
+        sdk.deleteDeveloper(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'deleted developer ' + item.email);
+                callback();
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error deleting developer ' + item.email);
+                lib.print('ERROR', err);
+                callback();
+            });
+	} else {
+    	lib.print('error', 'invalid JSON in payload');
+    	callback();
+	}
 }
 
 exports.adapter 			= adapter;

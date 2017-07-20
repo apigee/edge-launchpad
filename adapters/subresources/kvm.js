@@ -71,33 +71,38 @@ function create_kvm(item, callback) {
     // TODO conflict for environments attribute
     var payload = mustache.render(item.payload, context.getAllVariables());
 
-    var options = {
-        uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/keyvaluemaps',
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        auth: {},
-        body: payload
-    };
+    if(lib.is_json_string(item.payload)){
+        var options = {
+            uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/environments/' + opts.environments + '/keyvaluemaps',
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            auth: {},
+            body: payload
+        };
 
-    if(opts.token){
-        options.auth.bearer = opts.token;
-    } else {
-        options.auth.username = opts.username;
-        options.auth.password = opts.password;
-    }
-
-    request(options, function (error, response, body) {
-        if (!error) {
-            lib.print('info', 'created kvm ' + item.name);
-            callback();
+        if(opts.token){
+            options.auth.bearer = opts.token;
         } else {
-            lib.print('error', 'error creating kvm ' + item.name);
-            lib.print('error', error);
-            callback();
+            options.auth.username = opts.username;
+            options.auth.password = opts.password;
         }
-    });
+
+        request(options, function (error, response, body) {
+            if (!error) {
+                lib.print('info', 'created kvm ' + item.name);
+                callback();
+            } else {
+                lib.print('error', 'error creating kvm ' + item.name);
+                lib.print('error', error);
+                callback();
+            }
+        });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 function clean(context, resourceName, subResourceName, params, cb) {
@@ -135,22 +140,28 @@ function delete_kvm(item, callback) {
 
     // TODO conflict for environments attribute
     var payload = mustache.render(item.payload, context.getAllVariables());
-    lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    opts.mapName  	    = opts.name;
-    opts.environment    = opts.environments[0];
+    if(lib.is_json_string(item.payload)){
+        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
 
-    sdk.deleteKVM(opts)
-        .then(function(result){
-            //cache create success
-            lib.print('info', 'deleted kvm ' + opts.mapName);
-            callback();
-        },function(err){
-            //cache create failed
-            lib.print('error', 'error deleting kvm ' + opts.mapName);
-            lib.print('error', err);
-            callback();
-        });
+        opts.mapName  	    = opts.name;
+        opts.environment    = opts.environments[0];
+
+        sdk.deleteKVM(opts)
+            .then(function(result){
+                //cache create success
+                lib.print('info', 'deleted kvm ' + opts.mapName);
+                callback();
+            },function(err){
+                //cache create failed
+                lib.print('error', 'error deleting kvm ' + opts.mapName);
+                lib.print('error', err);
+                callback();
+            });
+    } else {
+        lib.print('error', 'invalid JSON in payload');
+        callback();
+    }
 }
 
 exports.adapter 			= adapter;
