@@ -81,20 +81,14 @@ function baseAdapter () {
 
         var resourceType                    = config.type;
 
-        var subResources;
-
-        if(taskName.toUpperCase() != 'CLEAN'){
-            subResources                        = config.properties.subResources;
-        } else {
-            subResources                        = config.properties.subResources;
-            // cleaning the resource in reverse order
-            subResources.reverse();
-        }
+        var subResources                    = config.properties.subResources;
 
         if (subResources && subResources.length > 0) {
+            if(taskName.toUpperCase() == 'CLEAN') {
+                subResources.reverse();
+            }
+
             // TODO use promise
-
-
             async.eachSeries(
                 subResources,
 
