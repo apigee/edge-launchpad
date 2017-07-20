@@ -8,7 +8,7 @@ https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvx
 
 ### Usage
 
-Usage: gulp < deploy / build / clean > [options]
+Usage: ```gulp < deploy / build / clean > [options]```
 
 Options: 
 
@@ -37,6 +37,15 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 
 refer openbank and healthapix repo for reference implementation - [openbank](https://github.com/apigee/openbank), [healthapix](https://github.com/apigee/flame/tree/master/src/gateway)
 
+## Bootstrap
+
+You can find the bootstrap code in bootstrap folder
+
+- copy all the files in bootstrap folder to your project directory
+- run ```npm install```
+- run ```npm install --global gulp-cli```
+- run ```gulp deploy```
+- refer the [developer guide](https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvxKCi7vZOJbrSQ/edit?usp=sharing) to add more subresources to the yaml file to deploy your project artifacts
 -------------------
 
 ### This is not an official Google project
