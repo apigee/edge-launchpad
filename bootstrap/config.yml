@@ -1,0 +1,23 @@
+resources:
+- name: my_project_apis
+  type: solutions.api
+  properties:
+    inputs:
+    - name: org
+      prompt: Edge Org name
+    - name: username
+      prompt: Username
+    - name: password
+      prompt: Password
+      hidden: true
+    - name: env
+      prompt: Edge Org Environment
+    configurations:
+    - env: test
+      baas_host: https://apibaas-trial.apigee.net
+      edge_host: https://api.enterprise.apigee.com
+    - env : prod
+      baas_host: https://apibaas-trial.apigee.net
+      edge_host: https://api.enterprise.apigee.com
+    basePath: .
+    subresources:
