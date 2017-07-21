@@ -4,7 +4,7 @@
 A deployment tool for apigee solutions. Helps orchestrating the deployement of any solution comprising of apps, products, developer, proxy, baas data etc
 
 ### Developer guide
-https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvxKCi7vZOJbrSQ/edit?usp=sharing
+https://docs.google.com/document/d/1g6cmrbcb4l9WwExcutZCQt9-7E9qSqdpPs8XPpZ-hno/edit?usp=sharing
 
 ### Usage
 
