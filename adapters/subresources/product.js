@@ -143,7 +143,6 @@ function delete_product(item, callback) {
 
     if(lib.is_json_string(item.payload)){
         var parsed_data = JSON.parse(payload);
-        
         lodash.merge(opts, lib.normalize_data(parsed_data));
 
         opts.productName  	= parsed_data.name;

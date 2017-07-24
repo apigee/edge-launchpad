@@ -25,7 +25,7 @@ resources:
       type: kvm
       items:
       - name: kvm
-        payload: '{ "name" : "hello_world", "entry" : [ { "name" : "welcome_msg", "value" : "holla !! welcome to the real world ! It sucks, but you will love it!" } ] }'
+        payload: '{ "name" : "hello_world", "entry" : [ { "name" : "welcome_msg", "value" : "holla !! welcome to the real world ! It sucks but you will love it!" } ] }'
     - name: public_API_proxies
       type: proxy
       items:
