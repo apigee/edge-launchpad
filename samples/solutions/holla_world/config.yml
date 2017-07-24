@@ -1,0 +1,48 @@
+resources:
+- name: my_project_apis
+  type: solutions.api
+  properties:
+    inputs:
+    - name: org
+      prompt: Edge Org name
+    - name: username
+      prompt: Username
+    - name: password
+      prompt: Password
+      hidden: true
+    - name: env
+      prompt: Edge Org Environment
+    configurations:
+    - env: test
+      baas_host: https://apibaas-trial.apigee.net
+      edge_host: https://api.enterprise.apigee.com
+    - env : prod
+      baas_host: https://apibaas-trial.apigee.net
+      edge_host: https://api.enterprise.apigee.com
+    basePath: .
+    subResources:
+    - name: message_kvm
+      type: kvm
+      items:
+      - name: kvm
+        payload: '{ "name" : "hello_world", "entry" : [ { "name" : "welcome_msg", "value" : "holla !! welcome to the real world ! It sucks, but you will love it!" } ] }'
+    - name: public_API_proxies
+      type: proxy
+      items:
+      - name: holla_world
+    - name: helloworld_products
+      type: product
+      items:
+      - name: hollaworld
+        payload: '{"approvalType":"auto", "displayName":"Hello World Product","name":"holla_world","environments":["test","prod"],"scopes":[], "proxies":["holla_world"]}'
+    - name: developers
+      type: developer
+      items:
+      - payload: '{"email":"hollaworld@apigee.net", "firstName":"holla","lastName":"world","userName":"holaworld"}'
+        email: hollaworld@apigee.net
+    - name: developer_apps
+      type: app
+      items:
+      - name: holla_world_app
+        payload: '{"name":"holla_world","callback":"","email":"hollaworld@apigee.net","apiProducts":"holla_world"}'
+   

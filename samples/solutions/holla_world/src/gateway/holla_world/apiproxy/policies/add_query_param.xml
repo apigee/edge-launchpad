@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="add_query_param">
+    <DisplayName>add_query_param</DisplayName>
+    <Properties/>
+    <Set>
+        <Headers/>
+        <QueryParams>
+            <QueryParam name="welcome_msg">{welcome_msg}</QueryParam>
+        </QueryParams>
+        <FormParams/>
+        <!-- <Verb>GET</Verb> -->
+        <Path/>
+    </Set>
+</AssignMessage>

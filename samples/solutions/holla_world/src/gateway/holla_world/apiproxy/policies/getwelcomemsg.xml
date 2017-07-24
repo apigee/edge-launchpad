@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<KeyValueMapOperations async="false" continueOnError="false" enabled="true" name="getwelcomemsg" mapIdentifier="hello_world">
+    <DisplayName>getwelcomemsg</DisplayName>
+    <Properties/>
+    <ExclusiveCache>false</ExclusiveCache>
+    <Get assignTo="welcome_msg" index="1">
+        <Key>
+            <Parameter>
+                welcome_msg
+            </Parameter>
+        </Key>
+    </Get>
+    <Scope>environment</Scope>
+</KeyValueMapOperations>

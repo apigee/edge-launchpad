@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="1" name="holla_world">
+    <Basepaths>/v0/hello</Basepaths>
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1500873025855</CreatedAt>
+    <CreatedBy>gauthamvk@google.com</CreatedBy>
+    <Description></Description>
+    <DisplayName>helloworld</DisplayName>
+    <LastModifiedAt>1500875113108</LastModifiedAt>
+    <LastModifiedBy>gauthamvk@google.com</LastModifiedBy>
+    <Policies>
+        <Policy>Verify-API-Key-1</Policy>
+        <Policy>add-cors</Policy>
+        <Policy>add_query_param</Policy>
+        <Policy>check-quota</Policy>
+        <Policy>getwelcomemsg</Policy>
+    </Policies>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources/>
+    <Spec></Spec>
+    <TargetServers/>
+    <TargetEndpoints>
+        <TargetEndpoint>default</TargetEndpoint>
+    </TargetEndpoints>
+    <validate>false</validate>
+</APIProxy>
