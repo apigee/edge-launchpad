@@ -138,13 +138,15 @@ function delete_product(item, callback) {
     var context			= item.context;
     delete item.context;
 
-	opts.productName  	= item.name;
-
 	// TODO conflict for environments attribute
     var payload = mustache.render(item.payload, context.getAllVariables());
 
     if(lib.is_json_string(item.payload)){
-        lodash.merge(opts, lib.normalize_data(JSON.parse(payload)));
+        var parsed_data = JSON.parse(payload);
+        
+        lodash.merge(opts, lib.normalize_data(parsed_data));
+
+        opts.productName  	= parsed_data.name;
 
         sdk.deleteProduct(opts)
             .then(function(result){

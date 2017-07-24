@@ -52,7 +52,7 @@ function baseAdapter () {
             case 'DEPLOY' :
                 try {
                     this.deploy(context, resourceName, subResourceName, params, function (err, result) {
-                        cb(err, result)
+                        cb(err, result);
                     });
                 } catch(e){
                     lib.print('error', e);
