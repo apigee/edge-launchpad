@@ -32,10 +32,13 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 **eg2** : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --resource openbank_apis
 
 
-## Sample config
-[samples/configuration/config_one.yml](samples/configuration/config_one.yml)
+## Sample
+- [hollaworld](samples/solutions/holla_world)
+- [openbank](https://github.com/apigee/openbank)
+- [healthapix](https://github.com/apigee/flame/tree/master/src/gateway)
 
-refer openbank and healthapix repo for reference implementation - [openbank](https://github.com/apigee/openbank), [healthapix](https://github.com/apigee/flame/tree/master/src/gateway)
+You can also see openbank configuration here - [samples/configuration/config_one.yml](samples/configuration/config_one.yml)
+
 
 ## Bootstrap
 
