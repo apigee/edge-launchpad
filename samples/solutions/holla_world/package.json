@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "gulp": "^3.9.1",
-    "launchpad": "git+https://git@github.com:apigee/edge-launchpad.git#master"
+    "edge-launchpad": "^2.0.1"
   }
 }

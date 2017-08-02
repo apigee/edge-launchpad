@@ -25,20 +25,22 @@
   "devDependencies": {
     "gulp": "^3.9.1"
   },
-  "name": "launchpad",
-  "version": "2.0.0",
-  "description": "deploy solutions",
+  "name": "edge-launchpad",
+  "version": "2.0.1",
+  "description": "Deploy Solutions onto Apigee Platform",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@revision.aeip.apigee.net:solution-commons/launchpad.git"
+    "url": "git@github.com:apigee/edge-launchpad.git"
   },
   "keywords": [
     "solutions",
     "deploy"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": [
+    "gauthamvk@google.com"
+  ],
+  "license": "Apache License 2.0"
 }
