@@ -31,6 +31,8 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 
 **eg2** : gulp deploy --username gauthamvk@google.com --org bumblebee --env test --resource openbank_apis
 
+## npm
+https://www.npmjs.com/package/edge-launchpad
 
 ## Sample
 - [hollaworld](samples/solutions/holla_world)
