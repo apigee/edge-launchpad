@@ -24,6 +24,8 @@ var async 			= require('async');
 var lodash 			= require('lodash');
 var request 		= require('request');
 
+var sdk 			= apigeetool.getPromiseSDK();
+
 var adapter = function () {
 	this.clean 				= clean;
 	this.build 				= build;
@@ -161,14 +163,16 @@ function deploy_proxy(item, callback) {
 //  https://api.enterprise.apigee.com/v1/o/{org_name}/environments/{env-name}/apis/{api_name}/revisions/{revision_number}/deployments \
 //	-u email:password
 //  curl -X POST -u email:password -F "file=@apiproxy.zip" "https://api.enterprise.apigee.com/v1/organizations/{org-name}/apis?action=import&name=example"
-
+/*
 	var proxy_zip = opts.directory +  '.zip';
+
 
     lib.zip(opts.directory, {saveTo: proxy_zip}, function (err, zip_buffer) {
 
+
         var formData = {
             file: fs.createReadStream(proxy_zip)
-        }
+        };
 
         var options = {
             uri: context.getVariable('edge_host') + '/v1/organizations/' + opts.organization + '/apis?action=import&name=' + opts.api,
@@ -220,8 +224,9 @@ function deploy_proxy(item, callback) {
 
                         callback();
                     } else {
-                        lib.print('error', 'error deploying proxy ' + opts.name);
-						if(!error){
+                        lib.print('error', 'error deploying proxy ' + opts.name + 'with status code : ' + response.statusCode);
+
+                        if(!error){
 							lib.print('error', JSON.stringify(body));
                         } else {
                              lib.print('error', JSON.stringify(error));
@@ -237,7 +242,9 @@ function deploy_proxy(item, callback) {
             }
         });
     });
-/*
+*/
+    opts['upload-modules'] = true;
+
 	sdk.deployProxy(opts).then(
 		function(result){
 			//deploy success
@@ -250,7 +257,7 @@ function deploy_proxy(item, callback) {
 			lib.print('ERROR', err);
 			callback();
 		});
-*/
+
 
 }
 
