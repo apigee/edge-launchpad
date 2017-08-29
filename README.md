@@ -51,6 +51,10 @@ You can find the bootstrap code in bootstrap folder
 - run ```npm install --global gulp-cli```
 - run ```gulp deploy```
 - refer the [developer guide](https://docs.google.com/a/apigee.com/document/d/1ptxyDnFRnH4tKGZb2C1QJ2-Qnp8izvxKCi7vZOJbrSQ/edit?usp=sharing) to add more subresources to the yaml file to deploy your project artifacts
+
+## Support
+* Post a question in [Apigee community](https://community.apigee.com/index.html)
+* Create an [issue](https://github.com/apigee/edge-launchpad/issues/new)
 -------------------
 
 ### This is not an official Google project
