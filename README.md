@@ -55,6 +55,9 @@ You can also see openbank configuration here - [samples/configuration/config_one
 You can find the bootstrap code in bootstrap folder
 
 - copy all the files in bootstrap folder to your project directory
+- run ```docker run -it -v $(pwd):/opt/apigee/deploy kidiyoor/edge-launchpad:2.0.2 gulp deploy```
+
+or
 - run ```npm install```
 - run ```npm install --global gulp-cli```
 - run ```gulp deploy```
