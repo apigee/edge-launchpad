@@ -34,6 +34,14 @@ Additional parameters can be passed to deploy script to avoid prompt. see **eg2*
 ## npm
 https://www.npmjs.com/package/edge-launchpad
 
+## Docker
+https://hub.docker.com/r/kidiyoor/edge-launchpad/
+
+Run the following command from the solution directory
+
+```docker run -it -v $(pwd):/opt/apigee/deploy kidiyoor/edge-launchpad:2.0.2 gulp deploy```
+
+
 ## Sample
 - [hollaworld](samples/solutions/holla_world)
 - [openbank](https://github.com/apigee/openbank)
