@@ -130,7 +130,8 @@ function deploy(context, resourceName, subResourceName, params, cb) {
 
 	for (var i=0; i< items.length; i++) {
 		lodash.merge(items[i], deploy_info);
-		items[i].api		= items[i].name;
+        items[i].descriptor = items[i].name;
+        items[i].api	= items[i].apiName || items[i].name;
 		items[i].directory 	= path.join(context.getBasePath(resourceName), 'src/gateway', items[i].name, 'target');
 		items[i].context 	= context;
 
