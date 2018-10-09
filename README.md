@@ -1,7 +1,7 @@
 # Edge-Launchpad
 ![](images/edge-launchpad-wall-image.png)
 
-A deployment tool for apigee solutions. Helps orchestrating the deployement of any solution comprising of apps, products, developer, proxy, baas data etc
+A deployment tool for apigee solutions. Helps orchestrating the deployment of any solution comprising of apps, products, developer, proxy, baas data etc
 
 ### Developer guide
 https://docs.google.com/document/d/1g6cmrbcb4l9WwExcutZCQt9-7E9qSqdpPs8XPpZ-hno/edit?usp=sharing
